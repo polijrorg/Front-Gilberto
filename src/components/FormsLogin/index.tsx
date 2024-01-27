@@ -1,5 +1,6 @@
 import * as S from './styles';
 import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 type ILogin = {
   codigo?: boolean;
@@ -9,10 +10,13 @@ type ILogin = {
 const FormsLogin: React.FC<ILogin> = ({ codigo, msg }) => {
   const [email, setEmail] = useState('');
   const [codigoAuth, setCodigoAuth] = useState('');
+  const navigation = useNavigation();
 
   const handleEnviarPress = () => {
     console.log('Email:', email);
     console.log('codigo:', codigoAuth);
+
+    navigation.navigate('Home' as never);
   };
 
   return (

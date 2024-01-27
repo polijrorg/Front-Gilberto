@@ -1,10 +1,17 @@
 import { Alert } from 'react-native';
 import * as S from './styles';
 import React from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 const HeaderMenu: React.FC = () => {
+  const navigation = useNavigation();
+
   const handleClick = () => {
-    Alert.alert('Logout', 'Até mais!');
+    Alert.alert('Logout', 'Volte Sempre');
+
+    setTimeout(() => {
+      navigation.navigate('Login' as never);
+    }, 1000);
   };
 
   return (

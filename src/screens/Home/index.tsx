@@ -1,20 +1,25 @@
-import DefaultButton from '@components/DefaultButton';
+import Header from '@components/HeaderMenu';
 import * as S from './styles';
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import BackButton from '@components/BackButton';
-import DropdownSelect from '@components/ListDropdown';
+import { StatusBar } from 'expo-status-bar';
+import ButtonWhite from '@components/ButtonWhite';
 
 const Home = () => (
-  <S.Wrapper>
-    <StatusBar style="light" />
-    <DefaultButton textButton={'estátisticas'} />
-    <DefaultButton textButton={'Olá mundo'} />
-    <DefaultButton textButton={'Hello'} />
-    <DefaultButton textButton={'Hello'} />
-    <BackButton />
-    <DropdownSelect />
-  </S.Wrapper>
+  <>
+    <StatusBar style="dark" />
+    <S.Wrapper>
+      <Header />
+      <S.ContainerActions>
+        <S.TitleActions>O que você vai fazer hoje?</S.TitleActions>
+        <S.DivActions>
+          <ButtonWhite text={'Avaliar um Mentorado'} />
+          <ButtonWhite text={'Auditar uma Visita'} />
+          <ButtonWhite text={'Ver Planos de Ação'} />
+          <ButtonWhite text={'Visualizar Equipe'} />
+        </S.DivActions>
+      </S.ContainerActions>
+    </S.Wrapper>
+  </>
 );
 
 export default Home;
