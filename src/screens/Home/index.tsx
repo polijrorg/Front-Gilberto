@@ -3,6 +3,7 @@ import * as S from './styles';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import BackButton from '@components/BackButton';
+import DropdownSelect from '@components/ListDropdown';
 
 const Home = () => (
   <S.Wrapper>
@@ -12,6 +13,7 @@ const Home = () => (
     <DefaultButton textButton={'Hello'} />
     <DefaultButton textButton={'Hello'} />
     <BackButton />
+    <DropdownSelect />
   </S.Wrapper>
 );
 

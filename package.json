@@ -25,6 +25,7 @@
     "@expo/ngrok": "^4.1.0",
     "@expo/webpack-config": "^0.17.0",
     "@react-native-async-storage/async-storage": "1.18.2",
+    "@react-native-picker/picker": "^2.6.1",
     "axios": "^0.27.2",
     "expo": "^49.0.0",
     "expo-splash-screen": "~0.20.5",
