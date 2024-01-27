@@ -2,6 +2,7 @@ import DefaultButton from '@components/DefaultButton';
 import * as S from './styles';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
+import BackButton from '@components/BackButton';
 
 const Home = () => (
   <S.Wrapper>
@@ -10,6 +11,7 @@ const Home = () => (
     <DefaultButton textButton={'Olá mundo'} />
     <DefaultButton textButton={'Hello'} />
     <DefaultButton textButton={'Hello'} />
+    <BackButton />
   </S.Wrapper>
 );
 
