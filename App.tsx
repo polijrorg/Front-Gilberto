@@ -1,11 +1,11 @@
 import AppProvider from '@hooks/index';
-import Login from '@screens/Login';
+import MentoriaMatriz from '@screens/Mentoria_Matriz';
 import React from 'react';
 
 export default function App() {
   return (
     <AppProvider>
-      <Login />
+      <MentoriaMatriz />
     </AppProvider>
   );
 }
