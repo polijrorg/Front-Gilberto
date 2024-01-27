@@ -1,11 +1,11 @@
 import AppProvider from '@hooks/index';
-import Home from '@screens/Home';
+import Login from '@screens/Login';
 import React from 'react';
 
 export default function App() {
   return (
     <AppProvider>
-      <Home />
+      <Login />
     </AppProvider>
   );
 }
