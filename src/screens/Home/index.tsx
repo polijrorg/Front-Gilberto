@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import ContainerActions from '@components/ContainerActions';
 import MatrizSlider from '@components/MatrizSlider';
 import ContainerVendedores from '@components/ContainerVendedores';
+import ButtonAdded from '@components/ButtonAdded';
 const Home = () => (
   <>
     <StatusBar style="dark" />
@@ -14,6 +15,7 @@ const Home = () => (
       <MatrizSlider />
       <ContainerVendedores />
     </S.Wrapper>
+    <ButtonAdded />
   </>
 );
 
