@@ -1,10 +1,9 @@
-import { View } from 'react-native';
+import { ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 import { theme } from '@styles/default.theme';
 
-export const Wrapper = styled(View)`
+export const Wrapper = styled(ScrollView)`
   width: 100%;
-  height: 100%;
-  overflow: hidden;
+  height: auto;
   background-color: ${theme.colors.primary.main};
 `;
