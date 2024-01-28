@@ -15,18 +15,16 @@ const ContainerVendedores: React.FC = () => {
         <CardVendedor
           nome="Pedro Gomes"
           cargo="Analista de Projetos"
-          nota={10}
+          nota={3.8}
         />
         <CardVendedor
           nome="João Gallego"
           cargo="Analista de Projetos"
-          nota={3.8}
+          nota={2.8}
         />
-        <CardVendedor nome="Gilberto" cargo="CHEFE" nota={9.8} />
-        <CardVendedor nome="Neymar" cargo="CHEFE" nota={6.9} />
-        <CardVendedor nome="Mbappé" cargo="Uber" nota={1.2} />
-        <CardVendedor nome="Allan Douglas" cargo="Gerente de RH" nota={1.2} />
-        <CardVendedor nome="Allan Gomes" cargo="Economista" nota={8.2} />
+        <CardVendedor nome="Gilberto" cargo="CHEFE" nota={5.0} />
+        <CardVendedor nome="Neymar" cargo="Futebolista" nota={1.3} />
+        <CardVendedor nome="Mbappé" cargo="Uber" nota={3.4} />
       </S.Cards>
     </S.DivWrapper>
   );

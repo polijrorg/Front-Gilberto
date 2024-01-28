@@ -44,8 +44,13 @@ export const Cargo = styled(Text)`
   font-size: 12px;
   font-weight: 400;
 `;
-export const DivAvalia = styled(View)`
-  background-color: #dff3df;
+
+interface DivAvaliaProps {
+  nota: number;
+}
+
+export const DivAvalia = styled(View)<DivAvaliaProps>`
+  background-color: ${({ nota }) => getColorByNoteDiv(nota)};
   border-radius: 2px;
   width: 34px;
   height: 32px;
@@ -55,8 +60,32 @@ export const DivAvalia = styled(View)`
   align-items: center;
 `;
 
-export const Nota = styled(Text)`
-  color: #46a758;
+export const Nota = styled(Text)<DivAvaliaProps>`
+  color: ${({ nota }) => getColorByNoteText(nota)};
   font-size: 16px;
   font-weight: 700;
 `;
+
+const getColorByNoteDiv = (note?: number): string => {
+  if (note !== undefined) {
+    if (note >= 4) {
+      return '#DFF3DF';
+    } else if (note >= 3) {
+      return '#FFF8BB';
+    } else {
+      return '#FFF0EE';
+    }
+  }
+};
+
+const getColorByNoteText = (note?: number): string => {
+  if (note !== undefined) {
+    if (note >= 4) {
+      return '#46A758';
+    } else if (note >= 3) {
+      return '#F1A10D';
+    } else {
+      return '#E5484D';
+    }
+  }
+};
