@@ -9,13 +9,13 @@ type ILogin = {
 
 const FormsLogin: React.FC<ILogin> = ({ codigo, msg }) => {
   const [email, setEmail] = useState('');
-  const [codigoAuth, setCodigoAuth] = useState('');
+  const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
   const handleEnviarPress = () => {
     console.log('Email:', email);
-    console.log('codigo:', codigoAuth);
 
+    console.log('Senha', password);
     navigation.navigate('Home' as never);
   };
 
@@ -23,18 +23,19 @@ const FormsLogin: React.FC<ILogin> = ({ codigo, msg }) => {
     <S.Wrapper>
       <S.Forms>
         <S.Div>
-          <S.LabelEmail>
-            {codigo
-              ? 'Insira o código recebido no e-mail'
-              : 'Insira seu e-mail'}
-          </S.LabelEmail>
-          <S.InputEmail
-            placeholder={codigo ? 'XXXXXXXX' : 'marco.rudas@gmail.com'}
-            keyboardType={codigo ? 'numeric' : 'email-address'}
-            value={codigo ? codigoAuth : email}
-            onChangeText={(text) =>
-              codigo ? setCodigoAuth(text) : setEmail(text)
-            }
+          <S.LabelEmail>{'Insira seu e-mail'}</S.LabelEmail>
+          <S.Input
+            placeholder={'marco.rudas@gmail.com'}
+            keyboardType={'email-address'}
+            value={email}
+            onChangeText={(text) => setEmail(text)}
+          />
+          <S.Input
+            placeholder={'Senha'}
+            keyboardType="default"
+            secureTextEntry={true}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
           />
           {!codigo && (
             <S.TextInfo hasError={msg !== undefined && msg !== ''}>
