@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 export const Wrapper = styled(View)`
   width: 100%;
-  height: 95%;
+  height: 105%;
   border-top-right-radius: 32px;
   border-top-left-radius: 32px;
   background-color: ${theme.colors.primary.main};
@@ -83,7 +83,7 @@ export const TitleBtn = styled(Text)`
 `;
 
 export const DivGradiente = styled(LinearGradient).attrs({
-  colors: ['#3EDDAD', '#3E63DD'], // Defina as cores do gradiente
+  colors: ['#3EDDAD', '#3E63DD'],
   start: { x: 0, y: 0 },
   end: { x: 1, y: 0 },
 })`

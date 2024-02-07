@@ -6,6 +6,7 @@ import ContainerActions from '@components/ContainerActions';
 import MatrizSlider from '@components/MatrizSlider';
 import ContainerVendedores from '@components/ContainerVendedores';
 import ButtonAdded from '@components/ButtonAdded';
+import DivGradient from '@components/DivGradient';
 
 const Home = () => {
   return (
@@ -16,6 +17,7 @@ const Home = () => {
         <ContainerActions />
         <MatrizSlider />
         <ContainerVendedores />
+        <DivGradient />
       </S.Wrapper>
       <ButtonAdded />
     </>

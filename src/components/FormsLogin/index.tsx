@@ -1,6 +1,7 @@
 import * as S from './styles';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import DivGradient from '@components/DivGradient';
 
 type ILogin = {
   codigo?: boolean;
@@ -20,35 +21,37 @@ const FormsLogin: React.FC<ILogin> = ({ codigo, msg }) => {
   };
 
   return (
-    <S.Wrapper>
-      <S.Forms>
-        <S.Div>
-          <S.LabelEmail>{'Insira seu e-mail'}</S.LabelEmail>
-          <S.Input
-            placeholder={'marco.rudas@gmail.com'}
-            keyboardType={'email-address'}
-            value={email}
-            onChangeText={(text) => setEmail(text)}
-          />
-          <S.Input
-            placeholder={'Senha'}
-            keyboardType="default"
-            secureTextEntry={true}
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-          />
-          {!codigo && (
-            <S.TextInfo hasError={msg !== undefined && msg !== ''}>
-              {msg || 'Mandaremos um código para autenticar sua entrada'}
-            </S.TextInfo>
-          )}
-        </S.Div>
-        <S.ButtonEnviar onPress={handleEnviarPress}>
-          <S.TitleBtn>Mandar Código</S.TitleBtn>
-        </S.ButtonEnviar>
-      </S.Forms>
-      <S.DivGradiente />
-    </S.Wrapper>
+    <>
+      <S.Wrapper>
+        <S.Forms>
+          <S.Div>
+            <S.LabelEmail>{'Insira seu e-mail'}</S.LabelEmail>
+            <S.Input
+              placeholder={'marco.rudas@gmail.com'}
+              keyboardType={'email-address'}
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+            />
+            <S.Input
+              placeholder={'Senha'}
+              keyboardType="default"
+              secureTextEntry={true}
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+            />
+            {!codigo && (
+              <S.TextInfo hasError={msg !== undefined && msg !== ''}>
+                {msg || 'Mandaremos um código para autenticar sua entrada'}
+              </S.TextInfo>
+            )}
+          </S.Div>
+          <S.ButtonEnviar onPress={handleEnviarPress}>
+            <S.TitleBtn>Mandar Código</S.TitleBtn>
+          </S.ButtonEnviar>
+        </S.Forms>
+        <DivGradient />
+      </S.Wrapper>
+    </>
   );
 };
 
