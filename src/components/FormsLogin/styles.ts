@@ -33,7 +33,7 @@ export const LabelEmail = styled(Text)`
   font-weight: 400;
 `;
 
-export const InputEmail = styled(TextInput)`
+export const Input = styled(TextInput)`
   border: none;
   width: 100%;
   border: 1px solid #d7dbdf;
