@@ -9,13 +9,13 @@ const AppStack = createNativeStackNavigator();
 const AppRoutes: React.FC = () => (
   <AppStack.Navigator>
     <AppStack.Screen
-      name="Home"
-      component={Home}
+      name="Login"
+      component={Login}
       options={{ header: () => <></> }}
     />
     <AppStack.Screen
-      name="Login"
-      component={Login}
+      name="Home"
+      component={Home}
       options={{ header: () => <></> }}
     />
   </AppStack.Navigator>
