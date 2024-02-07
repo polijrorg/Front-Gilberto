@@ -6,17 +6,20 @@ import ContainerActions from '@components/ContainerActions';
 import MatrizSlider from '@components/MatrizSlider';
 import ContainerVendedores from '@components/ContainerVendedores';
 import ButtonAdded from '@components/ButtonAdded';
-const Home = () => (
-  <>
-    <StatusBar style="dark" />
-    <S.Wrapper>
-      <Header />
-      <ContainerActions />
-      <MatrizSlider />
-      <ContainerVendedores />
-    </S.Wrapper>
-    <ButtonAdded />
-  </>
-);
+
+const Home = () => {
+  return (
+    <>
+      <StatusBar style="dark" />
+      <S.Wrapper>
+        <Header />
+        <ContainerActions />
+        <MatrizSlider />
+        <ContainerVendedores />
+      </S.Wrapper>
+      <ButtonAdded />
+    </>
+  );
+};
 
 export default Home;

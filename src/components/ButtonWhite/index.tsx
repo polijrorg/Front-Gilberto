@@ -3,9 +3,10 @@ import React, { useState } from 'react';
 
 type IbutonWhite = {
   text: string;
+  duty?: () => void;
 };
 
-const ButtonWhite: React.FC<IbutonWhite> = ({ text }) => {
+const ButtonWhite: React.FC<IbutonWhite> = ({ text, duty }) => {
   const [isPressed, setIsPressed] = useState(false);
 
   return (
@@ -13,6 +14,7 @@ const ButtonWhite: React.FC<IbutonWhite> = ({ text }) => {
       activeOpacity={0.8}
       onPressOut={() => setIsPressed(false)}
       isPressed={isPressed}
+      onPress={duty}
     >
       <S.StyledHeading>{text}</S.StyledHeading>
     </S.StyleButton>
