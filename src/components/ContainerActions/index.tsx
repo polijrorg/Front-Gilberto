@@ -7,10 +7,10 @@ const ContainerActions: React.FC = () => {
     <S.ContainerActions>
       <S.TitleActions>O que você vai fazer hoje?</S.TitleActions>
       <S.DivActions>
-        <ButtonWhite text={'Avaliar um Mentorado'} />
-        <ButtonWhite text={'Auditar uma Visita'} />
         <ButtonWhite text={'Ver Planos de Ação'} />
         <ButtonWhite text={'Visualizar Equipe'} />
+        <ButtonWhite text={'Avaliar um Mentorado'} />
+        <ButtonWhite text={'Auditar uma Visita'} />
       </S.DivActions>
     </S.ContainerActions>
   );
