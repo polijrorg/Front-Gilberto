@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import User from '@interfaces/User';
 
-import api from './api';
+import { api } from './api';
 
 interface ILoginRequest {
   email: string;
