@@ -2,10 +2,14 @@ import CardVendedor from '@components/CardVendedor';
 import * as S from './styles';
 import React from 'react';
 
-const ContainerVendedores: React.FC = () => {
+type IContianer = {
+  title?: string;
+};
+
+const ContainerVendedores: React.FC<IContianer> = ({ title }) => {
   return (
     <S.DivWrapper>
-      <S.TitleSlider>Vendedores</S.TitleSlider>
+      <S.TitleSlider>{title || 'Vendedores'}</S.TitleSlider>
       <S.Cards>
         <CardVendedor
           nome="Thiago D. Velasquez"
