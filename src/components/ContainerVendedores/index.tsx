@@ -33,6 +33,8 @@ const ContainerVendedores: React.FC<IContianer> = ({ title, vendedorName }) => {
     );
   }
 
+  filteredVendedores.sort((a, b) => b.nota - a.nota);
+
   return (
     <S.DivWrapper>
       <S.TitleSlider>{title || 'Vendedores'}</S.TitleSlider>
