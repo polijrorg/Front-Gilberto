@@ -5,10 +5,11 @@ import Routes from '@routes/index';
 import React from 'react';
 
 export default function App() {
+  const user = { id: '123' };
   return (
     <NavigationContainer>
       <AppProvider>
-        <Routes />
+        <Routes user={user} />
       </AppProvider>
     </NavigationContainer>
   );
