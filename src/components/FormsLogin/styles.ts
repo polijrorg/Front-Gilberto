@@ -24,7 +24,11 @@ export const Forms = styled(View)`
 
 export const Div = styled(View)`
   width: 100%;
-  gap: 16px;
+  gap: 24px;
+`;
+
+export const DivFields = styled(View)`
+  gap: 8px;
 `;
 
 export const LabelEmail = styled(Text)`

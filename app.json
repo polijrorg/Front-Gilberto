@@ -3,8 +3,6 @@
     "name": "my-app5",
     "slug": "my-app5",
     "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ]
+    "assetBundlePatterns": ["**/*"]
   }
 }

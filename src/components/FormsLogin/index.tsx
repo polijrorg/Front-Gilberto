@@ -2,6 +2,7 @@ import * as S from './styles';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import DivGradient from '@components/DivGradient';
+import UserService from '@services/UserService';
 
 type ILogin = {
   codigo?: boolean;
@@ -13,11 +14,18 @@ const FormsLogin: React.FC<ILogin> = ({ codigo, msg }) => {
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
-  const handleEnviarPress = () => {
-    console.log('Email:', email);
-
-    console.log('Senha', password);
-    navigation.navigate('Home' as never);
+  const handleEnviarPress = async () => {
+    try {
+      const data = {
+        email,
+        password,
+      };
+      const response = await UserService.login(data);
+      navigation.navigate('Home' as never);
+      console.log(response);
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+    }
   };
 
   return (
@@ -25,20 +33,27 @@ const FormsLogin: React.FC<ILogin> = ({ codigo, msg }) => {
       <S.Wrapper>
         <S.Forms>
           <S.Div>
-            <S.LabelEmail>{'Insira seu e-mail'}</S.LabelEmail>
-            <S.Input
-              placeholder={'marco.rudas@gmail.com'}
-              keyboardType={'email-address'}
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-            />
-            <S.Input
-              placeholder={'Senha'}
-              keyboardType="default"
-              secureTextEntry={true}
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-            />
+            <S.DivFields>
+              <S.LabelEmail>{'Digite seu E-mail'}</S.LabelEmail>
+              <S.Input
+                placeholder={'marco.rudas@gmail.com'}
+                keyboardType={'email-address'}
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+              />
+            </S.DivFields>
+
+            <S.DivFields>
+              <S.LabelEmail>{'Digite sua senha'}</S.LabelEmail>
+              <S.Input
+                placeholder={'Senha'}
+                keyboardType="default"
+                secureTextEntry={true}
+                value={password}
+                onChangeText={(text) => setPassword(text)}
+              />
+            </S.DivFields>
+
             {!codigo && (
               <S.TextInfo hasError={msg !== undefined && msg !== ''}>
                 {msg || 'Mandaremos um código para autenticar sua entrada'}
@@ -46,7 +61,7 @@ const FormsLogin: React.FC<ILogin> = ({ codigo, msg }) => {
             )}
           </S.Div>
           <S.ButtonEnviar onPress={handleEnviarPress}>
-            <S.TitleBtn>Mandar Código</S.TitleBtn>
+            <S.TitleBtn>Login</S.TitleBtn>
           </S.ButtonEnviar>
         </S.Forms>
         <DivGradient />

@@ -1,5 +1,5 @@
-import axios from 'axios';
+import getApi from './axios';
 
-const api = axios.create({ baseURL: 'https://gilberto.polijrinternal.com' });
+const api = getApi();
 
-export { api };
+export default api;
