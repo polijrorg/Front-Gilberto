@@ -19,11 +19,19 @@ export default class UserService {
     console.log('Aqui passou', data);
     const response: AxiosResponse<ILoginResponse> = await api.post(
       '/supervisor/login',
-      data
+      {
+        email: 'blab@polijunior.com',
+        password: 'senha123',
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
     );
 
-    await AsyncStorage.setItem('@gil:token', response.data.token);
-    await AsyncStorage.setItem('@gil:useId', response.data.user.id);
+    await AsyncStorage.setItem('@app:token', response.data.token);
+    await AsyncStorage.setItem('@app:useId', response.data.user.id);
 
     return response.data;
   }
