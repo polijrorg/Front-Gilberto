@@ -16,23 +16,20 @@ interface ILoginRequest {
 }
 export default class UserService {
   static async login(data: ILoginRequest): Promise<ILoginResponse> {
-    console.log('Aqui passou', data);
-    const response: AxiosResponse<ILoginResponse> = await api.post(
-      '/supervisor/login',
-      {
-        email: 'blab@polijunior.com',
-        password: 'senha123',
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    try {
+      console.log('Aqui passou', data);
+      const response: AxiosResponse<ILoginResponse> = await api.post(
+        '/supervisor/login',
+        data
+      );
 
-    await AsyncStorage.setItem('@app:token', response.data.token);
-    await AsyncStorage.setItem('@app:useId', response.data.user.id);
+      await AsyncStorage.setItem('@app:token', response.data.token);
+      await AsyncStorage.setItem('@app:useId', response.data.user.id);
 
-    return response.data;
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+      throw error;
+    }
   }
 }

@@ -15,17 +15,13 @@ const FormsLogin: React.FC<ILogin> = ({ codigo, msg }) => {
   const navigation = useNavigation();
 
   const handleEnviarPress = async () => {
-    try {
-      const data = {
-        email,
-        password,
-      };
-      const response = await UserService.login(data);
-      navigation.navigate('Home' as never);
-      console.log(response);
-    } catch (error) {
-      console.error('Erro ao fazer login:', error);
-    }
+    const data = {
+      email,
+      password,
+    };
+    const response = await UserService.login(data);
+    navigation.navigate('Home' as never);
+    console.log(response);
   };
 
   return (
