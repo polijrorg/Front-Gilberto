@@ -35,6 +35,7 @@ export const LabelEmail = styled(Text)`
   color: #11181c;
   font-size: 18px;
   font-weight: 400;
+  font-family: Poppins;
 `;
 
 export const Input = styled(TextInput)`
@@ -45,6 +46,7 @@ export const Input = styled(TextInput)`
   border-radius: 4px;
   font-size: 12px;
   background-color: #f1f3f5;
+  font-family: Poppins;
   ::placeholder {
     color: #687076; /* Cor do texto do placeholder */
   }
@@ -59,6 +61,7 @@ export const TextInfo = styled(Text)<TextInfoProps>`
   font-size: 10px;
   font-weight: 400;
   letter-spacing: 0.25px;
+  font-family: Poppins;
   ${(props) =>
     props.hasError &&
     css`
@@ -81,6 +84,7 @@ export const ButtonEnviar = styled(TouchableOpacity)`
 export const TitleBtn = styled(Text)`
   color: #fff;
   align-self: center;
+  font-family: Poppins;
   font-size: 12px;
   text-transform: uppercase;
   font-weight: 700;

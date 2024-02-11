@@ -58,6 +58,7 @@ export const TextMyTeam = styled(Text)`
   font-size: 16px;
   color: #fbfcfd;
   letter-spacing: 0.5px;
+  font-family: PoppinsBold;
 `;
 
 export const BackImage = styled(Image)`
@@ -86,6 +87,7 @@ export const InputVendedor = styled(TextInput)`
   width: 90%;
   font-size: 14px;
   color: #687076;
+  font-family: Poppins;
   background-color: transparent;
 `;
 

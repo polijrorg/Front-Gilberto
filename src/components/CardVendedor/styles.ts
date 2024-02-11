@@ -37,12 +37,14 @@ export const Name = styled(Text)`
   font-size: 16px;
   font-weight: 400;
   color: #11181c;
+  font-family: Poppins;
 `;
 
 export const Cargo = styled(Text)`
   color: #687076;
   font-size: 12px;
   font-weight: 400;
+  font-family: Poppins;
 `;
 
 interface DivAvaliaProps {
@@ -64,6 +66,7 @@ export const Nota = styled(Text)<DivAvaliaProps>`
   color: ${({ nota }) => getColorByNoteText(nota)};
   font-size: 16px;
   font-weight: 700;
+  font-family: Poppins;
 `;
 
 const getColorByNoteDiv = (note?: number): string => {

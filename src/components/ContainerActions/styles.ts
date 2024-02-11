@@ -13,6 +13,7 @@ export const TitleActions = styled(Text)`
   font-size: 16px;
   font-weight: 400;
   padding: 0px 18px;
+  font-family: Poppins;
 `;
 
 export const DivActions = styled(View)`

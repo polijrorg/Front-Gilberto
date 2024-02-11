@@ -11,6 +11,7 @@ import { theme } from '@styles/default.theme';
 export const StyledHeading = styled(Text)`
   font-size: 16px;
   font-weight: 700;
+  font-family: PoppinsBold;
   color: #fff;
   border-bottom-width: 3px;
   border-bottom-color: #d9e2fc;

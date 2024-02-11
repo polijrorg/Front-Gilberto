@@ -61,7 +61,7 @@ const FormsLogin: React.FC<ILogin> = ({ codigo, msg }) => {
             )}
           </S.Div>
           <S.ButtonEnviar onPress={handleEnviarPress}>
-            <S.TitleBtn>Login</S.TitleBtn>
+            <S.TitleBtn>Entrar</S.TitleBtn>
           </S.ButtonEnviar>
         </S.Forms>
         <DivGradient />

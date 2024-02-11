@@ -5,8 +5,9 @@ export const StyledHeading = styled(Text)`
   font-size: 12px;
   text-transform: uppercase;
   color: #687076;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   font-weight: 400;
+  font-family: Poppins;
 `;
 
 export const StyleButton = styled(TouchableOpacity)<{ isPressed: boolean }>`

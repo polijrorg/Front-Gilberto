@@ -18,6 +18,7 @@ export const TitleSlider = styled(Text)`
   font-weight: 800;
   margin-left: 24px;
   margin-bottom: 16px;
+  font-family: PoppinsBold;
 `;
 
 export const Cards = styled(View)`

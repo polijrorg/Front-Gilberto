@@ -23,6 +23,7 @@ export const TitleHeader = styled(Text)`
   color: #fff;
   font-weight: 700;
   font-size: 32px;
+  font-family: PoppinsBold;
 `;
 
 export const ImageHeader = styled(Image)`
