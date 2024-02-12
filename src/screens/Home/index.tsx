@@ -7,16 +7,21 @@ import MatrizSlider from '@components/MatrizSlider';
 import ContainerVendedores from '@components/ContainerVendedores';
 import ButtonAdded from '@components/ButtonAdded';
 import DivGradient from '@components/DivGradient';
+import useAuth from '@hooks/useAuth';
 
 const Home = () => {
+  const { user } = useAuth();
+
+  console.log(user);
+
   return (
     <>
       <StatusBar style="dark" />
       <S.Wrapper>
-        <Header />
+        <Header user={user} />
         <ContainerActions />
         <MatrizSlider />
-        <ContainerVendedores />
+        <ContainerVendedores user={user} />
         <DivGradient />
       </S.Wrapper>
       <ButtonAdded />

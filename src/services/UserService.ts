@@ -1,8 +1,8 @@
+/* eslint-disable no-catch-shadow */
+/* eslint-disable @typescript-eslint/no-shadow */
 import { AxiosResponse } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import User from '@interfaces/User';
-
 import api from './api';
 
 interface ILoginResponse {
@@ -14,22 +14,37 @@ interface ILoginRequest {
   email: string;
   password: string;
 }
+
 export default class UserService {
   static async login(data: ILoginRequest): Promise<ILoginResponse> {
     try {
-      console.log('Aqui passou', data);
-      const response: AxiosResponse<ILoginResponse> = await api.post(
+      // Tentar fazer login como supervisor
+      const supervisorResponse: AxiosResponse<ILoginResponse> = await api.post(
         '/supervisor/login',
         data
       );
+      // Se o login como supervisor for bem-sucedido, armazenar tokens e retornar resposta
+      await AsyncStorage.setItem('@app:token', supervisorResponse.data.token);
+      await AsyncStorage.setItem('@app:useId', supervisorResponse.data.user.id);
 
-      await AsyncStorage.setItem('@app:token', response.data.token);
-      await AsyncStorage.setItem('@app:useId', response.data.user.id);
-
-      return response.data;
+      return supervisorResponse.data;
     } catch (error) {
-      console.error('Erro ao fazer login:', error);
-      throw error;
+      console.error('Erro ao fazer login como supervisor:', error);
+      try {
+        // Tentar fazer login como gerente
+        const managerResponse: AxiosResponse<ILoginResponse> = await api.post(
+          '/manager/login',
+          data
+        );
+
+        // Se o login como gerente for bem-sucedido, armazenar tokens e retornar resposta
+        await AsyncStorage.setItem('@app:token', managerResponse.data.token);
+        await AsyncStorage.setItem('@app:useId', managerResponse.data.user.id);
+        return managerResponse.data;
+      } catch (error) {
+        console.error('Erro ao fazer login como gerente:', error);
+        throw new Error('Falha ao fazer login como supervisor e gerente');
+      }
     }
   }
 }

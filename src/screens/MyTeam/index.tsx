@@ -4,10 +4,12 @@ import { StatusBar } from 'expo-status-bar';
 import ContainerVendedores from '@components/ContainerVendedores';
 import DivGradient from '@components/DivGradient';
 import { useNavigation } from '@react-navigation/native';
+import useAuth from '@hooks/useAuth';
 
 const MyTeam = () => {
   const navigation = useNavigation();
   const [name, setName] = useState('');
+  const { user } = useAuth();
 
   const handlePressBack = () => {
     navigation.goBack();
@@ -36,7 +38,7 @@ const MyTeam = () => {
             <S.Lupa source={require('@assets/img/myteam/lupa.png')} />
           </S.ButtonLupa>
         </S.DivContainerInput>
-        <ContainerVendedores title="Meus Vendedores" vendedorName={name} />
+        <ContainerVendedores title="Meus Vendedores" user={user} />
       </S.Wrapper>
       <DivGradient />
     </S.WrapperTela>

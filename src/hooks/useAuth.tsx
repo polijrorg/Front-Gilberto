@@ -24,6 +24,7 @@ export const AuthProvider: React.FC<{
   children?: React.ReactNode | undefined;
 }> = ({ children }) => {
   const [user, setUser] = useState({} as User);
+  console.log('Auth passou');
 
   const login = async (data: ILoginRequest) => {
     try {
@@ -34,12 +35,11 @@ export const AuthProvider: React.FC<{
       };
 
       setUser(response.user);
-    } catch (error) {
-      // Errors handling
-    }
+    } catch (error) {}
   };
 
   const logout = () => {
+    setUser({} as User);
     AsyncStorage.removeItem('@app:token');
     AsyncStorage.removeItem('@app:useId');
   };

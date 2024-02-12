@@ -1,8 +1,9 @@
 import * as S from './styles';
+import { Alert } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import DivGradient from '@components/DivGradient';
-import UserService from '@services/UserService';
+import useAuth from '@hooks/useAuth';
 
 type ILogin = {
   codigo?: boolean;
@@ -14,14 +15,17 @@ const FormsLogin: React.FC<ILogin> = ({ codigo, msg }) => {
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
-  const handleEnviarPress = async () => {
-    const data = {
-      email,
-      password,
-    };
-    const response = await UserService.login(data);
-    navigation.navigate('Home' as never);
-    console.log(response);
+  const { login } = useAuth();
+
+  const handleEnviarPress = () => {
+    try {
+      console.log('aqui passou');
+      login({ email, password });
+      navigation.navigate('Home' as never);
+    } catch (error) {
+      Alert.alert('Erro ao Logar');
+      console.log(error);
+    }
   };
 
   return (

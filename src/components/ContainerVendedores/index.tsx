@@ -1,40 +1,51 @@
 import CardVendedor from '@components/CardVendedor';
 import * as S from './styles';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import IUser from '@interfaces/User';
+import SupervisorServices from '@services/SupervisorServices';
+import ISeller from '@interfaces/Seller';
 
 type IContianer = {
+  user: IUser;
   title?: string;
-  vendedorName?: string;
 };
 
-const ContainerVendedores: React.FC<IContianer> = ({ title, vendedorName }) => {
-  const vendedores = [
-    { nome: 'Thiago D. Velasquez', cargo: 'Coordenador', nota: 4.8 },
-    { nome: 'Pedro Gomes', cargo: 'Analista de Projetos', nota: 3.8 },
-    { nome: 'João Gallego', cargo: 'Analista de Projetos', nota: 2.8 },
-    { nome: 'Gilberto', cargo: 'CHEFE', nota: 5.0 },
-    { nome: 'Neymar', cargo: 'Futebolista', nota: 1.3 },
-    { nome: 'Mbappé', cargo: 'Uber', nota: 3.4 },
-    { nome: 'Pedro Souza', cargo: 'Frentista', nota: 3.7 },
-    { nome: 'Matheuszin', cargo: 'Pegador', nota: 5.0 },
-  ];
+const ContainerVendedores: React.FC<IContianer> = ({ user, title }) => {
+  const [sellers, setSellers] = useState<ISeller[]>([]);
 
-  //Deixa Otimizado para o Usuário n precisar digitar acentos
+  useEffect(() => {
+    const fetchSellers = async () => {
+      try {
+        const sellersData = await SupervisorServices.getAllSellerInSupervisor();
+        console.log(sellersData);
+        if (sellersData && sellersData.sellers) {
+          setSellers(sellersData.sellers);
+        } else {
+          console.error(
+            'Dados de vendedores ausentes ou inválidos:',
+            sellersData
+          );
+        }
+      } catch (error) {
+        console.error('Erro ao obter vendedores:', error);
+      }
+    };
+
+    fetchSellers();
+  }, []);
+
   const removeAccents = (str: string) => {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   };
 
-  let filteredVendedores = vendedores;
+  let filteredVendedores = sellers;
 
-  if (vendedorName && vendedorName.trim() !== '') {
-    const searchTerm = removeAccents(vendedorName.toLowerCase());
-    filteredVendedores = vendedores.filter((vendedor) =>
-      removeAccents(vendedor.nome.toLowerCase()).includes(searchTerm)
+  if (user.name) {
+    const searchTerm = removeAccents(user.name.toLowerCase());
+    filteredVendedores = sellers.filter((vendedor) =>
+      removeAccents(vendedor.name.toLowerCase()).includes(searchTerm)
     );
   }
-
-  filteredVendedores.sort((a, b) => b.nota - a.nota);
-
   return (
     <S.DivWrapper>
       <S.TitleSlider>{title || 'Vendedores'}</S.TitleSlider>
@@ -42,9 +53,9 @@ const ContainerVendedores: React.FC<IContianer> = ({ title, vendedorName }) => {
         {filteredVendedores.map((vendedor, index) => (
           <CardVendedor
             key={index}
-            nome={vendedor.nome}
-            cargo={vendedor.cargo}
-            nota={vendedor.nota}
+            nome={vendedor.name}
+            cargo={'Supervisor: ' + vendedor.supervisorId}
+            nota={3.2}
           />
         ))}
       </S.Cards>
