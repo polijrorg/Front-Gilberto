@@ -1,7 +1,10 @@
 import CardVendedor from '@components/CardVendedor';
 import * as S from './styles';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import ISupervisor from '@interfaces/Supervisor';
 import ISeller from '@interfaces/Seller';
+import SupervisorServices from '@services/SupervisorServices';
+import useAuth from '@hooks/useAuth';
 
 type IContianer = {
   title?: string;
@@ -14,6 +17,26 @@ const ContainerVendedores: React.FC<IContianer> = ({
   search,
   sellers,
 }) => {
+  const { user } = useAuth();
+  const [supervisor, setSupervisor] = useState<ISupervisor>();
+
+  useEffect(() => {
+    const fetchSupervisor = async () => {
+      try {
+        const supervisorByVendedor = await SupervisorServices.getSupervisorById(
+          user.id,
+          user.companyId
+        );
+        console.log(supervisorByVendedor); // Corrigido para imprimir supervisorByVendedor
+        setSupervisor(supervisorByVendedor as ISupervisor);
+      } catch (error) {
+        console.error('Erro ao obter supervisor:', error);
+      }
+    };
+
+    fetchSupervisor();
+  }, [user.companyId, user.id]); // Removido supervisor do array de dependências
+
   const removeAccents = (str: string) => {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   };
@@ -32,17 +55,15 @@ const ContainerVendedores: React.FC<IContianer> = ({
       <S.TitleSlider>{title || 'Vendedores'}</S.TitleSlider>
       <S.Cards>
         {filteredSeller.map((seller, index) => {
-          // Divide o nome do vendedor em partes
           const parts = seller.name.split(' ');
-          // Se houver mais de um nome, use apenas o primeiro nome
           const firstName = parts.length > 1 ? parts[0] : seller.name;
-          // Se houver mais de um nome, use apenas o último nome
           const lastName = parts.length > 1 ? parts[parts.length - 1] : '';
+
           return (
             <CardVendedor
               key={index}
               nome={`${firstName} ${lastName}`}
-              cargo={'Supervisor: ' + seller.supervisorId}
+              cargo={'Supervisor: ' + supervisor}
               nota={3.2}
             />
           );

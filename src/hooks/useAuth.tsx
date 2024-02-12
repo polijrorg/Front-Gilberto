@@ -24,7 +24,6 @@ export const AuthProvider: React.FC<{
   children?: React.ReactNode | undefined;
 }> = ({ children }) => {
   const [user, setUser] = useState({} as User);
-  console.log('Auth passou');
 
   const login = async (data: ILoginRequest) => {
     try {

@@ -20,7 +20,6 @@ const Home = () => {
       try {
         const sellersData =
           await SupervisorServices.getAllSellerInSupervisorById(user.id);
-        console.log(sellersData);
         setSellers(sellersData as ISeller[]);
       } catch (error) {
         console.error('Erro ao obter vendedores:', error);
