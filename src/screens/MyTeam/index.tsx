@@ -1,19 +1,38 @@
 import * as S from './styles';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import ContainerVendedores from '@components/ContainerVendedores';
 import DivGradient from '@components/DivGradient';
 import { useNavigation } from '@react-navigation/native';
 import useAuth from '@hooks/useAuth';
+import SupervisorServices from '@services/SupervisorServices';
+import ISeller from '@interfaces/Seller';
 
 const MyTeam = () => {
   const navigation = useNavigation();
-  const [name, setName] = useState('');
+  const [search, setSearch] = useState('');
+  const [sellers, setSellers] = useState<ISeller[]>([]);
+
   const { user } = useAuth();
 
   const handlePressBack = () => {
     navigation.goBack();
   };
+
+  useEffect(() => {
+    const fetchSellers = async () => {
+      try {
+        const sellersData =
+          await SupervisorServices.getAllSellerInSupervisorById(user.id);
+        console.log(sellersData);
+        setSellers(sellersData as ISeller[]);
+      } catch (error) {
+        console.error('Erro ao obter vendedores:', error);
+      }
+    };
+
+    fetchSellers();
+  }, [user.id]);
 
   return (
     <S.WrapperTela>
@@ -31,14 +50,18 @@ const MyTeam = () => {
           <S.InputVendedor
             placeholder={'Pesquisar'}
             keyboardType={'default'}
-            value={name}
-            onChangeText={(text) => setName(text)}
+            value={search}
+            onChangeText={(text) => setSearch(text)}
           />
           <S.ButtonLupa>
             <S.Lupa source={require('@assets/img/myteam/lupa.png')} />
           </S.ButtonLupa>
         </S.DivContainerInput>
-        <ContainerVendedores title="Meus Vendedores" user={user} />
+        <ContainerVendedores
+          title="Meus Vendedores"
+          search={search}
+          sellers={sellers}
+        />
       </S.Wrapper>
       <DivGradient />
     </S.WrapperTela>

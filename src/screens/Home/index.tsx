@@ -1,6 +1,6 @@
 import Header from '@components/HeaderMenu';
 import * as S from './styles';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import ContainerActions from '@components/ContainerActions';
 import MatrizSlider from '@components/MatrizSlider';
@@ -8,11 +8,27 @@ import ContainerVendedores from '@components/ContainerVendedores';
 import ButtonAdded from '@components/ButtonAdded';
 import DivGradient from '@components/DivGradient';
 import useAuth from '@hooks/useAuth';
+import ISeller from '@interfaces/Seller';
+import SupervisorServices from '@services/SupervisorServices';
 
 const Home = () => {
   const { user } = useAuth();
+  const [sellers, setSellers] = useState<ISeller[]>([]);
 
-  console.log(user);
+  useEffect(() => {
+    const fetchSellers = async () => {
+      try {
+        const sellersData =
+          await SupervisorServices.getAllSellerInSupervisorById(user.id);
+        console.log(sellersData);
+        setSellers(sellersData as ISeller[]);
+      } catch (error) {
+        console.error('Erro ao obter vendedores:', error);
+      }
+    };
+
+    fetchSellers();
+  }, [user.id]);
 
   return (
     <>
@@ -21,7 +37,7 @@ const Home = () => {
         <Header user={user} />
         <ContainerActions />
         <MatrizSlider />
-        <ContainerVendedores user={user} />
+        <ContainerVendedores sellers={sellers} />
         <DivGradient />
       </S.Wrapper>
       <ButtonAdded />

@@ -35,6 +35,7 @@ export const AuthProvider: React.FC<{
       };
 
       setUser(response.user);
+      return response.token;
     } catch (error) {}
   };
 

@@ -2,6 +2,8 @@ import AppProvider from '@hooks/index';
 import { NavigationContainer } from '@react-navigation/native';
 import Routes from '@routes/index';
 import { useFonts } from 'expo-font';
+import { ToastProvider } from 'react-native-toast-notifications';
+
 import React from 'react';
 
 export default function App() {
@@ -15,9 +17,11 @@ export default function App() {
   if (!fontsLoaded) return null;
   return (
     <NavigationContainer>
-      <AppProvider>
-        <Routes />
-      </AppProvider>
+      <ToastProvider>
+        <AppProvider>
+          <Routes />
+        </AppProvider>
+      </ToastProvider>
     </NavigationContainer>
   );
 }

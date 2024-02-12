@@ -3,6 +3,7 @@
 import { AxiosResponse } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import User from '@interfaces/User';
+
 import api from './api';
 
 interface ILoginResponse {
@@ -29,7 +30,6 @@ export default class UserService {
 
       return supervisorResponse.data;
     } catch (error) {
-      console.error('Erro ao fazer login como supervisor:', error);
       try {
         // Tentar fazer login como gerente
         const managerResponse: AxiosResponse<ILoginResponse> = await api.post(
@@ -41,10 +41,7 @@ export default class UserService {
         await AsyncStorage.setItem('@app:token', managerResponse.data.token);
         await AsyncStorage.setItem('@app:useId', managerResponse.data.user.id);
         return managerResponse.data;
-      } catch (error) {
-        console.error('Erro ao fazer login como gerente:', error);
-        throw new Error('Falha ao fazer login como supervisor e gerente');
-      }
+      } catch (error) {}
     }
   }
 }

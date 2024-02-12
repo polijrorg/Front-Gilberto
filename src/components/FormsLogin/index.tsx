@@ -1,71 +1,98 @@
-import * as S from './styles';
-import { Alert } from 'react-native';
-import React, { useState } from 'react';
+import * as React from 'react';
+import { Alert, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import {
+  Wrapper,
+  Forms,
+  Div,
+  DivFields,
+  LabelEmail,
+  Input,
+  ButtonEnviar,
+  TitleBtn,
+} from './styles';
 import DivGradient from '@components/DivGradient';
 import useAuth from '@hooks/useAuth';
+import { useToast } from 'react-native-toast-notifications';
 
-type ILogin = {
-  codigo?: boolean;
-  msg?: string;
-};
-
-const FormsLogin: React.FC<ILogin> = ({ codigo, msg }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const FormsLogin: React.FC = () => {
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
   const navigation = useNavigation();
-
   const { login } = useAuth();
+  const toast = useToast();
 
-  const handleEnviarPress = () => {
+  const handleEnviarPress = async () => {
     try {
-      console.log('aqui passou');
-      login({ email, password });
-      navigation.navigate('Home' as never);
+      setLoading(true);
+      const token = await login({ email, password });
+
+      if (token !== undefined) {
+        toast.show('Seja Bem-Vindo(a)', {
+          type: 'success',
+          placement: 'bottom',
+          duration: 3000,
+          animationType: 'zoom-in',
+        });
+        navigation.navigate('Home' as never);
+      } else {
+        navigation.navigate('Login' as never);
+        toast.show('Credênciais não encontradas', {
+          type: 'danger',
+          placement: 'bottom',
+          duration: 3000,
+          animationType: 'zoom-in',
+        });
+      }
     } catch (error) {
       Alert.alert('Erro ao Logar');
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
-      <S.Wrapper>
-        <S.Forms>
-          <S.Div>
-            <S.DivFields>
-              <S.LabelEmail>{'Digite seu E-mail'}</S.LabelEmail>
-              <S.Input
+      <Wrapper>
+        <Forms>
+          <Div>
+            <DivFields>
+              <LabelEmail>{'Digite seu E-mail'}</LabelEmail>
+              <Input
                 placeholder={'marco.rudas@gmail.com'}
                 keyboardType={'email-address'}
                 value={email}
                 onChangeText={(text) => setEmail(text)}
               />
-            </S.DivFields>
+            </DivFields>
 
-            <S.DivFields>
-              <S.LabelEmail>{'Digite sua senha'}</S.LabelEmail>
-              <S.Input
+            <DivFields>
+              <LabelEmail>{'Digite sua senha'}</LabelEmail>
+              <Input
                 placeholder={'Senha'}
                 keyboardType="default"
                 secureTextEntry={true}
                 value={password}
                 onChangeText={(text) => setPassword(text)}
               />
-            </S.DivFields>
-
-            {!codigo && (
-              <S.TextInfo hasError={msg !== undefined && msg !== ''}>
-                {msg || 'Mandaremos um código para autenticar sua entrada'}
-              </S.TextInfo>
+            </DivFields>
+          </Div>
+          <ButtonEnviar
+            onPress={loading ? undefined : handleEnviarPress}
+            disabled={loading}
+          >
+            {/* Desabilita o botão quando o carregamento estiver ocorrendo */}
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <TitleBtn>Entrar</TitleBtn>
             )}
-          </S.Div>
-          <S.ButtonEnviar onPress={handleEnviarPress}>
-            <S.TitleBtn>Entrar</S.TitleBtn>
-          </S.ButtonEnviar>
-        </S.Forms>
+          </ButtonEnviar>
+        </Forms>
         <DivGradient />
-      </S.Wrapper>
+      </Wrapper>
     </>
   );
 };
