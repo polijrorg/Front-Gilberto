@@ -16,41 +16,23 @@ const ContainerVendedores: React.FC<IContianer> = ({ user, title }) => {
   useEffect(() => {
     const fetchSellers = async () => {
       try {
-        const sellersData = await SupervisorServices.getAllSellerInSupervisor();
+        const sellersData =
+          await SupervisorServices.getAllSellerInSupervisorById(user.id);
         console.log(sellersData);
-        if (sellersData && sellersData.sellers) {
-          setSellers(sellersData.sellers);
-        } else {
-          console.error(
-            'Dados de vendedores ausentes ou inválidos:',
-            sellersData
-          );
-        }
+        setSellers(sellersData as ISeller[]);
       } catch (error) {
         console.error('Erro ao obter vendedores:', error);
       }
     };
 
     fetchSellers();
-  }, []);
+  }, [user.id]);
 
-  const removeAccents = (str: string) => {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  };
-
-  let filteredVendedores = sellers;
-
-  if (user.name) {
-    const searchTerm = removeAccents(user.name.toLowerCase());
-    filteredVendedores = sellers.filter((vendedor) =>
-      removeAccents(vendedor.name.toLowerCase()).includes(searchTerm)
-    );
-  }
   return (
     <S.DivWrapper>
       <S.TitleSlider>{title || 'Vendedores'}</S.TitleSlider>
       <S.Cards>
-        {filteredVendedores.map((vendedor, index) => (
+        {sellers.map((vendedor, index) => (
           <CardVendedor
             key={index}
             nome={vendedor.name}

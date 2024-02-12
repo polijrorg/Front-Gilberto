@@ -7,16 +7,15 @@ interface ISellerResponse {
 }
 
 export default class SupervisorServices {
-  static async getAllSellerInSupervisor(): Promise<ISellerResponse> {
+  static async getAllSellerInSupervisorById(
+    id: string
+  ): Promise<ISellerResponse> {
     try {
-      const sellerResponse: AxiosResponse<ISellerResponse> =
-        await api.get(`/seller/getAll`);
+      const sellerResponse: AxiosResponse<ISellerResponse> = await api.get(
+        `/seller/getAll/${id}`
+      );
 
-      if ('sellers' in sellerResponse.data) {
-        return sellerResponse.data;
-      } else {
-        throw new Error('Propriedade "sellers" ausente na resposta da API');
-      }
+      return sellerResponse.data;
     } catch (error) {
       console.error('Erro ao obter vendedores do supervisor:', error);
       throw error;
