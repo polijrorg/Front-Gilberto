@@ -1,4 +1,4 @@
-import { Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
 import styled, { css } from 'styled-components/native';
 import { theme } from '@styles/default.theme';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -38,6 +38,12 @@ export const LabelEmail = styled(Text)`
   font-family: Poppins;
 `;
 
+export const DivViewTextInput = styled(View)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
 export const Input = styled(TextInput)`
   border: none;
   width: 100%;
@@ -47,9 +53,22 @@ export const Input = styled(TextInput)`
   font-size: 12px;
   background-color: #f1f3f5;
   font-family: Poppins;
+  position: relative;
   ::placeholder {
-    color: #687076; /* Cor do texto do placeholder */
+    color: #687076;
   }
+`;
+
+export const BtnIconPass = styled(TouchableOpacity)`
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  right: 10px;
+`;
+
+export const Icon = styled(Image)`
+  width: 16px;
+  height: 16px;
 `;
 
 interface TextInfoProps {

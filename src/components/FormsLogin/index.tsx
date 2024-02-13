@@ -1,27 +1,26 @@
 import * as React from 'react';
 import { Alert, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import {
-  Wrapper,
-  Forms,
-  Div,
-  DivFields,
-  LabelEmail,
-  Input,
-  ButtonEnviar,
-  TitleBtn,
-} from './styles';
+import * as S from './styles';
+
 import DivGradient from '@components/DivGradient';
 import useAuth from '@hooks/useAuth';
 import { useToast } from 'react-native-toast-notifications';
+import { useState } from 'react';
 
 const FormsLogin: React.FC = () => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [loading, setLoading] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigation = useNavigation();
   const { login } = useAuth();
   const toast = useToast();
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleEnviarPress = async () => {
     try {
@@ -53,46 +52,66 @@ const FormsLogin: React.FC = () => {
     }
   };
 
+  // Verifica se ambos os campos estão preenchidos para habilitar o botão de enviar
+  const isEnviarDisabled = !email || !password;
+
+  // Define a opacidade do botão com base no conteúdo dos campos de e-mail e senha
+  const buttonOpacity = email && password ? 1 : 0.8;
+
   return (
     <>
-      <Wrapper>
-        <Forms>
-          <Div>
-            <DivFields>
-              <LabelEmail>{'Digite seu E-mail'}</LabelEmail>
-              <Input
+      <S.Wrapper>
+        <S.Forms>
+          <S.Div>
+            <S.DivFields>
+              <S.LabelEmail>{'Digite seu E-mail'}</S.LabelEmail>
+              <S.Input
                 placeholder={'marco.rudas@gmail.com'}
                 keyboardType={'email-address'}
                 value={email}
                 onChangeText={(text) => setEmail(text)}
               />
-            </DivFields>
+            </S.DivFields>
 
-            <DivFields>
-              <LabelEmail>{'Digite sua senha'}</LabelEmail>
-              <Input
-                placeholder={'Senha'}
-                keyboardType="default"
-                secureTextEntry={true}
-                value={password}
-                onChangeText={(text) => setPassword(text)}
-              />
-            </DivFields>
-          </Div>
-          <ButtonEnviar
-            onPress={loading ? undefined : handleEnviarPress}
-            disabled={loading}
+            <S.DivFields>
+              <S.LabelEmail>{'Digite sua senha'}</S.LabelEmail>
+              <S.DivViewTextInput>
+                <S.Input
+                  placeholder={'Senha'}
+                  keyboardType="default"
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={(text) => setPassword(text)}
+                />
+                <S.BtnIconPass onPress={toggleShowPassword}>
+                  <S.Icon
+                    source={
+                      showPassword
+                        ? require('@assets/img/olho_aberto.png')
+                        : require('@assets/img/olho_fechado.png')
+                    }
+                  />
+                </S.BtnIconPass>
+              </S.DivViewTextInput>
+            </S.DivFields>
+          </S.Div>
+          <S.ButtonEnviar
+            onPress={
+              loading || isEnviarDisabled ? undefined : handleEnviarPress
+            }
+            disabled={loading || isEnviarDisabled}
+            style={{ opacity: buttonOpacity }} // Define a opacidade do botão
           >
-            {/* Desabilita o botão quando o carregamento estiver ocorrendo */}
+            {/* Desabilita o botão quando o carregamento estiver ocorrendo ou algum dos campos estiver vazio */}
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <TitleBtn>Entrar</TitleBtn>
+              <S.TitleBtn>Entrar</S.TitleBtn>
             )}
-          </ButtonEnviar>
-        </Forms>
+          </S.ButtonEnviar>
+        </S.Forms>
         <DivGradient />
-      </Wrapper>
+      </S.Wrapper>
     </>
   );
 };
