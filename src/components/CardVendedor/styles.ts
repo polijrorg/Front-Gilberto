@@ -2,13 +2,8 @@ import { View, Image, Text, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { theme } from '@styles/default.theme';
 
-interface CardProps {
-  selected: boolean;
-}
-
-export const DivWrapper = styled(TouchableOpacity)<CardProps>`
-  background-color: ${({ selected }) =>
-    selected ? '#edebeb' : theme.colors.primary.main};
+export const DivWrapper = styled(TouchableOpacity)`
+  background-color: ${theme.colors.primary.main};
   width: 100%;
   height: auto;
   display: flex;

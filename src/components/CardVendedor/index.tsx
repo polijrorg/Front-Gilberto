@@ -1,5 +1,5 @@
 import * as S from './styles';
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 
 type IVendedor = {
@@ -15,17 +15,15 @@ const CardVendedor: React.FC<IVendedor> = ({
   nota,
   idVendedor,
 }) => {
-  const [isSelected, setIsSelected] = useState(false);
   const navigation = useNavigation();
 
   const handlePress = () => {
-    setIsSelected(!isSelected);
     navigation.navigate('SalesInpector', { idVendedor: idVendedor });
   };
   const formattedNota =
     nota !== undefined ? nota.toFixed(1).replace('.', ',') : '';
   return (
-    <S.DivWrapper selected={isSelected} onPress={handlePress}>
+    <S.DivWrapper onPress={handlePress}>
       <S.DivImage>
         <S.ImageVendedor
           source={require('@assets/img/cardVendedor/foto.png')}
