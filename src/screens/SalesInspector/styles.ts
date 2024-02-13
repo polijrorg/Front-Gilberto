@@ -42,7 +42,7 @@ export const ImageBtn = styled(Image)`
 
 export const Container = styled(View)`
   width: 100%;
-  padding: 2px 16px;
+  padding: 4px 16px;
   display: flex;
   background-color: ${theme.colors.secundary.main};
 `;

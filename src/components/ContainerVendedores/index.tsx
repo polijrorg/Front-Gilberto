@@ -23,19 +23,23 @@ const ContainerVendedores: React.FC<IContianer> = ({
   useEffect(() => {
     const fetchSupervisor = async () => {
       try {
-        const supervisorByVendedor = await SupervisorServices.getSupervisorById(
+        const supervisorLogged = await SupervisorServices.getSupervisorById(
           user.id,
           user.companyId
         );
-        console.log(supervisorByVendedor); // Corrigido para imprimir supervisorByVendedor
-        setSupervisor(supervisorByVendedor as ISupervisor);
+        if (supervisorLogged) {
+          setSupervisor(supervisorLogged);
+          console.log(supervisorLogged.name);
+        } else {
+          console.error('Resposta vazia');
+        }
       } catch (error) {
         console.error('Erro ao obter supervisor:', error);
       }
     };
 
     fetchSupervisor();
-  }, [user.companyId, user.id]); // Removido supervisor do array de dependências
+  }, [user.companyId, user.id]);
 
   const removeAccents = (str: string) => {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -64,7 +68,7 @@ const ContainerVendedores: React.FC<IContianer> = ({
               key={index}
               idVendedor={seller.id}
               nome={`${firstName} ${lastName}`}
-              cargo={'Supervisor: ' + supervisor}
+              cargo={`Supervisor: ${supervisor.name}`}
               nota={3.2}
             />
           );

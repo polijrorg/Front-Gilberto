@@ -6,7 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import DivGradient from '@components/DivGradient';
 import { useNavigation } from '@react-navigation/native';
 import useAuth from '@hooks/useAuth';
-import SupervisorServices from '@services/SupervisorServices';
+import SellerServices from '@services/SellerServices';
 import ISeller from '@interfaces/Seller';
 import { View } from 'react-native';
 
@@ -21,7 +21,7 @@ const SalesInpector = ({ route }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await SupervisorServices.getSellerById(
+        const response = await SellerServices.getSellerById(
           user.id,
           idVendedor
         );
