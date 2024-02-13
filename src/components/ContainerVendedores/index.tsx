@@ -62,6 +62,7 @@ const ContainerVendedores: React.FC<IContianer> = ({
           return (
             <CardVendedor
               key={index}
+              idVendedor={seller.id}
               nome={`${firstName} ${lastName}`}
               cargo={'Supervisor: ' + supervisor}
               nota={3.2}

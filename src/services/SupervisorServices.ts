@@ -22,6 +22,22 @@ export default class SupervisorServices {
     }
   }
 
+  static async getSellerById(
+    supervisorId: string,
+    sellerId: string
+  ): Promise<ISeller | null> {
+    try {
+      const response = await api.get<ISeller[]>(
+        `/seller/getAll/${supervisorId}`
+      );
+      const seller = response.data.find((seller) => seller.id === sellerId);
+
+      return seller || null;
+    } catch (error) {
+      console.error('Erro ao buscar vendedor:', error);
+      throw error;
+    }
+  }
   static async getAllSupervisorInCompanyById(
     idCompany: string
   ): Promise<ISupervisorResponse[]> {

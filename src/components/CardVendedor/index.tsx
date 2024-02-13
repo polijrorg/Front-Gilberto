@@ -1,16 +1,26 @@
 import * as S from './styles';
 import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 type IVendedor = {
   nome: string;
   cargo: string;
   nota: number;
+  idVendedor: string;
 };
 
-const CardVendedor: React.FC<IVendedor> = ({ nome, cargo, nota }) => {
+const CardVendedor: React.FC<IVendedor> = ({
+  nome,
+  cargo,
+  nota,
+  idVendedor,
+}) => {
   const [isSelected, setIsSelected] = useState(false);
+  const navigation = useNavigation();
+
   const handlePress = () => {
     setIsSelected(!isSelected);
+    navigation.navigate('SalesInpector', { idVendedor: idVendedor });
   };
   const formattedNota =
     nota !== undefined ? nota.toFixed(1).replace('.', ',') : '';

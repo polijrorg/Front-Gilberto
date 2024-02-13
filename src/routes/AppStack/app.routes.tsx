@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from '@screens/Home';
 import MyTeam from '@screens/MyTeam';
 import Login from '@screens/Login';
+import SalesInpector from '@screens/SalesInspector';
 
 const AppStack = createNativeStackNavigator();
 
@@ -23,6 +24,11 @@ const AppRoutes: React.FC = () => (
     <AppStack.Screen
       name="MyTeam"
       component={MyTeam}
+      options={{ header: () => <></> }}
+    />
+    <AppStack.Screen
+      name="SalesInpector"
+      component={SalesInpector}
       options={{ header: () => <></> }}
     />
   </AppStack.Navigator>
