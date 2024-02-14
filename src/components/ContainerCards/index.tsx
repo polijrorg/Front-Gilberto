@@ -1,4 +1,4 @@
-import CardVendedor from '@components/CardVendedor';
+import Card from '@components/Cards';
 import * as S from './styles';
 import React, { useEffect, useState } from 'react';
 import ISupervisor from '@interfaces/Supervisor';
@@ -12,11 +12,7 @@ type IContianer = {
   sellers: ISeller[];
 };
 
-const ContainerVendedores: React.FC<IContianer> = ({
-  title,
-  search,
-  sellers,
-}) => {
+const ContainerCards: React.FC<IContianer> = ({ title, search, sellers }) => {
   const { user } = useAuth();
   const [supervisor, setSupervisor] = useState<ISupervisor>();
 
@@ -64,7 +60,7 @@ const ContainerVendedores: React.FC<IContianer> = ({
           const lastName = parts.length > 1 ? parts[parts.length - 1] : '';
 
           return (
-            <CardVendedor
+            <Card
               key={index}
               idVendedor={seller.id}
               nome={`${firstName} ${lastName}`}
@@ -78,4 +74,4 @@ const ContainerVendedores: React.FC<IContianer> = ({
   );
 };
 
-export default ContainerVendedores;
+export default ContainerCards;

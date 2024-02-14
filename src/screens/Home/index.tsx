@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import ContainerActions from '@components/ContainerActions';
 import MatrizSlider from '@components/MatrizSlider';
-import ContainerVendedores from '@components/ContainerVendedores';
+import ContainerCards from '@components/ContainerCards';
 import ButtonAdded from '@components/ButtonAdded';
 import DivGradient from '@components/DivGradient';
 import useAuth from '@hooks/useAuth';
@@ -36,7 +36,7 @@ const Home = () => {
         <Header user={user} />
         <ContainerActions />
         <MatrizSlider />
-        <ContainerVendedores sellers={sellers} />
+        <ContainerCards sellers={sellers} />
         <DivGradient />
       </S.Wrapper>
       <ButtonAdded />

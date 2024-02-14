@@ -1,7 +1,7 @@
 import * as S from './styles';
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import ContainerVendedores from '@components/ContainerVendedores';
+import ContainerCards from '@components/ContainerCards';
 import DivGradient from '@components/DivGradient';
 import { useNavigation } from '@react-navigation/native';
 import useAuth from '@hooks/useAuth';
@@ -56,7 +56,7 @@ const MyTeam = () => {
             <S.Lupa source={require('@assets/img/myteam/lupa.png')} />
           </S.ButtonLupa>
         </S.DivContainerInput>
-        <ContainerVendedores
+        <ContainerCards
           title="Meus Vendedores"
           search={search}
           sellers={sellers}

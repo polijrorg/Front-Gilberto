@@ -9,12 +9,7 @@ type IVendedor = {
   idVendedor: string;
 };
 
-const CardVendedor: React.FC<IVendedor> = ({
-  nome,
-  cargo,
-  nota,
-  idVendedor,
-}) => {
+const Cards: React.FC<IVendedor> = ({ nome, cargo, nota, idVendedor }) => {
   const navigation = useNavigation();
 
   const handlePress = () => {
@@ -40,4 +35,4 @@ const CardVendedor: React.FC<IVendedor> = ({
   );
 };
 
-export default CardVendedor;
+export default Cards;
