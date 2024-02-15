@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
 import * as S from './styles';
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
@@ -16,29 +15,25 @@ const SalesInpector = ({ route }) => {
   const { idVendedor } = route.params;
   const { user } = useAuth();
   const [seller, setSeller] = useState<ISeller | null>(null);
-  const [reload, setReload] = useState(false);
+  const [reload, setReload] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await SellerServices.getSellerById(
+        const responseGetSeller = await SellerServices.getSellerById(
           user.id,
           idVendedor
         );
 
-        if (response) {
-          setSeller(response);
-          console.log(response.name);
-        } else {
-          console.error('Resposta vazia');
-        }
+        console.log(responseGetSeller);
+        setSeller(responseGetSeller);
       } catch (error) {
-        console.error('Erro ao buscar vendedor:', error);
+        console.error('Renderiza', error);
       }
     };
 
     fetchData();
-  }, [reload]);
+  }, [idVendedor, user.id]);
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -59,13 +54,11 @@ const SalesInpector = ({ route }) => {
               <S.ImageUser
                 source={require('@assets/img/cardVendedor/foto.png')}
               />
-              {seller && (
-                <S.InfoUser>
-                  <S.Title>{seller.name}</S.Title>
-                  <S.Loja>{seller.companyId}</S.Loja>
-                  <S.Funcao>{seller.email}</S.Funcao>
-                </S.InfoUser>
-              )}
+              <S.InfoUser>
+                <S.Title>{seller?.name || 'Usuário'}</S.Title>
+                <S.Loja>{seller?.job || 'Cargo'}</S.Loja>
+                <S.Funcao>{seller?.email || 'user123@gmail.com'}</S.Funcao>
+              </S.InfoUser>
 
               <S.BtnLixeira>
                 <S.ImageVectorLixeira

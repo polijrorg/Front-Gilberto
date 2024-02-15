@@ -9,7 +9,7 @@ import useAuth from '@hooks/useAuth';
 type IContianer = {
   title?: string;
   search?: string;
-  sellers: ISeller[];
+  sellers?: ISeller[];
 };
 
 const ContainerCards: React.FC<IContianer> = ({ title, search, sellers }) => {
@@ -25,7 +25,6 @@ const ContainerCards: React.FC<IContianer> = ({ title, search, sellers }) => {
         );
         if (supervisorLogged) {
           setSupervisor(supervisorLogged);
-          console.log(supervisorLogged.name);
         } else {
           console.error('Resposta vazia');
         }
@@ -35,7 +34,7 @@ const ContainerCards: React.FC<IContianer> = ({ title, search, sellers }) => {
     };
 
     fetchSupervisor();
-  }, [user.companyId, user.id]);
+  }, [supervisor, user.companyId, user.id]);
 
   const removeAccents = (str: string) => {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -55,19 +54,32 @@ const ContainerCards: React.FC<IContianer> = ({ title, search, sellers }) => {
       <S.TitleSlider>{title || 'Vendedores'}</S.TitleSlider>
       <S.Cards>
         {filteredSeller.map((seller, index) => {
-          const parts = seller.name.split(' ');
-          const firstName = parts.length > 1 ? parts[0] : seller.name;
-          const lastName = parts.length > 1 ? parts[parts.length - 1] : '';
+          if (seller) {
+            const fullName = seller.name || 'Usuário';
 
-          return (
-            <Card
-              key={index}
-              idVendedor={seller.id}
-              nome={`${firstName} ${lastName}`}
-              cargo={`Supervisor: ${supervisor.name}`}
-              nota={3.2}
-            />
-          );
+            const nameParts = fullName.split(' ');
+
+            let displayName = '';
+            if (nameParts.length > 1) {
+              const firstName = nameParts[0];
+              const lastName = nameParts[nameParts.length - 1];
+              displayName = `${firstName} ${lastName}`;
+            } else {
+              displayName = fullName;
+            }
+
+            return (
+              <Card
+                key={index}
+                idVendedor={seller.id}
+                nome={displayName}
+                cargo={`${supervisor?.job}: ${supervisor?.name || 'Cargo'}`}
+                nota={3.2}
+              />
+            );
+          } else {
+            return <></>;
+          }
         })}
       </S.Cards>
     </S.DivWrapper>

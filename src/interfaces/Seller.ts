@@ -6,4 +6,5 @@ export default interface Seller {
   supervisorId: string;
   companyId: string;
   created_at: Date;
+  job: string;
 }
