@@ -7,6 +7,7 @@ import DivGradient from '@components/DivGradient';
 import { useNavigation } from '@react-navigation/native';
 import useAuth from '@hooks/useAuth';
 import SellerServices from '@services/SellerServices';
+import MenuSalesInspector from '@components/MenuSalesInspector';
 import ISeller from '@interfaces/Seller';
 import { View } from 'react-native';
 
@@ -15,7 +16,6 @@ const SalesInpector = ({ route }) => {
   const { idVendedor } = route.params;
   const { user } = useAuth();
   const [seller, setSeller] = useState<ISeller | null>(null);
-  const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [reload, setReload] = useState(false);
 
   useEffect(() => {
@@ -42,10 +42,6 @@ const SalesInpector = ({ route }) => {
 
   const handleGoBack = () => {
     navigation.goBack();
-  };
-
-  const handlePress = (item: string) => {
-    setSelectedItem(item);
   };
 
   return (
@@ -77,28 +73,7 @@ const SalesInpector = ({ route }) => {
                 />
               </S.BtnLixeira>
             </S.ViewInfoUser>
-            <S.Menu>
-              <S.ButtonItem
-                isSelected={selectedItem === 'mentoria'}
-                onPress={() => handlePress('mentoria')}
-              >
-                <S.TextItem>Mentoria</S.TextItem>
-              </S.ButtonItem>
-
-              <S.ButtonItem
-                isSelected={selectedItem === 'visita'}
-                onPress={() => handlePress('visita')}
-              >
-                <S.TextItem>Visita</S.TextItem>
-              </S.ButtonItem>
-
-              <S.ButtonItem
-                isSelected={selectedItem === 'planos'}
-                onPress={() => handlePress('planos')}
-              >
-                <S.TextItem>Planos de ação</S.TextItem>
-              </S.ButtonItem>
-            </S.Menu>
+            <MenuSalesInspector />
           </S.Container>
         </View>
       </S.Wrapper>
