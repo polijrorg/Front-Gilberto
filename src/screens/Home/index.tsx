@@ -18,16 +18,18 @@ const Home = () => {
   useEffect(() => {
     const fetchSellers = async () => {
       try {
-        const sellersData =
-          await SupervisorServices.getAllSellerInSupervisorById(user.id);
-        setSellers(sellersData as ISeller[]);
+        if (user.job === 'Supervisor') {
+          const sellersData =
+            await SupervisorServices.getAllSellerInSupervisorById(user.id);
+          setSellers(sellersData as ISeller[]);
+        }
       } catch (error) {
         console.error('Erro ao obter vendedores:', error);
       }
     };
 
     fetchSellers();
-  }, [user.id]);
+  }, [user.id, user.job]);
 
   return (
     <>

@@ -5,7 +5,7 @@ import api from './api';
 import ISupervisor from '@interfaces/Supervisor';
 
 export default class SupervisorServices {
-  //Pega todos os Vendedores de um supervisor pelo ID do Vendedor
+  //Pega todos os Vendedores de um supervisor pelo ID do Supervisor
   static async getAllSellerInSupervisorById(id: string): Promise<ISeller[]> {
     try {
       const sellerResponse: AxiosResponse<ISeller[]> = await api.get(

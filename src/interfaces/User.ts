@@ -7,4 +7,5 @@ export default interface User {
   image: string;
   managerId: string;
   password: string;
+  job: string;
 }
