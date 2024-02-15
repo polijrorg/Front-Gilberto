@@ -73,27 +73,21 @@ export const Title = styled(Text)`
   font-family: Poppins;
   color: #fbfcfd;
   font-size: 16px;
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
 `;
 
 export const Loja = styled(Text)`
   font-family: Poppins;
   color: #fbfcfd;
   font-size: 12px;
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
 `;
 
 export const Funcao = styled(Text)`
   font-family: Poppins;
   color: #fbfcfd;
   font-size: 12px;
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
 `;
 
 export const BtnLixeira = styled(TouchableOpacity)`
