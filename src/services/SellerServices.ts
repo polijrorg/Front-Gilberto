@@ -11,7 +11,7 @@ export default class SellerService {
   ): Promise<ISeller | null> {
     try {
       const response = await api.get<ISeller[]>(
-        `/seller/getAll/${supervisorId}`
+        `/seller/getAllFromASupervisor/${supervisorId}`
       );
       const seller = response.data.find((seller) => seller.id === sellerId);
 

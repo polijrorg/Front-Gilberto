@@ -1,25 +1,9 @@
-import {
-  ScrollView,
-  View,
-  StatusBar as RNStatusBar,
-  TouchableOpacity,
-  Image,
-  Text,
-} from 'react-native';
+import { View, TouchableOpacity, Image, Text } from 'react-native';
 import styled from 'styled-components/native';
 import { theme } from '@styles/default.theme';
 
-export const WrapperTela = styled(View)`
+export const Wrapper = styled(View)`
   width: 100%;
-  height: 100%;
-  background-color: ${theme.colors.primary.main};
-`;
-
-export const Wrapper = styled(ScrollView)`
-  width: 100%;
-  height: 100%;
-  margin-top: ${RNStatusBar.currentHeight || 0}px;
-  position: relative;
   background-color: ${theme.colors.primary.main};
 `;
 
@@ -28,7 +12,8 @@ export const DivButtonBack = styled(View)`
   display: flex;
   justify-content: flex-start;
   background-color: ${theme.colors.secundary.main};
-  padding: 20px;
+  padding: 0px 25px;
+  padding-top: 50px;
 `;
 
 export const ButtonBack = styled(TouchableOpacity)`
@@ -42,7 +27,7 @@ export const ImageBtn = styled(Image)`
 
 export const Container = styled(View)`
   width: 100%;
-  padding: 4px 16px;
+  padding: 4px 0px;
   display: flex;
   background-color: ${theme.colors.secundary.main};
 `;

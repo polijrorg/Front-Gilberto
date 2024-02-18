@@ -9,7 +9,7 @@ export default class SupervisorServices {
   static async getAllSellerInSupervisorById(id: string): Promise<ISeller[]> {
     try {
       const sellerResponse: AxiosResponse<ISeller[]> = await api.get(
-        `/seller/getAll/${id}`
+        `/seller/getAllFromASupervisor/${id}`
       );
 
       return sellerResponse.data;
@@ -26,7 +26,7 @@ export default class SupervisorServices {
   ): Promise<ISupervisor | null> {
     try {
       const response = await api.get<ISupervisor[]>(
-        `/supervisor/getAll/${companyId}`
+        `supervisor/getAllFromACompany/${companyId}`
       );
       const supervisor = response.data.find(
         (supervisor) => supervisor.id === supervisorId
