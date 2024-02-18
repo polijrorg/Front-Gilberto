@@ -1,46 +1,36 @@
 import Card from '@components/Cards';
 import * as S from './styles';
 import React, { useEffect, useState } from 'react';
-import ISupervisor from '@interfaces/Supervisor';
 import ISeller from '@interfaces/Seller';
-import SupervisorServices from '@services/SupervisorServices';
 import useAuth from '@hooks/useAuth';
+import SupervisorServices from '@services/SupervisorServices';
 
 type IContianer = {
   title?: string;
   search?: string;
-  sellers?: ISeller[];
 };
 
-const ContainerCards: React.FC<IContianer> = ({ title, search, sellers }) => {
+const ContainerCards: React.FC<IContianer> = ({ title, search }) => {
   const { user } = useAuth();
-  const [supervisor, setSupervisor] = useState<ISupervisor>();
+  const [sellers, setSellers] = useState<ISeller[]>([]);
 
   useEffect(() => {
-    const fetchSupervisor = async () => {
-      try {
-        const supervisorLogged = await SupervisorServices.getSupervisorById(
-          user.id,
-          user.companyId
-        );
-        if (supervisorLogged) {
-          setSupervisor(supervisorLogged);
-        } else {
-          console.error('Resposta vazia');
-        }
-      } catch (error) {
-        console.error('Erro ao obter supervisor:', error);
+    const fetchCards = async () => {
+      if (user.job === 'Supervisor') {
+        const sellersData =
+          await SupervisorServices.getAllSellerInSupervisorById(user.id);
+        setSellers(sellersData as ISeller[]);
       }
     };
 
-    fetchSupervisor();
-  }, [supervisor, user.companyId, user.id]);
+    fetchCards();
+  }, [user.id, user.job]);
+
+  let filteredSeller = sellers;
 
   const removeAccents = (str: string) => {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   };
-
-  let filteredSeller = sellers;
 
   if (search) {
     const searchTerm = removeAccents(search.toLowerCase());
@@ -71,9 +61,9 @@ const ContainerCards: React.FC<IContianer> = ({ title, search, sellers }) => {
             return (
               <Card
                 key={index}
-                idVendedor={seller.id}
+                id={seller.id}
                 nome={displayName}
-                cargo={`${supervisor?.job}: ${supervisor?.name || 'Cargo'}`}
+                cargo={`${user.job}: ${user.name || 'Cargo'}`}
                 nota={3.2}
               />
             );

@@ -1,37 +1,17 @@
 import * as S from './styles';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import ContainerCards from '@components/ContainerCards';
 import DivGradient from '@components/DivGradient';
 import { useNavigation } from '@react-navigation/native';
-import useAuth from '@hooks/useAuth';
-import SupervisorServices from '@services/SupervisorServices';
-import ISeller from '@interfaces/Seller';
 
 const MyTeam = () => {
   const navigation = useNavigation();
   const [search, setSearch] = useState('');
-  const [sellers, setSellers] = useState<ISeller[]>([]);
-
-  const { user } = useAuth();
 
   const handlePressBack = () => {
     navigation.goBack();
   };
-
-  useEffect(() => {
-    const fetchSellers = async () => {
-      try {
-        const sellersData =
-          await SupervisorServices.getAllSellerInSupervisorById(user.id);
-        setSellers(sellersData as ISeller[]);
-      } catch (error) {
-        console.error('Erro ao obter vendedores:', error);
-      }
-    };
-
-    fetchSellers();
-  }, [user.id]);
 
   return (
     <S.WrapperTela>
@@ -56,11 +36,7 @@ const MyTeam = () => {
             <S.Lupa source={require('@assets/img/myteam/lupa.png')} />
           </S.ButtonLupa>
         </S.DivContainerInput>
-        <ContainerCards
-          title="Meus Vendedores"
-          search={search}
-          sellers={sellers}
-        />
+        <ContainerCards title="Meus Vendedores" search={search} />
       </S.Wrapper>
       <DivGradient />
     </S.WrapperTela>

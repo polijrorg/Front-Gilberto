@@ -2,16 +2,11 @@ import { Alert } from 'react-native';
 import * as S from './styles';
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import User from '@interfaces/User';
 import useAuth from '@hooks/useAuth';
 
-type IUser = {
-  user: User;
-};
-
-const HeaderMenu: React.FC<IUser> = ({ user }) => {
+const HeaderMenu: React.FC = () => {
   const navigation = useNavigation();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const handleClick = () => {
     Alert.alert('Logout', 'Volte Sempre');
     setTimeout(() => {

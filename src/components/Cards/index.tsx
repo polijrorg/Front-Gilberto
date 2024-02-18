@@ -6,14 +6,14 @@ type IVendedor = {
   nome: string;
   cargo: string;
   nota: number;
-  idVendedor: string;
+  id: string;
 };
 
-const Cards: React.FC<IVendedor> = ({ nome, cargo, nota, idVendedor }) => {
+const Cards: React.FC<IVendedor> = ({ nome, cargo, nota, id }) => {
   const navigation = useNavigation();
 
   const handlePress = () => {
-    navigation.navigate('SalesInspector', { idVendedor: idVendedor });
+    navigation.navigate('SalesInspector', { idVendedor: id });
   };
   const formattedNota =
     nota !== undefined ? nota.toFixed(1).replace('.', ',') : '';
