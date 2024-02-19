@@ -5,12 +5,14 @@ import useAuth from '@hooks/useAuth';
 import SellerServices from '@services/SellerServices';
 import ISeller from '@interfaces/Seller';
 import { View } from 'react-native';
+import Modal from 'react-native-modal';
 
 const SalesInpector = ({ route }) => {
   const navigation = useNavigation();
   const { idVendedor } = route.params;
   const { user } = useAuth();
   const [seller, setSeller] = useState<ISeller | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,6 +28,18 @@ const SalesInpector = ({ route }) => {
 
   const handleGoBack = () => {
     navigation.goBack();
+  };
+
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+  };
+
+  const handleDelete = async () => {
+    try {
+      console.log('DELETADO');
+    } catch (error) {
+      console.error('Erro ao excluir vendedor:', error);
+    }
   };
 
   return (
@@ -47,11 +61,29 @@ const SalesInpector = ({ route }) => {
               <S.Funcao>{seller?.email || 'user123@gmail.com'}</S.Funcao>
             </S.InfoUser>
 
-            <S.BtnLixeira>
+            <S.BtnLixeira onPress={toggleModal}>
               <S.ImageVectorLixeira
                 source={require('@assets/img/lixeira.png')}
               />
             </S.BtnLixeira>
+            <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
+              <S.ContentModal>
+                <S.WrapperConteudo>
+                  <S.ImageWarning
+                    source={require('@assets/img/warnnign.png')}
+                  />
+                  <S.TextModal>
+                    Tem certeza que deseja excluir esse vendedor?
+                  </S.TextModal>
+                </S.WrapperConteudo>
+                <S.BtnYes onPress={handleDelete}>
+                  <S.TitleBtnYes>Sim</S.TitleBtnYes>
+                </S.BtnYes>
+                <S.BtnBack onPress={toggleModal}>
+                  <S.TitleBtnBack>Voltar</S.TitleBtnBack>
+                </S.BtnBack>
+              </S.ContentModal>
+            </Modal>
           </S.ViewInfoUser>
         </S.Container>
       </View>
