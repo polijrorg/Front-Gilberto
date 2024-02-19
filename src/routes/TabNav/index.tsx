@@ -20,7 +20,7 @@ const TabNav: React.FC = ({ route }) => {
           screenOptions={{
             tabBarActiveTintColor: 'white',
             tabBarInactiveTintColor: theme.colors.primary.main,
-            tabBarLabelStyle: { fontSize: 16 },
+            tabBarLabelStyle: { fontSize: 13 },
             tabBarStyle: {
               backgroundColor: theme.colors.secundary.main,
             },
@@ -30,9 +30,9 @@ const TabNav: React.FC = ({ route }) => {
             },
           }}
         >
-          <Tab.Screen name="Ação" component={Action} />
           <Tab.Screen name="Mentoria" component={Mentoring} />
           <Tab.Screen name="Visita" component={Visit} />
+          <Tab.Screen name="Planos de Ação" component={Action} />
         </Tab.Navigator>
       </S.Container>
     </View>
