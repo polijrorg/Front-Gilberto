@@ -42,7 +42,6 @@ export default class SupervisorServices {
     }
   }
 
-  // Obtém todos os supervisores de um gerente específico
   static async getAllSupervisorsFromManager(
     managerId: string
   ): Promise<ISupervisor[]> {
