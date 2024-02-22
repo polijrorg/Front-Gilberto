@@ -50,6 +50,11 @@ const MyTeam = () => {
           <SellersContainer search={search} />
         )}
       </S.Wrapper>
+      {user.job === 'Gerente' && (
+        <S.BtnAddColaborador>
+          <S.TextBtn>Adicionar COLABORADOres</S.TextBtn>
+        </S.BtnAddColaborador>
+      )}
       <DivGradient />
     </S.WrapperTela>
   );

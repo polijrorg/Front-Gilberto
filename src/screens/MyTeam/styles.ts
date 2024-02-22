@@ -97,3 +97,26 @@ export const Lupa = styled(Image)`
   width: 18px;
   height: 18px;
 `;
+
+export const BtnAddColaborador = styled(TouchableOpacity)`
+  width: 90%;
+  height: 40px;
+  position: fixed;
+  bottom: 24px;
+  background-color: ${theme.colors.secundary.main};
+  border: none;
+  padding: 8px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  border-radius: 8px;
+`;
+
+export const TextBtn = styled(Text)`
+  font-family: PoppinsBold;
+  color: #f8faff;
+  letter-spacing: 1.25px;
+  font-size: 14px;
+  text-transform: uppercase;
+`;
