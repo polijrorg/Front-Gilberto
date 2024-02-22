@@ -18,6 +18,10 @@ const MyTeam = () => {
     navigation.goBack();
   };
 
+  const handlePressAddedSeller = () => {
+    navigation.navigate('SellerAdded' as never);
+  };
+
   return (
     <S.WrapperTela>
       <StatusBar style="dark" />
@@ -51,7 +55,7 @@ const MyTeam = () => {
         )}
       </S.Wrapper>
       {user.job === 'Gerente' && (
-        <S.BtnAddColaborador>
+        <S.BtnAddColaborador onPress={handlePressAddedSeller}>
           <S.TextBtn>Adicionar COLABORADOres</S.TextBtn>
         </S.BtnAddColaborador>
       )}
