@@ -5,7 +5,7 @@ import api from './api';
 import ISupervisor from '@interfaces/Supervisor';
 
 export default class SupervisorServices {
-  //Pega todos os Vendedores de um supervisor pelo ID do Supervisor
+  // Pega todos os Vendedores de um supervisor pelo ID do Supervisor
   static async getAllSellerInSupervisorById(id: string): Promise<ISeller[]> {
     try {
       const sellerResponse: AxiosResponse<ISeller[]> = await api.get(
@@ -19,15 +19,18 @@ export default class SupervisorServices {
     }
   }
 
-  //Pega um supervisor pelo ID
+  // Pega um supervisor pelo ID da companhia
   static async getSupervisorById(
     supervisorId: string,
-    companyId: string
+    managerId: string
   ): Promise<ISupervisor | null> {
     try {
+      console.log(supervisorId);
+      console.log(managerId);
       const response = await api.get<ISupervisor[]>(
-        `supervisor/getAllFromACompany/${companyId}`
+        `/supervisor/getAllFromAManager/${managerId}`
       );
+      console.log(response.data);
       const supervisor = response.data.find(
         (supervisor) => supervisor.id === supervisorId
       );
@@ -35,6 +38,22 @@ export default class SupervisorServices {
       return supervisor || null;
     } catch (error) {
       console.error('Erro ao buscar Supervisor:', error);
+      throw error;
+    }
+  }
+
+  // Obtém todos os supervisores de um gerente específico
+  static async getAllSupervisorsFromManager(
+    managerId: string
+  ): Promise<ISupervisor[]> {
+    try {
+      const response = await api.get<ISupervisor[]>(
+        `/supervisor/getAllFromAManager/${managerId}`
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao obter supervisores do gerente:', error);
       throw error;
     }
   }

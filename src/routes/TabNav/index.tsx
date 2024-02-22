@@ -8,10 +8,12 @@ import Mentoring from '@screens/SalesInspector/TabScreens/Mentoring';
 import Visit from '@screens/SalesInspector/TabScreens/Visit';
 import { theme } from '@styles/default.theme';
 import SalesInpector from '@screens/SalesInspector';
+import useAuth from '@hooks/useAuth';
 
 const Tab = createMaterialTopTabNavigator();
 
 const TabNav: React.FC = ({ route }) => {
+  const { user } = useAuth();
   return (
     <View style={{ flex: 1 }}>
       <SalesInpector route={route} />
@@ -32,7 +34,9 @@ const TabNav: React.FC = ({ route }) => {
         >
           <Tab.Screen name="Mentoria" component={Mentoring} />
           <Tab.Screen name="Visita" component={Visit} />
-          <Tab.Screen name="Planos de Ação" component={Action} />
+          {user.job !== 'Gerente' && (
+            <Tab.Screen name="Planos de Ação" component={Action} />
+          )}
         </Tab.Navigator>
       </S.Container>
     </View>

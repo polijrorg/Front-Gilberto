@@ -13,7 +13,7 @@ const Cards: React.FC<IVendedor> = ({ nome, cargo, nota, id }) => {
   const navigation = useNavigation();
 
   const handlePress = () => {
-    navigation.navigate('SalesInspector', { idVendedor: id });
+    navigation.navigate('SalesInspector', { idEmployee: id });
   };
   const formattedNota =
     nota !== undefined ? nota.toFixed(1).replace('.', ',') : '';

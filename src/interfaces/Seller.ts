@@ -1,4 +1,5 @@
 export default interface Seller {
+  [x: string]: number;
   image: string;
   id: string;
   email: string;

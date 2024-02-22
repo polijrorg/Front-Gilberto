@@ -1,30 +1,46 @@
+/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable no-catch-shadow */
 import * as S from './styles';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import useAuth from '@hooks/useAuth';
 import SellerServices from '@services/SellerServices';
 import ISeller from '@interfaces/Seller';
+import ISupervisor from '@interfaces/Supervisor';
+
 import { View } from 'react-native';
 import Modal from 'react-native-modal';
+import SupervisorServices from '@services/SupervisorServices';
 
 const SalesInpector = ({ route }) => {
   const navigation = useNavigation();
-  const { idVendedor } = route.params;
+  const { idEmployee } = route.params;
   const { user } = useAuth();
   const [seller, setSeller] = useState<ISeller | null>(null);
+  const [supervisors, setSupervisors] = useState<ISupervisor | null>(null);
+
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      const responseGetSeller = await SellerServices.getSellerById(
-        user.id,
-        idVendedor
-      );
-      setSeller(responseGetSeller);
+      try {
+        const responseGetSeller = await SellerServices.getSellerById(
+          user.id,
+          idEmployee
+        );
+        setSeller(responseGetSeller);
+      } catch (error) {
+        try {
+          const responseGetSupervisor =
+            await SupervisorServices.getSupervisorById(user.id, idEmployee);
+          console.log(responseGetSupervisor);
+          setSupervisors(responseGetSupervisor);
+        } catch (error) {}
+      }
     };
 
     fetchData();
-  }, [idVendedor, user.id]);
+  }, [idEmployee, user.companyId, user.id]);
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -56,9 +72,13 @@ const SalesInpector = ({ route }) => {
               source={require('@assets/img/cardVendedor/foto.png')}
             />
             <S.InfoUser>
-              <S.Title>{seller?.name || 'Usuário'}</S.Title>
-              <S.Loja>{seller?.job || 'Cargo'}</S.Loja>
-              <S.Funcao>{seller?.email || 'user123@gmail.com'}</S.Funcao>
+              <S.Title>
+                {seller?.name || supervisors?.name || 'Usuário'}
+              </S.Title>
+              <S.Loja>{seller?.job || supervisors?.job || 'Cargo'}</S.Loja>
+              <S.Funcao>
+                {seller?.email || supervisors?.email || 'user123@gmail.com'}
+              </S.Funcao>
             </S.InfoUser>
 
             <S.BtnLixeira onPress={toggleModal}>
