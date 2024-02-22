@@ -4,11 +4,16 @@ import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import ContainerActions from '@components/ContainerActions';
 import MatrizSlider from '@components/MatrizSlider';
-import ContainerCards from '@components/ContainerCards';
+import {
+  SellersContainer,
+  SupervisorsContainer,
+} from '@components/ContainerCards';
 import ButtonAdded from '@components/ButtonAdded';
 import DivGradient from '@components/DivGradient';
+import useAuth from '@hooks/useAuth';
 
 const Home = () => {
+  const { user } = useAuth();
   return (
     <>
       <StatusBar style="dark" />
@@ -16,7 +21,11 @@ const Home = () => {
         <Header />
         <ContainerActions />
         <MatrizSlider />
-        <ContainerCards />
+        {user.job === 'Gerente' ? (
+          <SupervisorsContainer />
+        ) : (
+          <SellersContainer />
+        )}
         <DivGradient />
       </S.Wrapper>
       <ButtonAdded />

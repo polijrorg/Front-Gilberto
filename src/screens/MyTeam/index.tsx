@@ -1,11 +1,16 @@
 import * as S from './styles';
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import ContainerCards from '@components/ContainerCards';
+import {
+  SellersContainer,
+  SupervisorsContainer,
+} from '@components/ContainerCards';
 import DivGradient from '@components/DivGradient';
 import { useNavigation } from '@react-navigation/native';
+import useAuth from '@hooks/useAuth';
 
 const MyTeam = () => {
+  const { user } = useAuth();
   const navigation = useNavigation();
   const [search, setSearch] = useState('');
 
@@ -36,7 +41,14 @@ const MyTeam = () => {
             <S.Lupa source={require('@assets/img/myteam/lupa.png')} />
           </S.ButtonLupa>
         </S.DivContainerInput>
-        <ContainerCards title="Meus Vendedores" search={search} />
+        {user.job === 'Gerente' ? (
+          <>
+            <SupervisorsContainer search={search} />
+            <SellersContainer search={search} />
+          </>
+        ) : (
+          <SellersContainer search={search} />
+        )}
       </S.Wrapper>
       <DivGradient />
     </S.WrapperTela>

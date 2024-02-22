@@ -10,43 +10,30 @@ import SupervisorServices from '@services/SupervisorServices';
 import { View, Text } from 'react-native';
 
 type IContainer = {
-  title?: string;
   search?: string;
 };
 
-const ContainerCards: React.FC<IContainer> = ({ title, search }) => {
+/*IMPORTANTE: AQUI EU FIZ UM CONTAINER PARA VENDEDORES E PARA SUPERVISORES */
+
+const SellersContainer: React.FC<IContainer> = ({ search }) => {
   const { user } = useAuth();
   const [sellers, setSellers] = useState<ISeller[]>([]);
-  const [supervisors, setSupervisors] = useState<ISupervisor[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (user.job === 'Supervisor') {
-          const sellersData =
-            await SupervisorServices.getAllSellerInSupervisorById(user.id);
-          setSellers(sellersData);
-        } else if (user.job === 'Gerente') {
-          const supervisorsData =
-            await SupervisorServices.getAllSupervisorsFromManager(user.id);
-          setSupervisors(supervisorsData);
-        }
+        const sellersData =
+          await SupervisorServices.getAllSellerInSupervisorById(user.id);
+        setSellers(sellersData);
       } catch (error) {
-        console.error('Erro ao buscar dados:', error);
+        console.error('Erro ao buscar dados de vendedores:', error);
       }
     };
 
     fetchData();
-  }, [user.id, user.job]);
+  }, [user.id]);
 
-  let dataToShow: (ISeller | ISupervisor)[] = [];
-  if (user.job === 'Supervisor') {
-    dataToShow = sellers;
-  } else if (user.job === 'Gerente') {
-    dataToShow = supervisors;
-  }
-
-  let filteredData = dataToShow;
+  let filteredSellers: ISeller[] = sellers;
 
   const removeAccents = (str: string) => {
     return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -54,18 +41,18 @@ const ContainerCards: React.FC<IContainer> = ({ title, search }) => {
 
   if (search) {
     const searchTerm = removeAccents(search.toLowerCase());
-    filteredData = dataToShow.filter((item) =>
-      removeAccents(item.name.toLowerCase()).includes(searchTerm)
+    filteredSellers = sellers.filter((seller) =>
+      removeAccents(seller.name.toLowerCase()).includes(searchTerm)
     );
   }
 
   return (
     <S.DivWrapper>
-      <S.TitleSlider>{title || 'Vendedores'}</S.TitleSlider>
+      <S.TitleSlider>{'Vendedores'}</S.TitleSlider>
       <S.Cards>
-        {filteredData.length > 0 ? (
-          filteredData.map((data, index) => {
-            const fullName = data.name || 'Usuário';
+        {filteredSellers.length > 0 ? (
+          filteredSellers.map((seller, index) => {
+            const fullName = seller.name || 'Usuário';
             const nameParts = fullName.split(' ');
 
             let displayName = '';
@@ -80,9 +67,9 @@ const ContainerCards: React.FC<IContainer> = ({ title, search }) => {
             return (
               <Card
                 key={index}
-                id={data.id}
+                id={seller.id}
                 nome={displayName}
-                cargo={`Cargo: ${data.job || 'Gerente'}`}
+                cargo={`Cargo: ${seller.job || 'Vendedor'}`}
                 nota={3.2} // Ajuste isso para obter a nota correta de cada tipo de dados (supervisor ou vendedor)
               />
             );
@@ -97,7 +84,7 @@ const ContainerCards: React.FC<IContainer> = ({ title, search }) => {
             }}
           >
             <Text style={{ textTransform: 'uppercase', fontFamily: 'Poppins' }}>
-              Não há nada cadastrado
+              Não há vendedores cadastrados
             </Text>
           </View>
         )}
@@ -106,4 +93,82 @@ const ContainerCards: React.FC<IContainer> = ({ title, search }) => {
   );
 };
 
-export default ContainerCards;
+const SupervisorsContainer: React.FC<IContainer> = ({ search }) => {
+  const { user } = useAuth();
+  const [supervisors, setSupervisors] = useState<ISupervisor[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const supervisorsData =
+          await SupervisorServices.getAllSupervisorsFromManager(user.id);
+        setSupervisors(supervisorsData);
+      } catch (error) {
+        console.error('Erro ao buscar dados de supervisores:', error);
+      }
+    };
+
+    fetchData();
+  }, [user.id]);
+
+  let filteredSupervisors: ISupervisor[] = supervisors;
+
+  const removeAccents = (str: string) => {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  };
+
+  if (search) {
+    const searchTerm = removeAccents(search.toLowerCase());
+    filteredSupervisors = supervisors.filter((supervisor) =>
+      removeAccents(supervisor.name.toLowerCase()).includes(searchTerm)
+    );
+  }
+
+  return (
+    <S.DivWrapper>
+      <S.TitleSlider>{'Supervisores'}</S.TitleSlider>
+      <S.Cards>
+        {filteredSupervisors.length > 0 ? (
+          filteredSupervisors.map((supervisor, index) => {
+            const fullName = supervisor.name || 'Usuário';
+            const nameParts = fullName.split(' ');
+
+            let displayName = '';
+            if (nameParts.length > 1) {
+              const firstName = nameParts[0];
+              const lastName = nameParts[nameParts.length - 1];
+              displayName = `${firstName} ${lastName}`;
+            } else {
+              displayName = fullName;
+            }
+
+            return (
+              <Card
+                key={index}
+                id={supervisor.id}
+                nome={displayName}
+                cargo={`Cargo: ${supervisor.job || 'Supervisor'}`}
+                nota={3.2} // Ajuste isso para obter a nota correta de cada tipo de dados (supervisor ou vendedor)
+              />
+            );
+          })
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              margin: 24,
+            }}
+          >
+            <Text style={{ textTransform: 'uppercase', fontFamily: 'Poppins' }}>
+              Não há supervisores cadastrados
+            </Text>
+          </View>
+        )}
+      </S.Cards>
+    </S.DivWrapper>
+  );
+};
+
+export { SellersContainer, SupervisorsContainer };
