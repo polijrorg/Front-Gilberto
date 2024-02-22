@@ -8,6 +8,7 @@ import SupervisorServices from '@services/SupervisorServices';
 import useAuth from '@hooks/useAuth';
 import ISupervisor from '@interfaces/Supervisor';
 import SellerService from '@services/SellerServices';
+import { useToast } from 'react-native-toast-notifications';
 
 const SupervisorDropdown = ({ supervisors, onSelectSupervisor }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -64,6 +65,7 @@ const SellerAdded = () => {
   const [selectedSupervisor, setSelectedSupervisor] =
     useState<ISupervisor | null>(null);
   const [isButtonEnabled, setIsButtonEnabled] = useState<boolean>(false);
+  const toast = useToast();
 
   const navigation = useNavigation();
 
@@ -88,6 +90,12 @@ const SellerAdded = () => {
         email,
         supervisorId,
         companyId,
+      });
+      toast.show('Vendedor Cadastrado', {
+        type: 'success',
+        placement: 'top',
+        duration: 3000,
+        animationType: 'zoom-in',
       });
       setName('');
       setEmail('');
@@ -135,6 +143,7 @@ const SellerAdded = () => {
           <S.InputField
             placeholder="Email do Vendedor"
             value={email}
+            keyboardType={'email-address'}
             onChangeText={(text) => setEmail(text)}
           />
         </S.DivFileds>
