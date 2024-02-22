@@ -6,12 +6,13 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import { theme } from '@styles/default.theme';
 
 export const Wrapper = styled(View)`
   width: 100%;
   height: 100%;
+  align-items: center;
   overflow: hidden;
   background-color: ${theme.colors.primary.main};
 `;
@@ -53,7 +54,6 @@ export const ImageHeader = styled(Image)`
 
 export const Main = styled(View)`
   width: 80%;
-  height: 100%;
   margin: 10px auto;
 `;
 
@@ -126,4 +126,36 @@ export const DropdownItem = styled(TouchableOpacity)`
 export const Selected = styled(Text)`
   color: #687076;
   font-size: 12px;
+`;
+
+interface ButtonProps {
+  color: boolean; // Propriedade booleana para determinar a cor do botão
+}
+
+export const BtnCreateSeller = styled(TouchableOpacity)<ButtonProps>`
+  width: 80%;
+  height: 40px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  background-color: ${(props) =>
+    props.color ? theme.colors.primary.main : theme.colors.secundary.main};
+  background-color: ${theme.colors.secundary.main};
+  border-radius: 8px;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: 10%;
+
+  ${(props) =>
+    props.disabled && // Condicional para verificar se o botão está desativado
+    css`
+      opacity: 0.5; /* Define a opacidade como 0.5 quando o botão estiver desativado */
+    `}
+`;
+
+export const BtnCreateSellerText = styled(Text)`
+  color: #ffffff;
+  font-size: 14px;
+  font-family: PoppinsBold;
+  font-weight: bold;
 `;

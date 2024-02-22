@@ -21,4 +21,14 @@ export default class SellerService {
       throw error;
     }
   }
+
+  // Função para criar um novo vendedor
+  static async createSeller(newSeller: Partial<ISeller>): Promise<void> {
+    try {
+      await api.post('/seller/create', newSeller);
+    } catch (error) {
+      console.error('Erro ao criar vendedor:', error);
+      throw error;
+    }
+  }
 }
