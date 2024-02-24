@@ -11,7 +11,7 @@ type IVendedor = {
   nota: number;
   id: string;
   supervisorId?: string;
-  companyId?: string;
+  companyId: string;
 };
 
 const Cards: React.FC<IVendedor> = ({
@@ -27,7 +27,11 @@ const Cards: React.FC<IVendedor> = ({
   const [supervisor, setSupervisor] = useState<ISupervisor>();
 
   const handlePress = () => {
-    navigation.navigate('SalesInspector', { idEmployee: id });
+    navigation.navigate('SalesInspector', {
+      idEmployee: id,
+      cargo: cargo,
+      companyId: companyId,
+    });
   };
   const formattedNota =
     nota !== undefined ? nota.toFixed(1).replace('.', ',') : '';
@@ -57,7 +61,11 @@ const Cards: React.FC<IVendedor> = ({
       </S.DivImage>
       <S.DivText>
         <S.Name>{nome}</S.Name>
-        <S.Cargo>{cargo}</S.Cargo>
+        <S.Cargo>
+          {cargo === 'Supervisor'
+            ? `Cargo: ${cargo || 'Supervisor'}`
+            : `Cargo: ${cargo || 'Vendedor'}`}
+        </S.Cargo>
         {supervisor && (
           <S.StyledText>{'Responsável: ' + supervisor?.name}</S.StyledText>
         )}

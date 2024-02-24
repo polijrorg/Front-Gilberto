@@ -26,6 +26,22 @@ export default class SellerService {
     return response.data;
   }
 
+  static async getSupervisorByIdCompany(
+    companyId: string,
+    sellerId: string
+  ): Promise<ISeller> {
+    const responseCompany = await this.getAllSellerFromCompany(companyId);
+    const seller = responseCompany.find((seller) => seller.id === sellerId);
+    return seller;
+  }
+
+  static async getAllSellerFromCompany(companyId: string): Promise<ISeller[]> {
+    const respose = await api.get<ISeller[]>(
+      `/seller/getAllFromACompany/${companyId}`
+    );
+    return respose.data;
+  }
+
   // Pega todos os Vendedores de um supervisor
   static async getAllSellerFromSupervisor(id: string): Promise<ISeller[]> {
     const sellerResponse: AxiosResponse<ISeller[]> = await api.get(

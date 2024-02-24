@@ -83,7 +83,7 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
                 key={index}
                 id={seller.id}
                 nome={displayName}
-                cargo={`Cargo: ${seller.job || 'Vendedor'}`}
+                cargo={seller.job}
                 supervisorId={seller.supervisorId}
                 companyId={seller.companyId}
                 nota={3.2} // Ajuste isso para obter a nota correta de cada tipo de dados (supervisor ou vendedor)
@@ -166,7 +166,8 @@ const SupervisorsContainer: React.FC<IContainer> = ({ search }) => {
                 key={index}
                 id={supervisor.id}
                 nome={displayName}
-                cargo={`Cargo: ${supervisor.job || 'Supervisor'}`}
+                cargo={supervisor.job}
+                companyId={supervisor.companyId}
                 nota={3.2} // Ajuste isso para obter a nota correta de cada tipo de dados (supervisor ou vendedor)
               />
             );

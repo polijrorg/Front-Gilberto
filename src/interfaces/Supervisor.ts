@@ -6,6 +6,6 @@ export default interface Supervisor {
   email: string;
   managerId: string;
   created_at: Date;
-  company: string;
+  companyId: string;
   job: string;
 }

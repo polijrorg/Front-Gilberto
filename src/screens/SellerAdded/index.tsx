@@ -122,7 +122,7 @@ const SellerAdded = () => {
 
       toast.show('Vendedor cadastrado com sucesso', {
         type: 'success',
-        placement: 'top',
+        placement: 'bottom',
         duration: 3000,
         animationType: 'zoom-in',
       });

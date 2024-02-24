@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-shadow */
-/* eslint-disable no-catch-shadow */
 import * as S from './styles';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
@@ -12,9 +10,9 @@ import { View } from 'react-native';
 import Modal from 'react-native-modal';
 import SupervisorServices from '@services/SupervisorServices';
 
-const SalesInpector = ({ route }) => {
+const SalesInspector = ({ route }) => {
   const navigation = useNavigation();
-  const { idEmployee } = route.params;
+  const { idEmployee, cargo, companyId } = route.params;
   const { user } = useAuth();
   const [seller, setSeller] = useState<ISeller | null>(null);
   const [supervisors, setSupervisors] = useState<ISupervisor | null>(null);
@@ -24,22 +22,25 @@ const SalesInpector = ({ route }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const responseGetSeller = await SellerServices.getSellerById(
-          user.id,
-          idEmployee
-        );
-        setSeller(responseGetSeller);
-      } catch (error) {
-        try {
-          const responseGetSupervisor =
-            await SupervisorServices.getSupervisorById(user.id, idEmployee);
-          setSupervisors(responseGetSupervisor);
-        } catch (error) {}
-      }
+        if (cargo === 'Supervisor') {
+          const responseSupervisor =
+            await SupervisorServices.getSupervisorByIdCompany(
+              companyId,
+              idEmployee
+            );
+          setSupervisors(responseSupervisor);
+        } else if (cargo === 'Vendedor') {
+          const responseSeller = await SellerServices.getSupervisorByIdCompany(
+            companyId,
+            idEmployee
+          );
+          setSeller(responseSeller);
+        }
+      } catch (error) {}
     };
 
     fetchData();
-  }, [idEmployee, user.companyId, user.id]);
+  }, [cargo, companyId, idEmployee, user.companyId, user.id]);
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -110,4 +111,4 @@ const SalesInpector = ({ route }) => {
   );
 };
 
-export default SalesInpector;
+export default SalesInspector;
