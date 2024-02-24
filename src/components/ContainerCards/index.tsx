@@ -8,6 +8,7 @@ import ISupervisor from '@interfaces/Supervisor';
 import useAuth from '@hooks/useAuth';
 import SupervisorServices from '@services/SupervisorServices';
 import { View, Text } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 
 type IContainer = {
   search?: string;
@@ -18,6 +19,8 @@ type IContainer = {
 const SellersContainer: React.FC<IContainer> = ({ search }) => {
   const { user } = useAuth();
   const [sellers, setSellers] = useState<ISeller[]>([]);
+
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,8 +33,10 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
       }
     };
 
-    fetchData();
-  }, [user.id]);
+    if (isFocused) {
+      fetchData();
+    }
+  }, [user.id, isFocused]);
 
   let filteredSellers: ISeller[] = sellers;
 
@@ -95,6 +100,7 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
 
 const SupervisorsContainer: React.FC<IContainer> = ({ search }) => {
   const { user } = useAuth();
+  const isFocused = useIsFocused();
   const [supervisors, setSupervisors] = useState<ISupervisor[]>([]);
 
   useEffect(() => {
@@ -108,8 +114,10 @@ const SupervisorsContainer: React.FC<IContainer> = ({ search }) => {
       }
     };
 
-    fetchData();
-  }, [user.id]);
+    if (isFocused) {
+      fetchData();
+    }
+  }, [user.id, isFocused]);
 
   let filteredSupervisors: ISupervisor[] = supervisors;
 

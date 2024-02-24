@@ -22,6 +22,7 @@ export const Wrapper = styled(ScrollView)`
   margin-top: ${RNStatusBar.currentHeight || 0}px;
   position: relative;
   background-color: ${theme.colors.primary.main};
+  margin-bottom: 30px; /* Defina a margem inferior dinamicamente */
 `;
 
 export const Header = styled(View)`

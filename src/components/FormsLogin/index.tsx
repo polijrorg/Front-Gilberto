@@ -46,7 +46,6 @@ const FormsLogin: React.FC = () => {
       }
     } catch (error) {
       Alert.alert('Erro ao Logar');
-      console.log(error);
     } finally {
       setLoading(false);
     }

@@ -54,11 +54,10 @@ const MyTeam = () => {
           <SellersContainer search={search} />
         )}
       </S.Wrapper>
-      {user.job === 'Gerente' && (
-        <S.BtnAddColaborador onPress={handlePressAddedSeller}>
-          <S.TextBtn>Adicionar COLABORADOres</S.TextBtn>
-        </S.BtnAddColaborador>
-      )}
+      <S.BtnAddColaborador onPress={handlePressAddedSeller}>
+        <S.TextBtn>Adicionar COLABORADOres</S.TextBtn>
+      </S.BtnAddColaborador>
+
       <DivGradient />
     </S.WrapperTela>
   );

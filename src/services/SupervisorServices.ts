@@ -19,18 +19,15 @@ export default class SupervisorServices {
     }
   }
 
-  // Pega um supervisor pelo ID da companhia
+  // Pega um supervisor pelo ID do Manager
   static async getSupervisorById(
     supervisorId: string,
     managerId: string
   ): Promise<ISupervisor | null> {
     try {
-      console.log(supervisorId);
-      console.log(managerId);
       const response = await api.get<ISupervisor[]>(
         `/supervisor/getAllFromAManager/${managerId}`
       );
-      console.log(response.data);
       const supervisor = response.data.find(
         (supervisor) => supervisor.id === supervisorId
       );

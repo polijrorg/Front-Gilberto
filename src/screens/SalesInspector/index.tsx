@@ -33,7 +33,6 @@ const SalesInpector = ({ route }) => {
         try {
           const responseGetSupervisor =
             await SupervisorServices.getSupervisorById(user.id, idEmployee);
-          console.log(responseGetSupervisor);
           setSupervisors(responseGetSupervisor);
         } catch (error) {}
       }

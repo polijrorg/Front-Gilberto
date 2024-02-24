@@ -40,14 +40,22 @@ const SupervisorDropdown = ({ supervisors, onSelectSupervisor }) => {
           </S.DropDownButton>
           {isOpen && (
             <S.DropdownList>
-              {supervisors.map((supervisor, index) => (
+              {supervisors && supervisors.list.length > 0 ? (
+                supervisors.list.map((supervisor, index) => (
+                  <S.DropdownItem
+                    key={index}
+                    onPress={() => handleSelectSupervisor(supervisor)}
+                  >
+                    <S.Selected>{supervisor.name}</S.Selected>
+                  </S.DropdownItem>
+                ))
+              ) : (
                 <S.DropdownItem
-                  key={index}
-                  onPress={() => handleSelectSupervisor(supervisor)}
+                  onPress={() => handleSelectSupervisor(supervisors?.single)}
                 >
-                  <S.Selected>{supervisor.name}</S.Selected>
+                  <S.Selected>{supervisors?.single?.name}</S.Selected>
                 </S.DropdownItem>
-              ))}
+              )}
             </S.DropdownList>
           )}
         </S.CustomDropdown>
@@ -56,8 +64,16 @@ const SupervisorDropdown = ({ supervisors, onSelectSupervisor }) => {
   );
 };
 
+interface SupervisorState {
+  single: ISupervisor | null;
+  list: ISupervisor[];
+}
+
 const SellerAdded = () => {
-  const [supervisors, setSupervisors] = useState<ISupervisor[]>([]);
+  const [supervisorState, setSupervisorState] = useState<SupervisorState>({
+    single: null,
+    list: [],
+  });
   const { user } = useAuth();
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -72,64 +88,70 @@ const SellerAdded = () => {
   const navigation = useNavigation();
 
   const handlePressBack = () => {
-    navigation.goBack();
+    navigation.navigate('MyTeam' as never);
   };
   const isCreateDisabled = !name;
 
   const handleSelectSupervisor = (supervisor: ISupervisor) => {
     setSelectedSupervisor(supervisor);
     setIsButtonEnabled(true);
-    console.log('Supervisor selecionado:', supervisor);
   };
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
 
-  const handleDelete = async () => {
+  const handleCreate = async () => {
     try {
-      try {
-        const supervisorId = selectedSupervisor?.id;
-        const companyId = user.companyId;
-        await SellerService.createSeller({
-          name,
-          image,
-          email,
-          supervisorId,
-          companyId,
-        });
-        toast.show('Vendedor Cadastrado', {
-          type: 'success',
-          placement: 'top',
-          duration: 3000,
-          animationType: 'zoom-in',
-        });
-        setName('');
-        setEmail('');
-        setSelectedSupervisor(null);
-        setIsButtonEnabled(false);
-        setIsModalVisible(false);
-      } catch (error) {
-        console.error('Erro ao criar vendedor:', error.message);
-      }
+      const supervisorId = selectedSupervisor?.id;
+      const companyId = user.companyId;
+
+      await SellerService.createSeller({
+        name,
+        image,
+        email,
+        supervisorId,
+        companyId,
+      });
+
+      setName('');
+      setEmail('');
+      setSelectedSupervisor(null);
+      setIsButtonEnabled(false);
+      setIsModalVisible(false);
+
+      toast.show('Vendedor cadastrado com sucesso', {
+        type: 'success',
+        placement: 'top',
+        duration: 3000,
+        animationType: 'zoom-in',
+      });
     } catch (error) {
-      console.error('Erro ao excluir vendedor:', error);
+      console.error('Erro ao criar vendedor:', error.message);
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const supervisorsData =
-          await SupervisorServices.getAllSupervisorsFromManager(user.id);
-        setSupervisors(supervisorsData);
+        if (user.job === 'Gerente') {
+          const supervisorsData =
+            await SupervisorServices.getAllSupervisorsFromManager(user.id);
+          setSupervisorState({ single: null, list: supervisorsData });
+        } else if (user.job === 'Supervisor') {
+          const supervisorData = await SupervisorServices.getSupervisorById(
+            user.id,
+            user.managerId
+          );
+          setSupervisorState({ single: supervisorData, list: [] });
+        }
       } catch (error) {
         console.error('Erro ao buscar dados de supervisores:', error);
       }
     };
 
     fetchData();
-  }, [user.id]);
+  }, [user, user.id]);
 
   return (
     <S.Wrapper>
@@ -160,7 +182,7 @@ const SellerAdded = () => {
         </S.DivFileds>
         <S.DivFileds>
           <SupervisorDropdown
-            supervisors={supervisors}
+            supervisors={supervisorState}
             onSelectSupervisor={handleSelectSupervisor}
           />
         </S.DivFileds>
@@ -182,7 +204,7 @@ const SellerAdded = () => {
               Tem certeza que deseja adicionar esse vendedor?
             </S.TextModal>
           </S.WrapperConteudo>
-          <S.BtnYes onPress={handleDelete}>
+          <S.BtnYes onPress={handleCreate}>
             <S.TitleBtnYes>ADICIONAR</S.TitleBtnYes>
           </S.BtnYes>
           <S.BtnBackModal onPress={toggleModal}>
