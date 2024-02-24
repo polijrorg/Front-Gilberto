@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import ISeller from '@interfaces/Seller';
 import ISupervisor from '@interfaces/Supervisor';
 import useAuth from '@hooks/useAuth';
+import SellerServices from '@services/SellerServices';
 import SupervisorServices from '@services/SupervisorServices';
 import { View, Text } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
@@ -25,9 +26,17 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const sellersData =
-          await SupervisorServices.getAllSellerInSupervisorById(user.id);
-        setSellers(sellersData);
+        if (user.job === 'Supervisor') {
+          const sellersData = await SellerServices.getAllSellerFromSupervisor(
+            user.id
+          );
+          setSellers(sellersData);
+        } else if (user.job === 'Gerente') {
+          const sellersData = await SellerServices.getAllSellerFromManager(
+            user.id
+          );
+          setSellers(sellersData);
+        }
       } catch (error) {
         console.error('Erro ao buscar dados de vendedores:', error);
       }
@@ -36,7 +45,7 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
     if (isFocused) {
       fetchData();
     }
-  }, [user.id, isFocused]);
+  }, [user.id, isFocused, user.job]);
 
   let filteredSellers: ISeller[] = sellers;
 
@@ -75,6 +84,8 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
                 id={seller.id}
                 nome={displayName}
                 cargo={`Cargo: ${seller.job || 'Vendedor'}`}
+                supervisorId={seller.supervisorId}
+                companyId={seller.companyId}
                 nota={3.2} // Ajuste isso para obter a nota correta de cada tipo de dados (supervisor ou vendedor)
               />
             );

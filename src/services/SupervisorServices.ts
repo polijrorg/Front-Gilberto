@@ -1,56 +1,50 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import { AxiosResponse } from 'axios';
-import ISeller from '@interfaces/Seller';
 import api from './api';
 import ISupervisor from '@interfaces/Supervisor';
 
 export default class SupervisorServices {
-  // Pega todos os Vendedores de um supervisor pelo ID do Supervisor
-  static async getAllSellerInSupervisorById(id: string): Promise<ISeller[]> {
-    try {
-      const sellerResponse: AxiosResponse<ISeller[]> = await api.get(
-        `/seller/getAllFromASupervisor/${id}`
-      );
-
-      return sellerResponse.data;
-    } catch (error) {
-      console.error('Erro ao obter vendedores do supervisor:', error);
-      throw error;
-    }
-  }
-
   // Pega um supervisor pelo ID do Manager
   static async getSupervisorById(
     supervisorId: string,
     managerId: string
   ): Promise<ISupervisor | null> {
-    try {
-      const response = await api.get<ISupervisor[]>(
-        `/supervisor/getAllFromAManager/${managerId}`
-      );
-      const supervisor = response.data.find(
-        (supervisor) => supervisor.id === supervisorId
-      );
+    const response = await api.get<ISupervisor[]>(
+      `/supervisor/getAllFromAManager/${managerId}`
+    );
+    const supervisor = response.data.find(
+      (supervisor) => supervisor.id === supervisorId
+    );
 
-      return supervisor || null;
-    } catch (error) {
-      console.error('Erro ao buscar Supervisor:', error);
-      throw error;
-    }
+    return supervisor || null;
   }
 
   static async getAllSupervisorsFromManager(
     managerId: string
   ): Promise<ISupervisor[]> {
-    try {
-      const response = await api.get<ISupervisor[]>(
-        `/supervisor/getAllFromAManager/${managerId}`
-      );
+    const response = await api.get<ISupervisor[]>(
+      `/supervisor/getAllFromAManager/${managerId}`
+    );
 
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao obter supervisores do gerente:', error);
-      throw error;
-    }
+    return response.data;
+  }
+
+  static async getSupervisorByIdCompany(
+    companyId: string,
+    supervisorId: string
+  ): Promise<ISupervisor> {
+    const responseCompany = await this.getAllSupervisorFromCompany(companyId);
+    const supervisor = responseCompany.find(
+      (supervisor) => supervisor.id === supervisorId
+    );
+    return supervisor;
+  }
+
+  static async getAllSupervisorFromCompany(
+    companyId: string
+  ): Promise<ISupervisor[]> {
+    const respose = await api.get<ISupervisor[]>(
+      `/supervisor/getAllFromACompany/${companyId}`
+    );
+    return respose.data;
   }
 }

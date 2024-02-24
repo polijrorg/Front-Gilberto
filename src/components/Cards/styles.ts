@@ -42,6 +42,13 @@ export const Cargo = styled(Text)`
   font-family: Poppins;
 `;
 
+export const StyledText = styled(Text)`
+  color: #687076;
+  font-size: 12px;
+  font-weight: 400;
+  font-family: Poppins;
+`;
+
 interface DivAvaliaProps {
   nota: number;
 }
