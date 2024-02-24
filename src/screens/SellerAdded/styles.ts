@@ -159,3 +159,61 @@ export const BtnCreateSellerText = styled(Text)`
   font-family: PoppinsBold;
   font-weight: bold;
 `;
+
+export const ContentModal = styled(View)`
+  background-color: white;
+  padding: 32px 24px;
+  gap: 8px;
+  border-radius: 8px;
+`;
+
+export const WrapperConteudo = styled(View)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ImageWarning = styled(Image)`
+  width: 48px;
+  height: 48px;
+`;
+
+export const TextModal = styled(Text)`
+  font-family: Poppins;
+  font-size: 14px;
+  margin: 16px auto;
+  text-align: center;
+  letter-spacing: 0.5px;
+`;
+
+export const BtnYes = styled(TouchableOpacity)`
+  background-color: #3e63dd;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const TitleBtnYes = styled(Text)`
+  font-family: PoppinsBold;
+  color: #f8faff;
+  letter-spacing: 1.25px;
+  text-transform: uppercase;
+`;
+
+export const BtnBackModal = styled(TouchableOpacity)`
+  border: 2px solid ${theme.colors.secundary.main};
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const TitleBtnBack = styled(Text)`
+  color: ${theme.colors.secundary.main};
+  font-family: PoppinsBold;
+  font-size: 14px;
+  text-transform: uppercase;
+`;

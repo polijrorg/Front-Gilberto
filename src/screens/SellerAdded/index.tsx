@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View } from 'react-native';
+import Modal from 'react-native-modal';
 import * as S from './styles';
 import { FontAwesome } from '@expo/vector-icons';
 import SupervisorServices from '@services/SupervisorServices';
@@ -66,6 +67,7 @@ const SellerAdded = () => {
     useState<ISupervisor | null>(null);
   const [isButtonEnabled, setIsButtonEnabled] = useState<boolean>(false);
   const toast = useToast();
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const navigation = useNavigation();
 
@@ -80,29 +82,38 @@ const SellerAdded = () => {
     console.log('Supervisor selecionado:', supervisor);
   };
 
-  const handleCreateSeller = async () => {
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+  };
+
+  const handleDelete = async () => {
     try {
-      const supervisorId = selectedSupervisor?.id;
-      const companyId = user.companyId;
-      await SellerService.createSeller({
-        name,
-        image,
-        email,
-        supervisorId,
-        companyId,
-      });
-      toast.show('Vendedor Cadastrado', {
-        type: 'success',
-        placement: 'top',
-        duration: 3000,
-        animationType: 'zoom-in',
-      });
-      setName('');
-      setEmail('');
-      setSelectedSupervisor(null);
-      setIsButtonEnabled(false);
+      try {
+        const supervisorId = selectedSupervisor?.id;
+        const companyId = user.companyId;
+        await SellerService.createSeller({
+          name,
+          image,
+          email,
+          supervisorId,
+          companyId,
+        });
+        toast.show('Vendedor Cadastrado', {
+          type: 'success',
+          placement: 'top',
+          duration: 3000,
+          animationType: 'zoom-in',
+        });
+        setName('');
+        setEmail('');
+        setSelectedSupervisor(null);
+        setIsButtonEnabled(false);
+        setIsModalVisible(false);
+      } catch (error) {
+        console.error('Erro ao criar vendedor:', error.message);
+      }
     } catch (error) {
-      console.error('Erro ao criar vendedor:', error.message);
+      console.error('Erro ao excluir vendedor:', error);
     }
   };
 
@@ -155,12 +166,30 @@ const SellerAdded = () => {
         </S.DivFileds>
       </S.Main>
       <S.BtnCreateSeller
-        onPress={handleCreateSeller}
+        onPress={toggleModal}
         disabled={!isButtonEnabled}
         color={!isButtonEnabled && isCreateDisabled}
       >
         <S.BtnCreateSellerText>Criar Vendedor</S.BtnCreateSellerText>
       </S.BtnCreateSeller>
+      <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
+        <S.ContentModal>
+          <S.WrapperConteudo>
+            <S.ImageWarning
+              source={require('@assets/img/Triangle_Warning.png')}
+            />
+            <S.TextModal>
+              Tem certeza que deseja adicionar esse vendedor?
+            </S.TextModal>
+          </S.WrapperConteudo>
+          <S.BtnYes onPress={handleDelete}>
+            <S.TitleBtnYes>ADICIONAR</S.TitleBtnYes>
+          </S.BtnYes>
+          <S.BtnBackModal onPress={toggleModal}>
+            <S.TitleBtnBack>Voltar</S.TitleBtnBack>
+          </S.BtnBackModal>
+        </S.ContentModal>
+      </Modal>
     </S.Wrapper>
   );
 };
