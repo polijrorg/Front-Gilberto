@@ -47,4 +47,8 @@ export default class SupervisorServices {
     );
     return respose.data;
   }
+
+  static async delete(supervisorId: string): Promise<void> {
+    await api.delete(`/supervisor/delete/${supervisorId}`);
+  }
 }

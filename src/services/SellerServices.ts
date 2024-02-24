@@ -51,6 +51,10 @@ export default class SellerService {
     return sellerResponse.data;
   }
 
+  static async delete(sellerId: string): Promise<void> {
+    await api.delete(`/seller/delete/${sellerId}`);
+  }
+
   // Função para criar um novo vendedor
   static async createSeller(newSeller: Partial<ISeller>): Promise<void> {
     await api.post('/seller/create', newSeller);

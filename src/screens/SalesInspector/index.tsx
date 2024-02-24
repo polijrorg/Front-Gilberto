@@ -52,7 +52,12 @@ const SalesInspector = ({ route }) => {
 
   const handleDelete = async () => {
     try {
-      console.log('DELETADO');
+      if (cargo === 'Supervisor' && supervisors) {
+        await SupervisorServices.delete(supervisors.id);
+      } else if (cargo === 'Vendedor' && seller) {
+        await SellerServices.delete(seller.id);
+      }
+      navigation.goBack();
     } catch (error) {
       console.error('Erro ao excluir vendedor:', error);
     }

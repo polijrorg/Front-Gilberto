@@ -155,7 +155,7 @@ const SellerAdded = () => {
 
   return (
     <S.Wrapper>
-      <StatusBar style="light" />
+      <StatusBar />
       <S.Header>
         <S.TitleHeader>Adicionar Vendedor</S.TitleHeader>
         <S.BtnBack onPress={handlePressBack}>

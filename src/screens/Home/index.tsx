@@ -16,7 +16,7 @@ const Home = () => {
   const { user } = useAuth();
   return (
     <>
-      <StatusBar style="dark" />
+      <StatusBar />
       <S.Wrapper>
         <Header />
         <ContainerActions />

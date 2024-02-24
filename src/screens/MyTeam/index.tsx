@@ -24,7 +24,7 @@ const MyTeam = () => {
 
   return (
     <S.WrapperTela>
-      <StatusBar style="dark" />
+      <StatusBar />
       <S.Wrapper>
         <S.Header>
           <S.TextWithBorder>
