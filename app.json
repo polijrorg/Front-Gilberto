@@ -1,8 +1,18 @@
 {
   "expo": {
-    "name": "my-app5",
-    "slug": "my-app5",
+    "name": "Sell Out Expert",
+    "slug": "sell-out-expert",
     "version": "1.0.0",
-    "assetBundlePatterns": ["**/*"]
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "39f35b77-3e5f-4a8f-804f-c69a7c66a0e9"
+      }
+    },
+    "android": {
+      "package": "com.selloutexpert.app"
+    }
   }
 }
