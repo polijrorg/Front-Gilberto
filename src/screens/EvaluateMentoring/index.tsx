@@ -20,6 +20,9 @@ const EvaluateMentoring = () => {
       <StatusBar />
       <S.Wrapper>
         <HeaderPages title="Avaliar Mentorado" />
+        <S.Container>
+          <S.FielInput>Nome do Vendedor</S.FielInput>
+        </S.Container>
         <DivGradient />
       </S.Wrapper>
       <ButtonAdded />
