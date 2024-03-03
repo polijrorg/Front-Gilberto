@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 
 export const DivFileds = styled(View)`
@@ -27,10 +27,10 @@ export const DropDownButton = styled(TouchableOpacity)`
   border-color: #d7dbdf;
 `;
 
-export const DropdownList = styled(View)`
+export const DropdownList = styled(ScrollView)`
   position: absolute;
   width: 100%;
-  height: auto;
+  height: 300px;
   background-color: #f1f3f5;
   top: 100%;
   z-index: 1;

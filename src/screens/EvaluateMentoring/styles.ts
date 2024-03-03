@@ -10,9 +10,10 @@ import { theme } from '@styles/default.theme';
 
 export const Wrapper = styled(ScrollView)`
   width: 100%;
-  height: 100%;
+  height: auto;
   margin-top: ${RNStatusBar.currentHeight || 0}px;
   background-color: ${theme.colors.primary.main};
+  position: relative;
 `;
 
 export const NameField = styled(Text)`
@@ -25,7 +26,7 @@ export const NameField = styled(Text)`
 
 export const Container = styled(View)`
   width: 90%;
-  height: 1200px;
+  height: 500px;
   margin: 10px auto;
 `;
 
@@ -34,6 +35,7 @@ export const DivContanerSeller = styled(View)`
   height: auto;
   padding: 8px 0;
   margin: 10px auto;
+  gap: 8px;
 `;
 
 export const ContainerButton = styled(View)`
@@ -53,4 +55,32 @@ export const TextBtn = styled(Text)`
   font-family: Poppins;
   font-weight: 400;
   font-size: 12px;
+`;
+
+export const StyledText = styled(Text)`
+  font-family: Poppins;
+  font-weight: 700;
+  margin: 20px auto;
+  font-size: 16px;
+`;
+
+export const BtnAvaliar = styled(TouchableOpacity)`
+  background-color: ${theme.colors.secundary.main};
+  padding: 8px 24px;
+  width: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  position: absolute;
+  bottom: 64px;
+  left: 20px;
+`;
+
+export const TextBtnAvaliar = styled(Text)`
+  color: #fff;
+  font-family: PoppinsBold;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 16px;
 `;
