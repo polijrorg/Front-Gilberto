@@ -6,6 +6,7 @@ import MyTeam from '@screens/MyTeam';
 import { SellerAdded } from '@screens/SellerAdded';
 import Login from '@screens/Login';
 import TabNav from '@routes/TabNav';
+import EvaluateMentoring from '@screens/EvaluateMentoring';
 
 const AppStack = createNativeStackNavigator();
 
@@ -34,6 +35,11 @@ const AppRoutes: React.FC = () => (
     <AppStack.Screen
       name="SellerAdded"
       component={SellerAdded}
+      options={{ header: () => <></> }}
+    />
+    <AppStack.Screen
+      name="EvaluateMentoring"
+      component={EvaluateMentoring}
       options={{ header: () => <></> }}
     />
   </AppStack.Navigator>
