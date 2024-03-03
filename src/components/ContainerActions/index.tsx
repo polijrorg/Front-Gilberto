@@ -24,7 +24,9 @@ const ContainerActions: React.FC = () => {
   };
 
   const handleEnviarEvaluateMentoring = () => {
-    navigation.navigate('EvaluateMentoring' as never);
+    if (user.job === 'Supervisor') {
+      navigation.navigate('EvaluateMentoring' as never);
+    }
   };
 
   const getButtonText = (buttonType: string) => {
