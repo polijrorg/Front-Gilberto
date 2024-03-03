@@ -8,15 +8,12 @@ import {
 import DivGradient from '@components/DivGradient';
 import { useNavigation } from '@react-navigation/native';
 import useAuth from '@hooks/useAuth';
+import HeaderPages from '@components/HeaderPages';
 
 const MyTeam = () => {
   const { user } = useAuth();
   const navigation = useNavigation();
   const [search, setSearch] = useState('');
-
-  const handlePressBack = () => {
-    navigation.goBack();
-  };
 
   const handlePressAddedSeller = () => {
     navigation.navigate('SellerAdded' as never);
@@ -26,14 +23,7 @@ const MyTeam = () => {
     <S.WrapperTela>
       <StatusBar />
       <S.Wrapper>
-        <S.Header>
-          <S.TextWithBorder>
-            <S.TextMyTeam>Minha Equipe</S.TextMyTeam>
-          </S.TextWithBorder>
-          <S.ButtonBack onPress={handlePressBack}>
-            <S.BackImage source={require('@assets/img/myteam/back.png')} />
-          </S.ButtonBack>
-        </S.Header>
+        <HeaderPages title="Minha Equipe" />
         <S.DivContainerInput>
           <S.InputVendedor
             placeholder={'Pesquisar'}

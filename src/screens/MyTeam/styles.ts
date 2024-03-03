@@ -25,26 +25,6 @@ export const Wrapper = styled(ScrollView)`
   margin-bottom: 30px; /* Defina a margem inferior dinamicamente */
 `;
 
-export const Header = styled(View)`
-  width: 100%;
-  height: 54px;
-  position: relative;
-  background-color: ${theme.colors.secundary.main};
-  flex-direction: row;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 16px;
-`;
-
-export const ButtonBack = styled(TouchableOpacity)`
-  border: none;
-  width: 24px;
-  height: 24px;
-  position: absolute;
-  left: 24px;
-`;
-
 export const TextWithBorder = styled(View)`
   border-bottom-width: 3px;
   border-bottom-color: #fbfcfd;
