@@ -40,8 +40,18 @@ const EvaluateMentoring = () => {
       <S.Wrapper>
         <HeaderPages title="Avaliar Mentorado" />
         <S.Container>
-          <S.NameField>Nome do Vendedor</S.NameField>
-          <Dropdown sellers={sellers} onSelectSeller={handleSelect} />
+          <S.DivContanerSeller>
+            <S.NameField>Nome do Vendedor</S.NameField>
+            <Dropdown sellers={sellers} onSelectSeller={handleSelect} />
+          </S.DivContanerSeller>
+          <S.DivContanerSeller>
+            <S.NameField>Veja quais módulos estão disponíveis</S.NameField>
+            <S.ContainerButton>
+              <S.BtnModule>
+                <S.TextBtn>Mod. 1</S.TextBtn>
+              </S.BtnModule>
+            </S.ContainerButton>
+          </S.DivContanerSeller>
         </S.Container>
         <DivGradient />
       </S.Wrapper>
