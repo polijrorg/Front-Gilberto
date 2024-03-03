@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import * as S from './styles';
 import { FontAwesome } from '@expo/vector-icons';
 import ISupervisor from '@interfaces/Supervisor';
+import ISeller from '@interfaces/Seller';
 
 interface SupervisorState {
   single: ISupervisor | null;
@@ -12,32 +13,44 @@ interface SupervisorState {
 type IDropdownProps = {
   supervisors?: SupervisorState;
   onSelectSupervisor?: (supervisor: ISupervisor) => void;
+  sellers?: ISeller[];
+  onSelectSeller?: (seller: ISeller) => void;
 };
 
 const Dropdown: React.FC<IDropdownProps> = ({
   supervisors,
   onSelectSupervisor,
+  sellers,
+  onSelectSeller,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedSupervisor, setSelectedSupervisor] = useState<ISupervisor>();
+  const [selectedSupervisor, setSelectedSupervisor] =
+    useState<ISupervisor | null>(null);
+  const [selectedSeller, setSelectedSeller] = useState<ISeller | null>(null);
 
   const handleSelectSupervisor = (supervisor: ISupervisor) => {
     setSelectedSupervisor(supervisor);
-    onSelectSupervisor(supervisor);
+    onSelectSupervisor && onSelectSupervisor(supervisor);
+    setIsOpen(false);
+  };
+
+  const handleSelectSeller = (seller: ISeller) => {
+    setSelectedSeller(seller);
+    onSelectSeller && onSelectSeller(seller);
     setIsOpen(false);
   };
 
   return (
     <View>
       <S.DivFileds>
-        <S.NameField>Supervisor Responsável</S.NameField>
         <S.CustomDropdown isOpen={isOpen} setIsOpen={setIsOpen}>
           <S.DropDownButton onPress={() => setIsOpen(!isOpen)}>
             <S.Selected>
-              {selectedSupervisor?.name
-                ? selectedSupervisor?.name
-                : 'Selecione o supervisor...'}
+              {selectedSupervisor?.name ||
+                selectedSeller?.name ||
+                'Selecione o responsável'}
             </S.Selected>
+
             <FontAwesome
               name={isOpen ? 'caret-up' : 'caret-down'}
               size={20}
@@ -46,22 +59,30 @@ const Dropdown: React.FC<IDropdownProps> = ({
           </S.DropDownButton>
           {isOpen && (
             <S.DropdownList>
-              {supervisors && supervisors.list.length > 0 ? (
-                supervisors.list.map((supervisor, index) => (
+              {(supervisors?.list.length > 0 &&
+                supervisors?.list.map((supervisor, index) => (
                   <S.DropdownItem
                     key={index}
                     onPress={() => handleSelectSupervisor(supervisor)}
                   >
                     <S.Selected>{supervisor.name}</S.Selected>
                   </S.DropdownItem>
-                ))
-              ) : (
-                <S.DropdownItem
-                  onPress={() => handleSelectSupervisor(supervisors?.single)}
-                >
-                  <S.Selected>{supervisors?.single?.name}</S.Selected>
-                </S.DropdownItem>
-              )}
+                ))) ||
+                (sellers?.length > 0 &&
+                  sellers?.map((seller, index) => (
+                    <S.DropdownItem
+                      key={index}
+                      onPress={() => handleSelectSeller(seller)}
+                    >
+                      <S.Selected>{seller.name}</S.Selected>
+                    </S.DropdownItem>
+                  ))) || (
+                  <S.DropdownItem
+                    onPress={() => handleSelectSupervisor(supervisors?.single)}
+                  >
+                    <S.Selected>{supervisors?.single?.name}</S.Selected>
+                  </S.DropdownItem>
+                )}
             </S.DropdownList>
           )}
         </S.CustomDropdown>

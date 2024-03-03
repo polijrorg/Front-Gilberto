@@ -33,6 +33,28 @@ const SellerAdded = () => {
 
   const isCreateDisabled = !name;
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (user.job === 'Gerente') {
+          const supervisorsData =
+            await SupervisorServices.getAllSupervisorsFromManager(user.id);
+          setSupervisorState({ single: null, list: supervisorsData });
+        } else if (user.job === 'Supervisor') {
+          const supervisorData = await SupervisorServices.getSupervisorById(
+            user.id,
+            user.managerId
+          );
+          setSupervisorState({ single: supervisorData, list: [] });
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados de supervisores:', error);
+      }
+    };
+
+    fetchData();
+  }, [user, user.id]);
+
   const handleSelectSupervisor = (supervisor: ISupervisor) => {
     setSelectedSupervisor(supervisor);
     setIsButtonEnabled(true);
@@ -46,6 +68,7 @@ const SellerAdded = () => {
     try {
       const supervisorId = selectedSupervisor?.id;
       const companyId = user.companyId;
+      console.log(name, email, image, supervisorId);
 
       await SellerService.createSeller({
         name,
@@ -72,28 +95,6 @@ const SellerAdded = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (user.job === 'Gerente') {
-          const supervisorsData =
-            await SupervisorServices.getAllSupervisorsFromManager(user.id);
-          setSupervisorState({ single: null, list: supervisorsData });
-        } else if (user.job === 'Supervisor') {
-          const supervisorData = await SupervisorServices.getSupervisorById(
-            user.id,
-            user.managerId
-          );
-          setSupervisorState({ single: supervisorData, list: [] });
-        }
-      } catch (error) {
-        console.error('Erro ao buscar dados de supervisores:', error);
-      }
-    };
-
-    fetchData();
-  }, [user, user.id]);
-
   return (
     <>
       <StatusBar />
@@ -118,6 +119,7 @@ const SellerAdded = () => {
             />
           </S.DivFileds>
           <S.DivFileds>
+            <S.NameField>Responsável</S.NameField>
             <DropdownData
               supervisors={supervisorState}
               onSelectSupervisor={handleSelectSupervisor}

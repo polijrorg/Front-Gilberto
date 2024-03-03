@@ -4,15 +4,6 @@ import styled from 'styled-components/native';
 export const DivFileds = styled(View)`
   width: 100%;
   height: auto;
-  gap: 4px;
-  margin-top: 5%;
-`;
-export const NameField = styled(Text)`
-  color: #11181c;
-  font-family: Poppins;
-  font-weight: 400;
-  font-size: 14px;
-  letter-spacing: 0.5px;
 `;
 
 interface CustomDropdownProps {
