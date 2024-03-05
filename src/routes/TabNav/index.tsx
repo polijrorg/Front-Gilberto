@@ -34,7 +34,7 @@ const TabNav: React.FC = ({ route }) => {
         >
           <Tab.Screen name="Mentoria" component={Mentoring} />
           <Tab.Screen name="Visita" component={Visit} />
-          {user.job !== 'Gerente' && (
+          {user.job === 'Supervisor' && (
             <Tab.Screen name="Planos de Ação" component={Action} />
           )}
         </Tab.Navigator>

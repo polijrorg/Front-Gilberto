@@ -1,32 +1,34 @@
-import { View, Text, Image } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
 import styled from 'styled-components/native';
 import { theme } from '@styles/default.theme';
 
-export const Wrapper = styled(View)`
+export const Wrapper = styled(ScrollView)`
   width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background-color: ${theme.colors.secundary.main};
+  max-height: 65% !important;
+  background-color: ${theme.colors.primary.main};
 `;
 
-export const Header = styled(View)`
-  height: 50%;
-  width: 100%;
+export const WrapperView = styled(View)`
   display: flex;
+  width: 90%;
+  max-height: 90%;
   margin: 0 auto;
-  flex-direction: column;
-  justify-content: space-evenly;
+`;
+
+export const BtnCriarAction = styled(TouchableOpacity)`
+  width: 90%;
+  padding: 12px 8px;
+  margin: 0 auto;
+  border-radius: 8px;
+  background-color: ${theme.colors.secundary.main};
+  display: flex;
+  justify-content: center;
   align-items: center;
 `;
 
-export const TitleHeader = styled(Text)`
+export const TextBtn = styled(Text)`
+  font-size: 16px;
+  text-transform: uppercase;
+  font-family: Poppins;
   color: #fff;
-  font-weight: 700;
-  font-size: 32px;
-  font-family: PoppinsBold;
-`;
-
-export const ImageHeader = styled(Image)`
-  width: 80px;
-  height: 80px;
 `;
