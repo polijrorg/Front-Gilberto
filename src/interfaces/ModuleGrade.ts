@@ -1,6 +1,8 @@
 export default interface ModuleGrade {
-  implementationScore: string;
-  knowledgeScore: string;
+  id: string;
+  implementationScore: number;
+  knowledgeScore: number;
+  media: number;
   supervisorComment: string;
   moduleId: string;
   sellerId: string;

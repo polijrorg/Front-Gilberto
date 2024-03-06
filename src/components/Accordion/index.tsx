@@ -3,7 +3,17 @@ import React, { useState } from 'react';
 import { View, Text, TouchableWithoutFeedback, TextInput } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 
-const Accordion = ({ title }) => {
+type AccordionProps = {
+  title: string;
+  implementation: number | string;
+  knowledge: number | string;
+};
+
+const Accordion: React.FC<AccordionProps> = ({
+  title,
+  implementation,
+  knowledge,
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showText, setShowText] = useState(true); // Estado para controlar a visibilidade do texto
   const [comentario, setComentario] = useState<string>();
@@ -13,6 +23,13 @@ const Accordion = ({ title }) => {
     setShowText(isExpanded); // Alterna a visibilidade do texto
   };
 
+  const formatNumber = (number: number | string) => {
+    if (number !== undefined) {
+      return number.toLocaleString('pt-BR', { minimumFractionDigits: 1 });
+    }
+    return '';
+  };
+
   return (
     <View style={{ marginTop: 16, borderRadius: 8 }}>
       <TouchableWithoutFeedback onPress={toggleExpand}>
@@ -20,12 +37,13 @@ const Accordion = ({ title }) => {
           style={{
             flexDirection: 'row',
             alignItems: 'center',
+            justifyContent: 'space-between',
             backgroundColor: '#F1F3F5',
             padding: 10,
             borderRadius: 8,
           }}
         >
-          <Text style={{ flex: 1, fontFamily: 'Poppins' }}>{title}</Text>
+          <Text style={{ flex: 0.9, fontFamily: 'Poppins' }}>{title}</Text>
           {showText && (
             <>
               <Text
@@ -39,7 +57,7 @@ const Accordion = ({ title }) => {
                   padding: 2,
                 }}
               >
-                I: X,X
+                I: {formatNumber(implementation)}
               </Text>
               <Text
                 style={{
@@ -52,7 +70,7 @@ const Accordion = ({ title }) => {
                   padding: 2,
                 }}
               >
-                C: X,X
+                C: {formatNumber(knowledge)}
               </Text>
             </>
           )}
@@ -82,10 +100,10 @@ const Accordion = ({ title }) => {
             }}
           >
             <Text style={{ fontFamily: 'Poppins', color: '#687076' }}>
-              Implementação: X,X
+              Implementação: {formatNumber(implementation)}
             </Text>
             <Text style={{ fontFamily: 'Poppins', color: '#687076' }}>
-              Conhecimento: X,X
+              Conhecimento: {formatNumber(knowledge)}
             </Text>
           </View>
           <TextInput
