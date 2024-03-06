@@ -16,7 +16,7 @@ const Mentoring = ({ route }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (cargo === 'Vendedor') {
+        if (cargo === 'Vendedor' || cargo === 'Supervisor') {
           const dataSeller =
             await ModulesServices.getModuleGradesByIdSeller(idEmployee);
           setModuleGrade(dataSeller);
