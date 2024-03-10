@@ -78,7 +78,7 @@ const EvaluateMentoring = () => {
               {loading ? (
                 <ActivityIndicator color="#3E63DD" />
               ) : modules.length > 0 ? (
-                modules.map((module, index) => (
+                modules.map((_module, index) => (
                   <S.BtnModule key={index} disabled>
                     <S.TextBtn>{`Módulo ${index + 1}`}</S.TextBtn>
                   </S.BtnModule>
