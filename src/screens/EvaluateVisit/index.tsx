@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import * as S from './styles';
 import { useNavigation } from '@react-navigation/native';
+import Breadcrumb from '@components/Breadcrumb';
 
 const EvaluateVisit = () => {
   const navigation = useNavigation();
@@ -24,16 +25,7 @@ const EvaluateVisit = () => {
   return (
     <S.WrapperView>
       <S.ContainerFields>
-        <S.Container>
-          {path.map((screen, index) => (
-            <S.ItemContainer key={index}>
-              <S.Button onPress={() => handleNavigation(index)}>
-                <S.Crumb>{screen.name}</S.Crumb>
-              </S.Button>
-              {index !== path.length - 1 && <S.Separator>{'>'}</S.Separator>}
-            </S.ItemContainer>
-          ))}
-        </S.Container>
+        <Breadcrumb path={path} handleNavigation={handleNavigation} />
         <S.DivContainer>
           <S.TitleInput>Nome do Vendedor</S.TitleInput>
           <S.Input placeholder="Selecionar" />
