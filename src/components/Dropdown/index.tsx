@@ -42,7 +42,7 @@ const Dropdown: React.FC<IDropdownProps> = ({
 
   return (
     <View>
-      <S.DivFileds>
+      <S.DivFields>
         <S.CustomDropdown isOpen={isOpen} setIsOpen={setIsOpen}>
           <S.DropDownButton onPress={() => setIsOpen(!isOpen)}>
             <S.Selected>
@@ -50,7 +50,6 @@ const Dropdown: React.FC<IDropdownProps> = ({
                 selectedSeller?.name ||
                 'Selecione o responsável'}
             </S.Selected>
-
             <FontAwesome
               name={isOpen ? 'caret-up' : 'caret-down'}
               size={20}
@@ -58,7 +57,11 @@ const Dropdown: React.FC<IDropdownProps> = ({
             />
           </S.DropDownButton>
           {isOpen && (
-            <S.DropdownList>
+            <S.DropdownList
+              maxHeight={
+                supervisors?.list.length > 1 || sellers?.length > 1 ? 300 : null
+              }
+            >
               {(supervisors?.list.length > 0 &&
                 supervisors?.list.map((supervisor, index) => (
                   <S.DropdownItem
@@ -86,7 +89,7 @@ const Dropdown: React.FC<IDropdownProps> = ({
             </S.DropdownList>
           )}
         </S.CustomDropdown>
-      </S.DivFileds>
+      </S.DivFields>
     </View>
   );
 };

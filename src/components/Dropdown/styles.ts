@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 
-export const DivFileds = styled(View)`
+export const DivFields = styled(View)`
   width: 100%;
   height: auto;
 `;
@@ -27,10 +27,14 @@ export const DropDownButton = styled(TouchableOpacity)`
   border-color: #d7dbdf;
 `;
 
-export const DropdownList = styled(ScrollView)`
+interface DropdownListProps {
+  maxHeight?: number;
+}
+
+export const DropdownList = styled(ScrollView)<DropdownListProps>`
   position: absolute;
   width: 100%;
-  height: 300px;
+  max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'auto')};
   background-color: #f1f3f5;
   top: 100%;
   z-index: 1;
