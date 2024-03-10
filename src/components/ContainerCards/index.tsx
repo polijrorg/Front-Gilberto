@@ -9,6 +9,7 @@ import SellerServices from '@services/SellerServices';
 import SupervisorServices from '@services/SupervisorServices';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
+import ModulesServices from '@services/ModuleServices';
 
 type IContainer = {
   search?: string;
@@ -17,6 +18,7 @@ type IContainer = {
 const SellersContainer: React.FC<IContainer> = ({ search }) => {
   const { user } = useAuth();
   const [sellers, setSellers] = useState<ISeller[]>([]);
+  const [media, setMedia] = useState<{ [key: string]: number }>({});
   const [loading, setLoading] = useState(true);
 
   const isFocused = useIsFocused();
@@ -25,15 +27,27 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        let sellersData: ISeller[] = [];
-        if (user.job === 'Supervisor') {
-          sellersData = await SellerServices.getAllSellerFromSupervisor(
-            user.id
+        const sellersData: ISeller[] =
+          user.job === 'Supervisor'
+            ? await SellerServices.getAllSellerFromSupervisor(user.id)
+            : await SellerServices.getAllSellerFromManager(user.id);
+
+        const mediaData: { [key: string]: number } = {};
+        for (const seller of sellersData) {
+          const moduleGrades = await ModulesServices.getModuleGradesByIdSeller(
+            seller.id
           );
-        } else if (user.job === 'Gerente') {
-          sellersData = await SellerServices.getAllSellerFromManager(user.id);
+          const totalGrade = moduleGrades.reduce(
+            (sum, grade) => sum + grade.media,
+            0
+          );
+          const averageGrade =
+            moduleGrades.length > 0 ? totalGrade / moduleGrades.length : 0;
+          mediaData[seller.id] = averageGrade;
         }
+
         setSellers(sellersData);
+        setMedia(mediaData);
       } catch (error) {
         console.error('Erro ao buscar dados de vendedores:', error);
       } finally {
@@ -78,7 +92,6 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
           filteredSellers.map((seller, index) => {
             const fullName = seller.name || 'Usuário';
             const nameParts = fullName.split(' ');
-
             let displayName = '';
             if (nameParts.length > 1) {
               const firstName = nameParts[0];
@@ -88,6 +101,8 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
               displayName = fullName;
             }
 
+            const sellerMedia = media[seller.id] || 0;
+
             return (
               <Card
                 key={index}
@@ -96,7 +111,7 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
                 cargo={seller.job}
                 supervisorId={seller.supervisorId}
                 companyId={seller.companyId}
-                nota={3.2} // Ajuste isso para obter a nota correta de cada tipo de dados (supervisor ou vendedor)
+                nota={sellerMedia} // Aqui exibimos a média do vendedor
               />
             );
           })

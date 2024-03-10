@@ -16,19 +16,27 @@ const EvaluateMentoring = () => {
   const { user } = useAuth();
   const [sellers, setSellers] = useState<ISeller[]>([]);
   const [modules, setModules] = useState<IModule[]>([]);
-  const [loading, setLoading] = useState(true); // Estado para indicar se está carregando ou não
+  const [loading, setLoading] = useState(true);
   const [selectedSupervisor, setSelectedSupervisor] = useState<ISeller | null>(
     null
   );
+  const [selectedModuleIndex, setSelectedModuleIndex] = useState<number | null>(
+    null
+  );
+
   const handleSelect = (seller: ISeller) => {
     setSelectedSupervisor(seller);
+  };
+
+  const handleModuleSelect = (index: number) => {
+    setSelectedModuleIndex(index);
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (user.job === 'Supervisor') {
-          setLoading(true); // Indicar que está carregando
+          setLoading(true);
           const sellerData = await SellerService.getAllSellerFromSupervisor(
             user.id
           );
@@ -36,10 +44,10 @@ const EvaluateMentoring = () => {
           const modulesData = await ModulesServices.getAllModules();
           setModules(modulesData);
           setSellers(sellerData);
-          setLoading(false); // Indicar que a carga terminou
+          setLoading(false);
         }
       } catch (error) {
-        setLoading(false); // Indicar que ocorreu um erro
+        setLoading(false);
       }
     };
 
@@ -63,8 +71,14 @@ const EvaluateMentoring = () => {
                 <ActivityIndicator color="#3E63DD" />
               ) : modules.length > 0 ? (
                 modules.map((module, index) => (
-                  <S.BtnModule key={index}>
-                    <S.TextBtn>{`Módulo ${index + 1}`}</S.TextBtn>
+                  <S.BtnModule
+                    key={index}
+                    onPress={() => handleModuleSelect(index)}
+                    selected={selectedModuleIndex === index}
+                  >
+                    <S.TextBtn
+                      selected={selectedModuleIndex === index}
+                    >{`Módulo ${index + 1}`}</S.TextBtn>
                   </S.BtnModule>
                 ))
               ) : (
