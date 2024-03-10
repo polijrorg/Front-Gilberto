@@ -19,9 +19,7 @@ const EvaluateMentoring = () => {
   const [modules, setModules] = useState<IModule[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSeller, setSelectedSeller] = useState<ISeller | null>(null);
-  const [selectedModuleIndex, setSelectedModuleIndex] = useState<number | null>(
-    null
-  );
+
   const [buttonOpacity, setButtonOpacity] = useState(0.5);
 
   useEffect(() => {
@@ -47,19 +45,11 @@ const EvaluateMentoring = () => {
 
   const handleSelectSeller = (seller: ISeller) => {
     setSelectedSeller(seller);
-    updateButtonOpacity(seller, selectedModuleIndex);
+    updateButtonOpacity(seller);
   };
 
-  const handleSelectModule = (index: number) => {
-    setSelectedModuleIndex(index);
-    updateButtonOpacity(selectedSeller, index);
-  };
-
-  const updateButtonOpacity = (
-    seller: ISeller | null,
-    moduleIndex: number | null
-  ) => {
-    if (seller && moduleIndex !== null) {
+  const updateButtonOpacity = (seller: ISeller | null) => {
+    if (seller) {
       setButtonOpacity(1);
     } else {
       setButtonOpacity(0.5);
@@ -67,14 +57,9 @@ const EvaluateMentoring = () => {
   };
 
   const handleSetAsk = () => {
-    if (selectedModuleIndex !== null && selectedSeller !== null) {
-      const selectedModule = modules[selectedModuleIndex];
-      navigation.navigate('AskEvaluateMentoring', {
-        module: selectedModule,
-        index: selectedModuleIndex,
-        seller: selectedSeller,
-      });
-    }
+    navigation.navigate('AskEvaluateMentoring', {
+      seller: selectedSeller,
+    });
   };
 
   return (
@@ -94,14 +79,8 @@ const EvaluateMentoring = () => {
                 <ActivityIndicator color="#3E63DD" />
               ) : modules.length > 0 ? (
                 modules.map((module, index) => (
-                  <S.BtnModule
-                    key={index}
-                    onPress={() => handleSelectModule(index)}
-                    selected={selectedModuleIndex === index}
-                  >
-                    <S.TextBtn
-                      selected={selectedModuleIndex === index}
-                    >{`Módulo ${index + 1}`}</S.TextBtn>
+                  <S.BtnModule key={index} disabled>
+                    <S.TextBtn>{`Módulo ${index + 1}`}</S.TextBtn>
                   </S.BtnModule>
                 ))
               ) : (

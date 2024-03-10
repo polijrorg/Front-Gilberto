@@ -48,23 +48,19 @@ export const ContainerButton = styled(View)`
   gap: 8px;
 `;
 
-interface PropsBtn {
-  selected: boolean;
-}
-
-export const BtnModule = styled(TouchableOpacity)<PropsBtn>`
-  background-color: ${({ selected }) => (selected ? '#3E63DD' : '#f1f3f5')};
+export const BtnModule = styled(TouchableOpacity)`
+  background-color: #f1f3f5;
   padding: 4px 8px;
   border-radius: 4px;
   max-width: 100%;
 `;
 
-export const TextBtn = styled(Text)<PropsBtn>`
+export const TextBtn = styled(Text)`
   font-family: Poppins;
   margin: 0 auto;
   font-weight: 400;
   font-size: 12px;
-  color: ${({ selected }) => (selected ? '#FFFFFF' : '#000000')};
+  color: #000000;
 `;
 
 export const StyledText = styled(Text)`
