@@ -6,10 +6,8 @@ import styled from 'styled-components/native';
 export const WrapperView = styled(View)`
   width: 100%;
   height: 90%;
-  padding: 8px;
   margin-top: ${RNStatusBar.currentHeight || 0}px;
   display: flex;
-  justify-content: space-between;
 `;
 
 export const ContainerFields = styled(View)`
@@ -48,8 +46,11 @@ export const Input = styled(TextInput)`
 export const ButtonIniciar = styled(TouchableOpacity)`
   padding: 8px 24px;
   background-color: #3e63dd;
-  width: 100%;
+  width: 95%;
   display: flex;
+  position: absolute;
+  bottom: 0;
+  left: 10px;
   justify-content: center;
   align-items: center;
   border-radius: 8px;
