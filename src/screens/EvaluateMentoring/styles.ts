@@ -30,7 +30,7 @@ export const Container = styled(View)`
   margin: 10px auto;
 `;
 
-export const DivContanerSeller = styled(View)`
+export const DivContainerSeller = styled(View)`
   width: 100%;
   height: auto;
   padding: 8px 0;
