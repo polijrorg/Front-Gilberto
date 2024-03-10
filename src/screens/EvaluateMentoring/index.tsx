@@ -64,7 +64,7 @@ const EvaluateMentoring = () => {
               ) : modules.length > 0 ? (
                 modules.map((module, index) => (
                   <S.BtnModule key={index}>
-                    <S.TextBtn>{module.name}</S.TextBtn>
+                    <S.TextBtn>{`Módulo ${index + 1}`}</S.TextBtn>
                   </S.BtnModule>
                 ))
               ) : (
