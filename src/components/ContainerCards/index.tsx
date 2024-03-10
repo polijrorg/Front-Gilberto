@@ -1,5 +1,4 @@
 /* eslint-disable react-native/no-inline-styles */
-
 import Card from '@components/Cards';
 import * as S from './styles';
 import React, { useEffect, useState } from 'react';
@@ -8,37 +7,37 @@ import ISupervisor from '@interfaces/Supervisor';
 import useAuth from '@hooks/useAuth';
 import SellerServices from '@services/SellerServices';
 import SupervisorServices from '@services/SupervisorServices';
-import { View, Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 
 type IContainer = {
   search?: string;
 };
 
-/*IMPORTANTE: AQUI EU FIZ UM CONTAINER PARA VENDEDORES E PARA SUPERVISORES */
-
 const SellersContainer: React.FC<IContainer> = ({ search }) => {
   const { user } = useAuth();
   const [sellers, setSellers] = useState<ISeller[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const isFocused = useIsFocused();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
+        let sellersData: ISeller[] = [];
         if (user.job === 'Supervisor') {
-          const sellersData = await SellerServices.getAllSellerFromSupervisor(
+          sellersData = await SellerServices.getAllSellerFromSupervisor(
             user.id
           );
-          setSellers(sellersData);
         } else if (user.job === 'Gerente') {
-          const sellersData = await SellerServices.getAllSellerFromManager(
-            user.id
-          );
-          setSellers(sellersData);
+          sellersData = await SellerServices.getAllSellerFromManager(user.id);
         }
+        setSellers(sellersData);
       } catch (error) {
         console.error('Erro ao buscar dados de vendedores:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -64,7 +63,18 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
     <S.DivWrapper>
       <S.TitleSlider>{'Vendedores'}</S.TitleSlider>
       <S.Cards>
-        {filteredSellers.length > 0 ? (
+        {loading ? (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              margin: 24,
+            }}
+          >
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        ) : filteredSellers.length > 0 ? (
           filteredSellers.map((seller, index) => {
             const fullName = seller.name || 'Usuário';
             const nameParts = fullName.split(' ');
@@ -113,15 +123,19 @@ const SupervisorsContainer: React.FC<IContainer> = ({ search }) => {
   const { user } = useAuth();
   const isFocused = useIsFocused();
   const [supervisors, setSupervisors] = useState<ISupervisor[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const supervisorsData =
           await SupervisorServices.getAllSupervisorsFromManager(user.id);
         setSupervisors(supervisorsData);
       } catch (error) {
         console.error('Erro ao buscar dados de supervisores:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -147,7 +161,18 @@ const SupervisorsContainer: React.FC<IContainer> = ({ search }) => {
     <S.DivWrapper>
       <S.TitleSlider>{'Supervisores'}</S.TitleSlider>
       <S.Cards>
-        {filteredSupervisors.length > 0 ? (
+        {loading ? (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              margin: 24,
+            }}
+          >
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        ) : filteredSupervisors.length > 0 ? (
           filteredSupervisors.map((supervisor, index) => {
             const fullName = supervisor.name || 'Usuário';
             const nameParts = fullName.split(' ');
