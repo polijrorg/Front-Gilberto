@@ -7,14 +7,16 @@ interface askProps {
   textAsk: string;
   moduleId: string;
   onChangeValue: (moduleId: string, newValue: number) => void;
+  initialValue?: number; // Propriedade para receber o valor inicial
 }
 
 const InputRange: React.FC<askProps> = ({
   textAsk,
   moduleId,
   onChangeValue,
+  initialValue = 1, // Atribui o valor 1 caso initialValue não seja fornecido
 }) => {
-  const [value, setValue] = useState(1);
+  const [value, setValue] = useState(initialValue); // Usa initialValue como valor inicial
 
   return (
     <S.Container>

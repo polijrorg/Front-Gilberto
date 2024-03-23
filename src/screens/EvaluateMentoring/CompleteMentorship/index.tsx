@@ -8,6 +8,7 @@ import ModuleGradeServices from '@services/ModuleGradeService';
 import DivGradient from '@components/DivGradient';
 import HeaderPages from '@components/HeaderPages';
 import ISeller from '@interfaces/Seller';
+import { useToast } from 'react-native-toast-notifications';
 
 interface RouteParams {
   ModulesEvaluate: Array<{
@@ -27,6 +28,8 @@ const CompleteMentoship: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
   const [comment, setComment] = useState('');
+
+  const toast = useToast();
 
   const days = Array.from(Array(30), (_, i) => (i + 1).toString());
   const months = [
@@ -87,6 +90,12 @@ const CompleteMentoship: React.FC = () => {
         })
       );
       console.log('Módulos avaliados com sucesso');
+      toast.show('Módulos avaliados com sucesso', {
+        type: 'success',
+        placement: 'bottom',
+        duration: 3500,
+        animationType: 'zoom-in',
+      });
     } catch (error) {
       console.error('Erro ao completar o mentorado:', error);
     }

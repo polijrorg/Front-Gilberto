@@ -8,6 +8,8 @@ import HeaderPages from '@components/HeaderPages';
 import IModule from '@interfaces/Module';
 import ISeller from '@interfaces/Seller';
 import ModulesServices from '@services/ModuleServices';
+import ModuleGradeServices from '@services/ModuleGradeService';
+import IModuleGrade from '@interfaces/ModuleGrade';
 
 interface RouteParams {
   module: IModule;
@@ -24,6 +26,7 @@ interface Props {
 const ModuloAsk: React.FC<Props> = ({ route }) => {
   const { seller } = route.params;
   const [modules, setModules] = useState<IModule[]>([]);
+  const [modulesGrades, setModulesGrades] = useState<IModuleGrade[]>();
   const [loading, setLoading] = useState(true);
   const [moduleValues, setModuleValues] = useState<
     Array<{ idModule: string; conhecimento: number; implementacao: number }>
@@ -34,6 +37,9 @@ const ModuloAsk: React.FC<Props> = ({ route }) => {
     const fetchData = async () => {
       try {
         const modulesData = await ModulesServices.getAllModules();
+        const modulesGradeData =
+          await ModuleGradeServices.getModuleGradesByIdSeller(seller.id);
+        setModulesGrades(modulesGradeData);
         setModules(modulesData);
       } catch (error) {
         console.log(error);
@@ -90,38 +96,45 @@ const ModuloAsk: React.FC<Props> = ({ route }) => {
             <S.NomeMentora>{seller.name}</S.NomeMentora>
           </S.DivFilds>
         </S.HeaderMentorado>
-        {modules.map((module, index) => (
-          <S.AskDiv key={module.id}>
-            <S.TitleModule>
-              Módulo {index + 1}: {module.name}
-            </S.TitleModule>
-            <InputRange
-              moduleId={module.id}
-              textAsk="Conhecimento"
-              onChangeValue={(moduleId, value) =>
-                handleUpdateModuleValues(
-                  moduleId,
-                  index,
-                  value,
-                  moduleValues[index]?.implementacao || 0
-                )
-              }
-            />
-            <InputRange
-              moduleId={module.id}
-              textAsk="Implementação"
-              onChangeValue={(moduleId, value) =>
-                handleUpdateModuleValues(
-                  moduleId,
-                  index,
-                  moduleValues[index]?.conhecimento || 0,
-                  value
-                )
-              }
-            />
-          </S.AskDiv>
-        ))}
+        {modules.map((module, index) => {
+          const moduleGrade = modulesGrades.find(
+            (grade) => grade.moduleId === module.id
+          );
 
+          return (
+            <S.AskDiv key={module.id}>
+              <S.TitleModule>
+                Módulo {index + 1}: {module.name}
+              </S.TitleModule>
+              <InputRange
+                moduleId={module.id}
+                textAsk="Conhecimento"
+                initialValue={moduleGrade?.knowledgeScore || 1}
+                onChangeValue={(moduleId, value) =>
+                  handleUpdateModuleValues(
+                    moduleId,
+                    index,
+                    value,
+                    moduleValues[index]?.implementacao || 0
+                  )
+                }
+              />
+              <InputRange
+                moduleId={module.id}
+                textAsk="Implementação"
+                initialValue={moduleGrade?.implementationScore || 1}
+                onChangeValue={(moduleId, value) =>
+                  handleUpdateModuleValues(
+                    moduleId,
+                    index,
+                    moduleValues[index]?.conhecimento || 0,
+                    value
+                  )
+                }
+              />
+            </S.AskDiv>
+          );
+        })}
         <S.ButtonConcluir onPress={handleSetComplete}>
           <S.TextBtn>Concluir Avaliação</S.TextBtn>
         </S.ButtonConcluir>
