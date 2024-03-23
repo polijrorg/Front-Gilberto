@@ -2,6 +2,7 @@
   "expo": {
     "name": "Sell Out Expert",
     "slug": "sell-out-expert",
+    "icon":"./public/assets/AppIcon.jpeg",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
