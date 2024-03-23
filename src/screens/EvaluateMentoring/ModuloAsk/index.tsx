@@ -1,4 +1,4 @@
-import { RouteProp } from '@react-navigation/native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
 import * as S from './styles';
 import React, { useEffect, useState } from 'react';
 import { StatusBar, ActivityIndicator, View, StyleSheet } from 'react-native';
@@ -25,6 +25,10 @@ const ModuloAsk: React.FC<Props> = ({ route }) => {
   const { seller } = route.params;
   const [modules, setModules] = useState<IModule[]>([]);
   const [loading, setLoading] = useState(true);
+  const [moduleValues, setModuleValues] = useState<
+    Array<{ idModule: string; conhecimento: number; implementacao: number }>
+  >([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,6 +45,23 @@ const ModuloAsk: React.FC<Props> = ({ route }) => {
     fetchData();
   }, [seller]);
 
+  const handleUpdateModuleValues = (
+    moduleId: string,
+    index: number,
+    conhecimento: number,
+    implementacao: number
+  ) => {
+    setModuleValues((prevValues) => {
+      const updatedValues = [...prevValues];
+      updatedValues[index] = {
+        idModule: moduleId,
+        conhecimento,
+        implementacao,
+      };
+      return updatedValues;
+    });
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -48,6 +69,13 @@ const ModuloAsk: React.FC<Props> = ({ route }) => {
       </View>
     );
   }
+
+  const handleSetComplete = () => {
+    navigation.navigate('CompleteMentoring', {
+      Seller: seller,
+      ModulesEvaluate: moduleValues,
+    });
+  };
 
   return (
     <>
@@ -67,11 +95,34 @@ const ModuloAsk: React.FC<Props> = ({ route }) => {
             <S.TitleModule>
               Módulo {index + 1}: {module.name}
             </S.TitleModule>
-            <InputRange textAsk="Conhecimento" />
-            <InputRange textAsk="Implementação" />
+            <InputRange
+              moduleId={module.id}
+              textAsk="Conhecimento"
+              onChangeValue={(moduleId, value) =>
+                handleUpdateModuleValues(
+                  moduleId,
+                  index,
+                  value,
+                  moduleValues[index]?.implementacao || 0
+                )
+              }
+            />
+            <InputRange
+              moduleId={module.id}
+              textAsk="Implementação"
+              onChangeValue={(moduleId, value) =>
+                handleUpdateModuleValues(
+                  moduleId,
+                  index,
+                  moduleValues[index]?.conhecimento || 0,
+                  value
+                )
+              }
+            />
           </S.AskDiv>
         ))}
-        <S.ButtonConcluir>
+
+        <S.ButtonConcluir onPress={handleSetComplete}>
           <S.TextBtn>Concluir Avaliação</S.TextBtn>
         </S.ButtonConcluir>
       </S.Wrapper>

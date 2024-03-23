@@ -7,6 +7,7 @@ import { SellerAdded } from '@screens/SellerAdded';
 import Login from '@screens/Login';
 import TabNav from '@routes/TabNav';
 import EvaluateMentoring from '@screens/EvaluateMentoring';
+import CompleteMentorship from '@screens/EvaluateMentoring/CompleteMentorship';
 import EvaluateVisit from '@screens/EvaluateVisit';
 import useAuth from '@hooks/useAuth';
 import ModuloAsk from '@screens/EvaluateMentoring/ModuloAsk';
@@ -51,6 +52,12 @@ const AppRoutes: React.FC = () => {
       <AppStack.Screen
         name="AskEvaluateMentoring"
         component={ModuloAsk}
+        options={{ header: () => <></> }}
+      />
+
+      <AppStack.Screen
+        name="CompleteMentoring"
+        component={CompleteMentorship}
         options={{ header: () => <></> }}
       />
 

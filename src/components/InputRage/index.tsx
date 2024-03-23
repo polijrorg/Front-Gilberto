@@ -5,9 +5,15 @@ import Slider from '@react-native-community/slider';
 
 interface askProps {
   textAsk: string;
+  moduleId: string;
+  onChangeValue: (moduleId: string, newValue: number) => void;
 }
 
-const InputRange: React.FC<askProps> = ({ textAsk }) => {
+const InputRange: React.FC<askProps> = ({
+  textAsk,
+  moduleId,
+  onChangeValue,
+}) => {
   const [value, setValue] = useState(1);
 
   return (
@@ -24,12 +30,14 @@ const InputRange: React.FC<askProps> = ({ textAsk }) => {
           maximumTrackTintColor="#D9E2FC"
           thumbTintColor="#3E63DD"
           value={value}
-          onValueChange={(newValue) => setValue(newValue)}
+          step={1}
+          onValueChange={(newValue) => {
+            setValue(newValue);
+            onChangeValue(moduleId, newValue);
+          }}
         />
         <Text style={styles.sliderValue}>
-          {value !== 1 && value !== 5
-            ? value.toFixed(2).replace('.', ',')
-            : value.toFixed(0).replace('.', ',')}
+          {value.toFixed(0).replace('.', ',')}
         </Text>
       </S.SliderContainer>
     </S.Container>
