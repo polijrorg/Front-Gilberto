@@ -41,6 +41,7 @@ export const Input = styled(TextInput)`
   border-color: #d7dbdf;
   font-size: 12px;
   font-weight: 400;
+  color: #687076;
 `;
 
 export const ButtonIniciar = styled(TouchableOpacity)`

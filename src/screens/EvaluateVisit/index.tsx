@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import * as S from './styles';
 import { useNavigation } from '@react-navigation/native';
@@ -6,6 +5,8 @@ import Breadcrumb from '@components/Breadcrumb';
 import Dropdown from '@components/Dropdown';
 import useAuth from '@hooks/useAuth';
 import SellerService from '@services/SellerServices';
+import CompanyService from '@services/CompanyService';
+import ICompany from '@interfaces/Company';
 import ISeller from '@interfaces/Seller';
 import HeaderPages from '@components/HeaderPages';
 
@@ -13,9 +14,9 @@ const EvaluateVisit = () => {
   const navigation = useNavigation();
   const { user } = useAuth();
   const [sellers, setSellers] = useState<ISeller[]>([]);
-  const [selectedSupervisor, setSelectedSupervisor] = useState<ISeller | null>(
-    null
-  );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [selectedSeller, setSelectedSeller] = useState<ISeller | null>(null);
+  const [company, setCompany] = useState<ICompany | null>();
   const [path, setPath] = useState([
     { name: '1', path: '' },
     { name: '2', path: 'ScreenSequence' },
@@ -42,8 +43,16 @@ const EvaluateVisit = () => {
     fetchData();
   }, [user.id, user.job]);
 
-  const handleSelect = (seller: ISeller) => {
-    setSelectedSupervisor(seller);
+  const handleSelect = async (seller: ISeller) => {
+    setSelectedSeller(seller);
+    setCompany(await findyCompanyById(seller));
+  };
+
+  const findyCompanyById = async (seller: ISeller) => {
+    const companyResponse = await CompanyService.getCompanyById(
+      seller.companyId
+    );
+    return companyResponse;
   };
 
   const handleNavigation = (index) => {
@@ -65,7 +74,11 @@ const EvaluateVisit = () => {
           </S.DivContainer>
           <S.DivContainer>
             <S.TitleInput>Loja</S.TitleInput>
-            <S.Input placeholder="Nome da Loja" />
+            <S.Input
+              placeholder="Nome da Loja"
+              readOnly
+              value={company?.name}
+            />
           </S.DivContainer>
         </S.ContainerFields>
         <S.ButtonIniciar>
