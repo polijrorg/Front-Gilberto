@@ -1,5 +1,4 @@
 /* eslint-disable react-native/no-inline-styles */
-
 import Card from '@components/Cards';
 import * as S from './styles';
 import React, { useEffect, useState } from 'react';
@@ -8,37 +7,51 @@ import ISupervisor from '@interfaces/Supervisor';
 import useAuth from '@hooks/useAuth';
 import SellerServices from '@services/SellerServices';
 import SupervisorServices from '@services/SupervisorServices';
-import { View, Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
+import ModulesServices from '@services/ModuleServices';
 
 type IContainer = {
   search?: string;
 };
 
-/*IMPORTANTE: AQUI EU FIZ UM CONTAINER PARA VENDEDORES E PARA SUPERVISORES */
-
 const SellersContainer: React.FC<IContainer> = ({ search }) => {
   const { user } = useAuth();
   const [sellers, setSellers] = useState<ISeller[]>([]);
+  const [media, setMedia] = useState<{ [key: string]: number }>({});
+  const [loading, setLoading] = useState(true);
 
   const isFocused = useIsFocused();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (user.job === 'Supervisor') {
-          const sellersData = await SellerServices.getAllSellerFromSupervisor(
-            user.id
+        setLoading(true);
+        const sellersData: ISeller[] =
+          user.job === 'Supervisor'
+            ? await SellerServices.getAllSellerFromSupervisor(user.id)
+            : await SellerServices.getAllSellerFromManager(user.id);
+
+        const mediaData: { [key: string]: number } = {};
+        for (const seller of sellersData) {
+          const moduleGrades = await ModulesServices.getModuleGradesByIdSeller(
+            seller.id
           );
-          setSellers(sellersData);
-        } else if (user.job === 'Gerente') {
-          const sellersData = await SellerServices.getAllSellerFromManager(
-            user.id
+          const totalGrade = moduleGrades.reduce(
+            (sum, grade) => sum + grade.media,
+            0
           );
-          setSellers(sellersData);
+          const averageGrade =
+            moduleGrades.length > 0 ? totalGrade / moduleGrades.length : 0;
+          mediaData[seller.id] = averageGrade;
         }
+
+        setSellers(sellersData);
+        setMedia(mediaData);
       } catch (error) {
         console.error('Erro ao buscar dados de vendedores:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -64,11 +77,21 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
     <S.DivWrapper>
       <S.TitleSlider>{'Vendedores'}</S.TitleSlider>
       <S.Cards>
-        {filteredSellers.length > 0 ? (
+        {loading ? (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              margin: 24,
+            }}
+          >
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        ) : filteredSellers.length > 0 ? (
           filteredSellers.map((seller, index) => {
             const fullName = seller.name || 'Usuário';
             const nameParts = fullName.split(' ');
-
             let displayName = '';
             if (nameParts.length > 1) {
               const firstName = nameParts[0];
@@ -78,6 +101,8 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
               displayName = fullName;
             }
 
+            const sellerMedia = media[seller.id] || 0;
+
             return (
               <Card
                 key={index}
@@ -86,7 +111,7 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
                 cargo={seller.job}
                 supervisorId={seller.supervisorId}
                 companyId={seller.companyId}
-                nota={3.2} // Ajuste isso para obter a nota correta de cada tipo de dados (supervisor ou vendedor)
+                nota={sellerMedia} // Aqui exibimos a média do vendedor
               />
             );
           })
@@ -113,15 +138,19 @@ const SupervisorsContainer: React.FC<IContainer> = ({ search }) => {
   const { user } = useAuth();
   const isFocused = useIsFocused();
   const [supervisors, setSupervisors] = useState<ISupervisor[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const supervisorsData =
           await SupervisorServices.getAllSupervisorsFromManager(user.id);
         setSupervisors(supervisorsData);
       } catch (error) {
         console.error('Erro ao buscar dados de supervisores:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -147,7 +176,18 @@ const SupervisorsContainer: React.FC<IContainer> = ({ search }) => {
     <S.DivWrapper>
       <S.TitleSlider>{'Supervisores'}</S.TitleSlider>
       <S.Cards>
-        {filteredSupervisors.length > 0 ? (
+        {loading ? (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              margin: 24,
+            }}
+          >
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        ) : filteredSupervisors.length > 0 ? (
           filteredSupervisors.map((supervisor, index) => {
             const fullName = supervisor.name || 'Usuário';
             const nameParts = fullName.split(' ');

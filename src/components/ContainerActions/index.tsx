@@ -29,6 +29,10 @@ const ContainerActions: React.FC = () => {
     }
   };
 
+  const handleEnviarEvaluateVisit = () => {
+    navigation.navigate('EvaluateVisit' as never);
+  };
+
   const getButtonText = (buttonType: string) => {
     const userTypeConfig = buttonConfig[user.job] || buttonConfig.default;
     return userTypeConfig[buttonType];
@@ -44,7 +48,10 @@ const ContainerActions: React.FC = () => {
           text={getButtonText('mentorado')}
           duty={handleEnviarEvaluateMentoring}
         />
-        <ButtonWhite text={getButtonText('visita')} />
+        <ButtonWhite
+          text={getButtonText('visita')}
+          duty={handleEnviarEvaluateVisit}
+        />
       </S.DivActions>
     </S.ContainerActions>
   );

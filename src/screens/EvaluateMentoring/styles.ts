@@ -30,7 +30,7 @@ export const Container = styled(View)`
   margin: 10px auto;
 `;
 
-export const DivContanerSeller = styled(View)`
+export const DivContainerSeller = styled(View)`
   width: 100%;
   height: auto;
   padding: 8px 0;
@@ -39,22 +39,28 @@ export const DivContanerSeller = styled(View)`
 `;
 
 export const ContainerButton = styled(View)`
+  max-width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 `;
 
 export const BtnModule = styled(TouchableOpacity)`
   background-color: #f1f3f5;
   padding: 4px 8px;
   border-radius: 4px;
+  max-width: 100%;
 `;
 
 export const TextBtn = styled(Text)`
   font-family: Poppins;
+  margin: 0 auto;
   font-weight: 400;
   font-size: 12px;
+  color: #000000;
 `;
 
 export const StyledText = styled(Text)`
