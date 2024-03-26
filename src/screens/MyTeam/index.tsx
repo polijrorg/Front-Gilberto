@@ -21,7 +21,7 @@ const MyTeam = () => {
 
   return (
     <S.WrapperTela>
-      <StatusBar />
+      <StatusBar backgroundColor="#3E63DD" style="light" />
       <S.Wrapper>
         <HeaderPages title="Minha Equipe" />
         <S.DivContainerInput>

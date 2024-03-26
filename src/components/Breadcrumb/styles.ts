@@ -8,14 +8,28 @@ export const Container = styled(View)`
   align-items: center;
   justify-content: center;
   border-radius: 8px;
+  margin: 16px 0;
 `;
 
-export const Button = styled(TouchableOpacity)`
+export const Button = styled(TouchableOpacity)<{
+  Selected: 'check' | 'selected' | 'false';
+}>`
   width: 16px;
   height: 16px;
   padding: 0px;
   border-radius: 8px;
-  background-color: #c1c8cd;
+  background-color: ${({ Selected }) => {
+    switch (Selected) {
+      case 'check':
+        return '#46A758';
+      case 'selected':
+        return '#3E63DD';
+      case 'false':
+        return '#c1c8cd';
+      default:
+        return '#c1c8cd';
+    }
+  }};
   display: flex;
   align-items: center;
   justify-content: center;

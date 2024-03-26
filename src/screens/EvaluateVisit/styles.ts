@@ -1,4 +1,8 @@
-import { TouchableOpacity, StatusBar as RNStatusBar } from 'react-native';
+import {
+  TouchableOpacity,
+  StatusBar as RNStatusBar,
+  ScrollView,
+} from 'react-native';
 import { Text } from 'react-native';
 import { TextInput, View } from 'react-native';
 import styled from 'styled-components/native';
@@ -12,23 +16,22 @@ export const WrapperView = styled(View)`
 
 export const ContainerFields = styled(View)`
   max-width: 100%;
-  height: auto;
+  height: 100%;
   display: flex;
-  justify-content: space-around;
-  gap: 24px;
-  padding: 10px 16px;
 `;
 
-export const DivContainer = styled(View)`
+export const DivContainer = styled(ScrollView)`
   width: 100%;
-  height: auto;
-  gap: 4px;
+  height: 100%;
+  margin: 10px auto;
+  padding: 16px 8px;
 `;
 
 export const TitleInput = styled(Text)`
   font-family: Poppins;
   font-size: 12px;
   font-weight: 400;
+  margin: 8px 0;
 `;
 
 export const Input = styled(TextInput)`
@@ -44,18 +47,30 @@ export const Input = styled(TextInput)`
   color: #687076;
 `;
 
-export const ButtonIniciar = styled(TouchableOpacity)`
+export const ButtonFirst = styled(TouchableOpacity)`
   padding: 8px 24px;
   background-color: #3e63dd;
-  width: 95%;
+  width: 100%;
+  height: auto;
+
   display: flex;
-  position: absolute;
-  bottom: 0;
-  left: 10px;
   justify-content: center;
   align-items: center;
   border-radius: 8px;
-  margin: 0 auto;
+
+  margin-top: 120%;
+`;
+
+export const ButtonIniciar = styled(TouchableOpacity)`
+  padding: 8px 24px;
+  background-color: #3e63dd;
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  margin: 16px auto;
 `;
 
 export const TextBtn = styled(Text)`

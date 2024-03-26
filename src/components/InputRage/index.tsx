@@ -4,9 +4,9 @@ import { StyleSheet, Text } from 'react-native';
 import Slider from '@react-native-community/slider';
 
 interface askProps {
-  textAsk: string;
-  moduleId: string;
-  onChangeValue: (moduleId: string, newValue: number) => void;
+  textAsk?: string;
+  moduleId?: string;
+  onChangeValue?: (moduleId: string, newValue: number) => void;
   initialValue?: number; // Propriedade para receber o valor inicial
 }
 
@@ -14,10 +14,9 @@ const InputRange: React.FC<askProps> = ({
   textAsk,
   moduleId,
   onChangeValue,
-  initialValue = 1, // Atribui o valor 1 caso initialValue não seja fornecido
+  initialValue = 1,
 }) => {
-  const [value, setValue] = useState(initialValue); // Usa initialValue como valor inicial
-
+  const [value, setValue] = useState(initialValue);
   return (
     <S.Container>
       <S.Title>{textAsk}</S.Title>

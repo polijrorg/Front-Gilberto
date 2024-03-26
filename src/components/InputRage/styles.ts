@@ -6,7 +6,7 @@ export const Title = styled(Text)`
   color: black;
 `;
 export const Container = styled(View)`
-  flex: 1;
+  height: fit-content;
 `;
 
 export const SliderContainer = styled(View)`

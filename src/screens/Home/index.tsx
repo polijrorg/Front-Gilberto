@@ -16,7 +16,7 @@ const Home = () => {
   const { user } = useAuth();
   return (
     <>
-      <StatusBar />
+      <StatusBar backgroundColor="#3E63DD" style="light" />
       <S.Wrapper>
         <Header />
         <ContainerActions />
