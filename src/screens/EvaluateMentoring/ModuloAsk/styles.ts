@@ -4,6 +4,7 @@ import {
   View,
   Text,
   Image,
+  TextInput,
 } from 'react-native';
 import styled from 'styled-components/native';
 import { theme } from '@styles/default.theme';
@@ -56,6 +57,18 @@ export const AskDiv = styled(View)`
   border-width: 1px;
   border-color: #d7dbdf;
   border-radius: 4px;
+`;
+
+export const TextArea = styled(TextInput)`
+  background-color: #f1f3f5;
+  border: 1px;
+  border-width: 1px;
+  border-color: #d7dbdf;
+  color: #687076;
+  font-size: 16px;
+  padding: 16px;
+  border-radius: 8px;
+  vertical-align: top;
 `;
 
 export const TitleModule = styled(Text)`

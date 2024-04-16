@@ -15,6 +15,7 @@ interface RouteParams {
     idModule: string;
     conhecimento: number;
     implementacao: number;
+    comment: string;
   }>;
   Seller: ISeller;
 }
@@ -22,7 +23,7 @@ interface RouteParams {
 const CompleteMentoship: React.FC = () => {
   const route = useRoute<RouteProp<{ ModuloAsk: RouteParams }, 'ModuloAsk'>>();
   const { ModulesEvaluate, Seller } = route.params;
-
+  console.log(ModulesEvaluate, Seller);
   const [selectedAction, setSelectedAction] = useState('');
   const [selectedDay, setSelectedDay] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');
@@ -50,6 +51,7 @@ const CompleteMentoship: React.FC = () => {
 
   const handleComplete = async () => {
     console.log('complete');
+    // Aqui você pode enviar os valores selecionados para onde for necessário
   };
 
   const handleCompleteWithoutActionPlan = async () => {
@@ -58,7 +60,6 @@ const CompleteMentoship: React.FC = () => {
         ModulesEvaluate.map(async (element) => {
           try {
             if (element) {
-              // Verifica se element não é indefinido
               const moduleGrades =
                 await ModuleGradeServices.getModuleGradesByIdSeller(Seller.id);
               const existingModuleGrade = moduleGrades.find(
@@ -67,17 +68,17 @@ const CompleteMentoship: React.FC = () => {
               if (existingModuleGrade) {
                 await ModuleGradeServices.updateModuleGrade(
                   existingModuleGrade.id,
-                  comment,
-                  element.conhecimento,
-                  element.implementacao
+                  element.comment,
+                  element.implementacao,
+                  element.conhecimento
                 );
               } else {
                 await ModuleGradeServices.create(
                   comment,
                   element.idModule,
                   Seller.id,
-                  element.conhecimento,
-                  element.implementacao
+                  element.implementacao,
+                  element.conhecimento
                 );
               }
             }

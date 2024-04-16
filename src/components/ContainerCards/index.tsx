@@ -73,6 +73,8 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
     );
   }
 
+  filteredSellers.sort((a, b) => media[b.id] - media[a.id]);
+
   return (
     <S.DivWrapper>
       <S.TitleSlider>{'Vendedores'}</S.TitleSlider>

@@ -44,7 +44,6 @@ const Mentoring = ({ route }) => {
   return (
     <S.Wrapper>
       {isLoading ? (
-        // Se isLoading for verdadeiro, exibe o ActivityIndicator centralizado
         <View
           style={{
             flex: 1,
@@ -57,7 +56,6 @@ const Mentoring = ({ route }) => {
           <ActivityIndicator color="#3E63DD" />
         </View>
       ) : modules.length === 0 ? (
-        // Se não houver módulos disponíveis, exibe uma mensagem
         <View
           style={{
             flex: 1,
@@ -70,19 +68,25 @@ const Mentoring = ({ route }) => {
           <Text>Nenhum módulo disponível</Text>
         </View>
       ) : (
-        // Se houver módulos, exibe os módulos
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <S.WrapperView>
             {modules.map((module, index) => (
               <Accordion
                 key={index}
+                comment={moduleGrade[index]?.supervisorComment}
                 title={
                   `Módulo ${index + 1}: ${module.name}` || 'Módulo X: Tema'
                 }
                 implementation={
-                  moduleGrade[index]?.implementationScore || 'X,X'
+                  moduleGrade[index]?.implementationScore === 0
+                    ? '0,0'
+                    : moduleGrade[index]?.implementationScore || 'X.X'
                 }
-                knowledge={moduleGrade[index]?.knowledgeScore || 'X,X'}
+                knowledge={
+                  moduleGrade[index]?.knowledgeScore === 0
+                    ? '0,0'
+                    : moduleGrade[index]?.knowledgeScore || 'X.X'
+                }
               />
             ))}
           </S.WrapperView>
