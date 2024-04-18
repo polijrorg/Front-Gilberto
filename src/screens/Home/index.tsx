@@ -9,7 +9,6 @@ import {
   SupervisorsContainer,
 } from '@components/ContainerCards';
 import ButtonAdded from '@components/ButtonAdded';
-import DivGradient from '@components/DivGradient';
 import useAuth from '@hooks/useAuth';
 
 const Home = () => {
@@ -26,7 +25,6 @@ const Home = () => {
         ) : (
           <SellersContainer />
         )}
-        <DivGradient />
       </S.Wrapper>
       <ButtonAdded />
     </>
