@@ -49,10 +49,7 @@ const EvaluateVisit = () => {
   };
 
   const handleAdvance = () => {
-    setIndexScreen(indexScreen + 1);
-    if (indexScreen > 7) {
-      setIndexScreen(1);
-    }
+    setIndexScreen(indexScreen < 7 ? indexScreen + 1 : 1);
   };
 
   const handleNavigation = (index: number) => {
@@ -69,16 +66,24 @@ const EvaluateVisit = () => {
             handleNavigation={handleNavigation}
             selected={indexScreen}
           />
+          <S.DivSellerInfo>
+            <S.DivSellerImage>
+              <S.ImageSeller
+                source={require('@assets/img/cardVendedor/foto.png')}
+              />
+            </S.DivSellerImage>
+            <S.DivInfoSeller>
+              <S.InfoSeller>
+                {selectedSeller ? selectedSeller.name : 'Nome do vendedor'}
+              </S.InfoSeller>
+            </S.DivInfoSeller>
+          </S.DivSellerInfo>
           {indexScreen === 1 && (
             <S.DivContainer>
               <S.TitleInput>Nome do Vendedor</S.TitleInput>
               <Dropdown sellers={sellers} onSelectSeller={handleSelect} />
               <S.TitleInput>Loja</S.TitleInput>
-              <S.Input
-                placeholder="Nome da Loja"
-                readOnly
-                value={company?.name}
-              />
+              <S.Input placeholder="Nome da Loja" />
               <S.ButtonFirst onPress={handleAdvance}>
                 <S.TextBtn>iniciar Avaliação</S.TextBtn>
               </S.ButtonFirst>
@@ -133,11 +138,7 @@ const EvaluateVisit = () => {
                 title="5. Identificação de objeções"
                 textAsk="Surgiram objeções durante a apresentação da proposta de vendas?"
               />
-              <Question textAsk="Vendedor se manteve calmo ao se deparar com a objeção?" />
               <Question textAsk="Utilizou as técnicas de comunicação para identificar objeções (falsas/verdadeiras)?" />
-              <Question textAsk="Propôs um fechamento?" />
-              <Question textAsk="Surgiram objeções durante a apresentação da proposta de vendas?" />
-              <Question textAsk="Vendedor se manteve calmo ao se deparar com a objeção?" />
               <Question textAsk="Conduziu a apresentação com segurança e coerência?" />
               <Question textAsk="Enfatizou os benefícios da proposta para o cliente?" />
               <S.ButtonIniciar onPress={handleAdvance}>

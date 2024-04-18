@@ -2,6 +2,7 @@ import {
   TouchableOpacity,
   StatusBar as RNStatusBar,
   ScrollView,
+  Image,
 } from 'react-native';
 import { Text } from 'react-native';
 import { TextInput, View } from 'react-native';
@@ -9,7 +10,7 @@ import styled from 'styled-components/native';
 
 export const WrapperView = styled(View)`
   width: 100%;
-  height: 90%;
+  height: 100%;
   margin-top: ${RNStatusBar.currentHeight || 0}px;
   display: flex;
 `;
@@ -18,6 +19,42 @@ export const ContainerFields = styled(View)`
   max-width: 100%;
   height: 100%;
   display: flex;
+`;
+
+export const DivSellerInfo = styled(View)`
+  width: 50%;
+  height: auto;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  padding: 8px 0px;
+  align-items: center;
+  justify-content: space-around;
+`;
+
+export const DivSellerImage = styled(View)`
+  width: 64px;
+  height: 64px;
+`;
+
+export const ImageSeller = styled(Image)`
+  width: 64px;
+  height: 64px;
+`;
+
+export const DivInfoSeller = styled(View)`
+  width: 100%;
+  justify-content: flex-start;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+`;
+
+export const InfoSeller = styled(Text)`
+  font-size: 16px;
+  max-width: 75%;
+  font-family: Poppins;
+  margin-left: 24px;
 `;
 
 export const DivContainer = styled(ScrollView)`
@@ -58,7 +95,7 @@ export const ButtonFirst = styled(TouchableOpacity)`
   align-items: center;
   border-radius: 8px;
 
-  margin-top: 120%;
+  margin-top: 80%;
 `;
 
 export const ButtonIniciar = styled(TouchableOpacity)`
@@ -68,6 +105,8 @@ export const ButtonIniciar = styled(TouchableOpacity)`
   height: auto;
   display: flex;
   justify-content: center;
+  margin: 0;
+  scroll-behavior: auto;
   align-items: center;
   border-radius: 8px;
   margin: 16px auto;
