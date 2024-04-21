@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, ActivityIndicator, Text, ScrollView } from 'react-native';
 import * as S from './styles';
-import Accordion from '@components/Accordion';
+import Accordion from '@components/AccordionMentory';
 import ModulesServices from '@services/ModuleServices';
 import IModuleGrade from '@interfaces/ModuleGrade';
 import IModule from '@interfaces/Module';

@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import styled from 'styled-components/native';
 import { theme } from '@styles/default.theme';
 
@@ -12,20 +12,4 @@ export const Wrapper = styled(View)`
   justify-content: center;
   border-bottom-width: 1px;
   border-bottom-color: #d1d1d1; // Cor ajustada
-`;
-
-export const WrapperChart = styled(View)`
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-export const TitleSlider = styled(Text)`
-  color: #687076;
-  font-size: 16px;
-  font-weight: 400;
-  margin: 5px 0;
-  align-self: flex-start;
-  align-items: flex-start;
 `;

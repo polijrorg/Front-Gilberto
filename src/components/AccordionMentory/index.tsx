@@ -10,7 +10,7 @@ type AccordionProps = {
   comment?: string;
 };
 
-const Accordion: React.FC<AccordionProps> = ({
+const AccordionMentory: React.FC<AccordionProps> = ({
   title,
   implementation,
   knowledge,
@@ -128,4 +128,4 @@ const Accordion: React.FC<AccordionProps> = ({
   );
 };
 
-export default Accordion;
+export default AccordionMentory;
