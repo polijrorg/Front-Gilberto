@@ -6,7 +6,7 @@ interface PlainActionProps {
   state: number;
 }
 
-const PlainMentory: React.FC<PlainActionProps> = ({ state }) => {
+const PlainMentory: React.FC<PlainActionProps> = () => {
   const cities = [
     { label: 'City 1', value: 'City 1' },
     { label: 'City 2', value: 'City 2' },
