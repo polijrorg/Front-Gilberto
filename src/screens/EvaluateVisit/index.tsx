@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import * as S from './styles';
 import { useNavigation } from '@react-navigation/native';
@@ -7,6 +6,7 @@ import Dropdown from '@components/Dropdown';
 import useAuth from '@hooks/useAuth';
 import SellerService from '@services/SellerServices';
 import CompanyService from '@services/CompanyService';
+import VisitService from '@services/VisitService';
 import ICompany from '@interfaces/Company';
 import ISeller from '@interfaces/Seller';
 import HeaderPages from '@components/HeaderPages';
@@ -21,7 +21,7 @@ const EvaluateVisit = () => {
   const [company, setCompany] = useState<ICompany | null>();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchSellers = async () => {
       try {
         const sellersData =
           user.job === 'Supervisor'
@@ -33,15 +33,25 @@ const EvaluateVisit = () => {
       }
     };
 
-    fetchData();
+    fetchSellers();
   }, [user.id, user.job]);
 
-  const handleSelect = async (seller: ISeller) => {
+  const handleSelectSeller = async (seller: ISeller) => {
     setSelectedSeller(seller);
-    setCompany(await findyCompanyById(seller));
+    setCompany(await findCompanyById(seller));
+    const visitTemplate = await VisitService.getTemplateByCompanyId(
+      seller.companyId
+    );
+    const categories = await VisitService.getCategoriesByIdTemplate(
+      visitTemplate[0].id
+    );
+    const questions = await VisitService.getQuestionsByIdCategory(
+      categories[0].id
+    );
+    console.log(questions, categories, visitTemplate);
   };
 
-  const findyCompanyById = async (seller: ISeller) => {
+  const findCompanyById = async (seller: ISeller) => {
     const companyResponse = await CompanyService.getCompanyById(
       seller.companyId
     );
@@ -79,99 +89,80 @@ const EvaluateVisit = () => {
             </S.DivInfoSeller>
           </S.DivSellerInfo>
           {indexScreen === 1 && (
-            <S.DivContainer>
-              <S.TitleInput>Nome do Vendedor</S.TitleInput>
-              <Dropdown sellers={sellers} onSelectSeller={handleSelect} />
-              <S.TitleInput>Loja</S.TitleInput>
-              <S.Input placeholder="Nome da Loja" />
-              <S.ButtonFirst onPress={handleAdvance}>
-                <S.TextBtn>iniciar Avaliação</S.TextBtn>
-              </S.ButtonFirst>
-            </S.DivContainer>
+            <SellerSelection
+              sellers={sellers}
+              onSelectSeller={handleSelectSeller}
+              onAdvance={handleAdvance}
+            />
           )}
-
-          {indexScreen === 2 && (
-            <S.DivContainer>
-              <Question
-                title="2. Planejamento"
-                textAsk="O material de trabalho está em ordem (tablet, política comercial, catálogo)?"
-              />
-              <Question textAsk="Apresentou plano de vendas para o cliente visitado?" />
-              <Question textAsk="Apresentou planos alinhados à expectativa (S.M.A.R.T)?" />
-              <S.ButtonIniciar onPress={handleAdvance}>
-                <S.TextBtn>Próximo</S.TextBtn>
-              </S.ButtonIniciar>
-            </S.DivContainer>
-          )}
-          {indexScreen === 3 && (
-            <S.DivContainer>
-              <Question
-                title="3. Aproximação"
-                textAsk="Realizou verificação de produtos em gôndola?"
-              />
-              <Question textAsk="Buscou formas de melhorar visibilidade de itens?" />
-              <Question textAsk="Verificou se precificação aplicada pelo cliente é coerente com objetivos?" />
-              <Question textAsk="Pesquisou novos meios de promoção para produtos?" />
-              <Question textAsk="Identificou rupturas de itens já cadastrados?" />
-              <S.ButtonIniciar onPress={handleAdvance}>
-                <S.TextBtn>Próximo</S.TextBtn>
-              </S.ButtonIniciar>
-            </S.DivContainer>
-          )}
-          {indexScreen === 4 && (
-            <S.DivContainer>
-              <Question
-                title="4. Apresentação"
-                textAsk="Fez revisão de sua proposta inicial, após checagem de loja?"
-              />
-              <Question textAsk="Elencou prioridades de acordo com as estratégias comerciais?" />
-              <Question textAsk="Conduziu a apresentação com segurança e coerência?" />
-              <Question textAsk="Enfatizou os benefícios da proposta para o cliente?" />
-              <S.ButtonIniciar onPress={handleAdvance}>
-                <S.TextBtn>Próximo</S.TextBtn>
-              </S.ButtonIniciar>
-            </S.DivContainer>
-          )}
-          {indexScreen === 5 && (
-            <S.DivContainer>
-              <Question
-                title="5. Identificação de objeções"
-                textAsk="Surgiram objeções durante a apresentação da proposta de vendas?"
-              />
-              <Question textAsk="Utilizou as técnicas de comunicação para identificar objeções (falsas/verdadeiras)?" />
-              <Question textAsk="Conduziu a apresentação com segurança e coerência?" />
-              <Question textAsk="Enfatizou os benefícios da proposta para o cliente?" />
-              <S.ButtonIniciar onPress={handleAdvance}>
-                <S.TextBtn>Próximo</S.TextBtn>
-              </S.ButtonIniciar>
-            </S.DivContainer>
-          )}
-          {indexScreen === 6 && (
-            <S.DivContainer>
-              <Question
-                title="6. Cobranças"
-                textAsk="Questionou ao cliente sobre alguma pendência acordada anteriormente?"
-              />
-              <Question textAsk="Iniciou processo de cobrança relativo a pendências financeiras?" />
-              <S.ButtonIniciar onPress={handleAdvance}>
-                <S.TextBtn>Próximo</S.TextBtn>
-              </S.ButtonIniciar>
-            </S.DivContainer>
-          )}
-          {indexScreen === 7 && (
-            <S.DivContainer>
-              <Question
-                title="7. Acompanhamento"
-                textAsk="Estabeleceu agenda de acompanhamento para os acordos firmados?"
-              />
-              <S.ButtonIniciar onPress={handleAdvance}>
-                <S.TextBtn>Próximo</S.TextBtn>
-              </S.ButtonIniciar>
-            </S.DivContainer>
-          )}
+          {[2, 3, 4, 5, 6, 7].map((screen) => (
+            <QuestionSection
+              key={screen}
+              indexScreen={indexScreen}
+              screen={screen}
+              onAdvance={handleAdvance}
+            />
+          ))}
         </S.ContainerFields>
       </S.WrapperView>
     </>
+  );
+};
+
+const SellerSelection = ({ sellers, onSelectSeller, onAdvance }) => {
+  return (
+    <S.DivContainer>
+      <S.TitleInput>Nome do Vendedor</S.TitleInput>
+      <Dropdown sellers={sellers} onSelectSeller={onSelectSeller} />
+      <S.TitleInput>Loja</S.TitleInput>
+      <S.Input placeholder="Nome da Loja" />
+      <S.ButtonFirst onPress={onAdvance}>
+        <S.TextBtn>iniciar Avaliação</S.TextBtn>
+      </S.ButtonFirst>
+    </S.DivContainer>
+  );
+};
+
+const QuestionSection = ({ indexScreen, screen, onAdvance }) => {
+  const titles = [
+    'Planejamento',
+    'Aproximação',
+    'Apresentação',
+    'Identificação de objeções',
+    'Cobranças',
+    'Acompanhamento',
+  ];
+  const questions = [
+    'O material de trabalho está em ordem (tablet, política comercial, catálogo)?',
+    'Apresentou plano de vendas para o cliente visitado?',
+    'Apresentou planos alinhados à expectativa (S.M.A.R.T)?',
+    'Realizou verificação de produtos em gôndola?',
+    'Buscou formas de melhorar visibilidade de itens?',
+    'Verificou se precificação aplicada pelo cliente é coerente com objetivos?',
+    'Pesquisou novos meios de promoção para produtos?',
+    'Identificou rupturas de itens já cadastrados?',
+    'Fez revisão de sua proposta inicial, após checagem de loja?',
+    'Elencou prioridades de acordo com as estratégias comerciais?',
+    'Conduziu a apresentação com segurança e coerência?',
+    'Enfatizou os benefícios da proposta para o cliente?',
+    'Surgiram objeções durante a apresentação da proposta de vendas?',
+    'Utilizou as técnicas de comunicação para identificar objeções (falsas/verdadeiras)?',
+    'Iniciou processo de cobrança relativo a pendências financeiras?',
+    'Estabeleceu agenda de acompanhamento para os acordos firmados?',
+  ];
+
+  return (
+    indexScreen === screen && (
+      <S.DivContainer>
+        <Question
+          title={`${screen}. ${titles[screen - 2]}`}
+          textAsk={questions[screen - 2]}
+        />
+        <S.ButtonIniciar onPress={onAdvance}>
+          <S.TextBtn>Próximo</S.TextBtn>
+        </S.ButtonIniciar>
+      </S.DivContainer>
+    )
   );
 };
 

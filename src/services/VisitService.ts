@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import { AxiosResponse } from 'axios';
-import ITemplateVisity from '@interfaces/Visit/TemplateVisit';
+import ITemplateVisit from '@interfaces/Visit/TemplateVisit';
 import ICategories from '@interfaces/Visit/Categories';
 import IQuestions from '@interfaces/Visit/Questions';
 
@@ -9,8 +9,8 @@ import api from './api';
 export default class VisitService {
   static async getTemplateByCompanyId(
     idCompany: string
-  ): Promise<ITemplateVisity[]> {
-    const templateResponse: AxiosResponse<ITemplateVisity[]> = await api.get(
+  ): Promise<ITemplateVisit[]> {
+    const templateResponse: AxiosResponse<ITemplateVisit[]> = await api.get(
       `/visitTemplate/getByCompany/${idCompany}`
     );
 
