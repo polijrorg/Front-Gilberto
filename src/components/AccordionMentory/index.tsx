@@ -1,4 +1,4 @@
-/* eslint-disable react-native/no-inline-styles */
+ /* eslint-disable react-native/no-inline-styles */
 import React, { useState } from 'react';
 import { View, Text, TouchableWithoutFeedback, TextInput } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
