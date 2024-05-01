@@ -1,57 +1,76 @@
 import React, { useState } from 'react';
 import * as S from './styles';
 import Select from '@components/Select';
-
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from '@react-native-community/datetimepicker';
+import ISeller from '@interfaces/Seller';
+import IModules from '@interfaces/Module';
+import PlainService from '@services/PlainService';
+import { useToast } from 'react-native-toast-notifications';
 interface PlainActionProps {
-  state: number;
+  setState: () => void;
+  seller: ISeller;
+  modules: IModules[];
 }
 
-const PlainMentory: React.FC<PlainActionProps> = () => {
-  const cities = [
-    { label: 'City 1', value: 'City 1' },
-    { label: 'City 2', value: 'City 2' },
-    { label: 'City 3', value: 'City 3' },
-    { label: 'City 4', value: 'City 4' },
-    { label: 'City 5', value: 'City 5' },
-  ];
-  const days = Array.from({ length: 31 }, (_, index) => ({
-    label: String(index + 1),
-    value: String(index + 1),
-  }));
-  const months = Array.from({ length: 12 }, (_, index) => ({
-    label: String(index + 1),
-    value: String(index + 1),
-  }));
-  const years = Array.from({ length: 10 }, (_, index) => ({
-    label: String(2024 - index),
-    value: String(2024 - index),
-  }));
-
-  const [selectedCity, setSelectedCity] = useState<string>('');
-  const [selectedDay, setSelectedDay] = useState<string>('');
-  const [selectedMonth, setSelectedMonth] = useState<string>('');
-  const [selectedYear, setSelectedYear] = useState<string>('');
+const PlainMentory: React.FC<PlainActionProps> = ({
+  seller,
+  setState,
+  modules,
+}) => {
+  const [selectedValue, setSelectedValue] = useState<string>('');
   const [comment, setComment] = useState('');
-  const [improvement, setImprovement] = useState('');
+  const [titleAction, setTitleAction] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const toast = useToast();
 
-  const handleCityChange = (city: string) => {
-    setSelectedCity(city);
+  const handleModuleChange = (value: string) => {
+    setSelectedValue(value);
   };
 
-  const handleDayChange = (day: string) => {
-    setSelectedDay(day);
+  const handleDateChange = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date
+  ) => {
+    const currentDate = selectedDate || date;
+    setShowDatePicker(false);
+    setDate(currentDate);
   };
 
-  const handleMonthChange = (month: string) => {
-    setSelectedMonth(month);
+  const showDatePickerModal = () => {
+    setShowDatePicker(true);
   };
 
-  const handleYearChange = (year: string) => {
-    setSelectedYear(year);
-  };
+  const handleCompletePlainAction = async () => {
+    try {
+      await PlainService.createPlain({
+        title: titleAction,
+        comments: comment,
+        prize: date.toLocaleDateString(),
+        sellerId: seller.id,
+        supervisorId: seller.supervisorId,
+        moduleId: selectedValue,
+      });
 
-  const handleNavigator = () => {
-    // Aqui você pode usar selectedCity, selectedDay, selectedMonth, selectedYear conforme necessário
+      setState();
+
+      toast.show('Plano de ação efetivado com sucesso', {
+        type: 'success',
+        placement: 'bottom',
+        duration: 3000,
+        animationType: 'zoom-in',
+      });
+    } catch (error) {
+      setState();
+      toast.show('Não foi possível criar plano de ação', {
+        type: 'warning',
+        placement: 'bottom',
+        duration: 3000,
+        animationType: 'zoom-in',
+      });
+    }
   };
 
   return (
@@ -60,35 +79,39 @@ const PlainMentory: React.FC<PlainActionProps> = () => {
         <S.TextForms>Módulo de Avaliação</S.TextForms>
         <Select
           placeholder="Selecione"
-          options={cities}
-          onChange={handleCityChange}
+          options={modules.map((module) => {
+            return {
+              label: module.name,
+              value: module.id,
+            };
+          })}
+          onChange={handleModuleChange}
         />
 
         <S.TextForms>Ação Programada</S.TextForms>
-        <S.InputText placeholder="Ex: Realizar nova visita " />
-
-        <S.Row>
-          <Select placeholder="Dia" options={days} onChange={handleDayChange} />
-          <Select
-            placeholder="Mês"
-            options={months}
-            onChange={handleMonthChange}
-          />
-          <Select
-            placeholder="Ano"
-            options={years}
-            onChange={handleYearChange}
-          />
-        </S.Row>
-
-        <S.TextForms>Pontos de Melhoria</S.TextForms>
-        <S.TextArea
-          placeholder="Digite aqui..."
-          multiline={true}
-          numberOfLines={5}
-          value={improvement}
-          onChangeText={(text) => setImprovement(text)}
+        <S.InputText
+          placeholder="Ex: Realizar nova visita"
+          value={titleAction}
+          onChangeText={(text) => setTitleAction(text)}
         />
+
+        <S.DivContainer>
+          <S.TextForms>Data</S.TextForms>
+          <S.BtnData onPress={showDatePickerModal}>
+            <S.TextBtnData>
+              {date ? date.toLocaleDateString() : 'Selecione a Data'}
+            </S.TextBtnData>
+          </S.BtnData>
+          {showDatePicker && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode="date"
+              display="default"
+              onChange={handleDateChange}
+            />
+          )}
+        </S.DivContainer>
 
         <S.TextForms>Comentário</S.TextForms>
         <S.TextArea
@@ -99,7 +122,7 @@ const PlainMentory: React.FC<PlainActionProps> = () => {
           onChangeText={(text) => setComment(text)}
         />
 
-        <S.BtnCriarAction onPress={handleNavigator}>
+        <S.BtnCriarAction onPress={handleCompletePlainAction}>
           <S.TextBtn>criar plano de ação</S.TextBtn>
         </S.BtnCriarAction>
       </S.WrapperView>

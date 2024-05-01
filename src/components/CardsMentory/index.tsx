@@ -44,20 +44,23 @@ const CheckBox = ({ onChange }) => {
   );
 };
 
-const CardsMentory: React.FC = () => {
+interface CardMentoryProps {
+  title: string;
+  prize: string;
+}
+
+const CardsMentory: React.FC<CardMentoryProps> = ({ title, prize }) => {
   const navigation = useNavigation();
   const [isSelected, setSelection] = useState(false);
 
   return (
     <S.StyledWrapper>
-      <CheckBox
-        onChange={setSelection} // Passando a função para atualizar o estado isSelected
-      />
+      <CheckBox onChange={setSelection} />
       <S.DivText>
-        <S.Title>O que deve ser feito</S.Title>
+        <S.Title>{title}</S.Title>
       </S.DivText>
       <S.DivNota>
-        <S.Nota>00/12</S.Nota>
+        <S.Nota>{prize}</S.Nota>
       </S.DivNota>
     </S.StyledWrapper>
   );

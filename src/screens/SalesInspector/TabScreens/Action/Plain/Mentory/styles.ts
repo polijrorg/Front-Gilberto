@@ -1,5 +1,3 @@
-// styles.ts
-
 import { theme } from '@styles/default.theme';
 import {
   View,
@@ -7,6 +5,8 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
+  Button,
+  Platform,
 } from 'react-native';
 import styled from 'styled-components/native';
 
@@ -21,7 +21,7 @@ export const WrapperView = styled(View)`
   max-height: 100%;
   flex: 1;
   padding: 12px;
-  gap: 24px;
+  gap: 16px;
   margin: 0 auto;
 `;
 
@@ -75,6 +75,24 @@ export const TextBtn = styled(Text)`
   color: #fff;
 `;
 
+export const BtnData = styled(TouchableOpacity)`
+  border-radius: 8px;
+  border-radius: 1px;
+  color: #687076;
+  background-color: #f1f3f5;
+  border: 1px solid #d7dbdf;
+  padding: 8px 12px;
+  border: 1px solid #ccc2;
+`;
+
+export const TextBtnData = styled(Text)`
+  font-size: 16px;
+  font-family: Poppins;
+`;
+
+export const DivContainer = styled(View)`
+  gap: 12px;
+`;
 export const SelectScrollView = styled(ScrollView)`
   flex: 1;
   height: auto; /* Permitir que o ScrollView se ajuste dinamicamente ao conteúdo */

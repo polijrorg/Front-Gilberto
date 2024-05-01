@@ -37,7 +37,9 @@ export const DropdownList = styled(ScrollView)<DropdownListProps>`
   max-height: ${({ maxHeight }) => (maxHeight ? `${maxHeight}px` : 'auto')};
   background-color: #f1f3f5;
   top: 100%;
-  z-index: 1;
+  z-index: 10000;
+  overflow-y: scroll;
+  background-color: #f1f3f5;
   border-width: 1px;
   border-color: #d7dbdf;
   border-radius: 8px;
@@ -53,5 +55,4 @@ export const Selected = styled(Text)`
   color: #687076;
   font-size: 12px;
   margin-right: 8px;
-
 `;

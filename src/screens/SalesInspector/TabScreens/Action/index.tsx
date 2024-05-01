@@ -1,37 +1,88 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CardsMentory from '@components/CardsMentory';
 import PlainMentory from './Plain/Mentory';
+import PlainService from '@services/PlainService';
+import SellerServices from '@services/SellerServices';
+import ModuleServices from '@services/ModuleServices';
+import { ActivityIndicator, View, StyleSheet } from 'react-native';
 import * as S from './styles';
+import IPlains from '@interfaces/Plain';
+import ISeller from '@interfaces/Seller';
+import IModules from '@interfaces/Module';
 
-const Action = () => {
-  const [state, setState] = useState<number>(0);
+const Action = ({ route }) => {
+  const { idEmployee, cargo, companyId } = route.params;
+  const [loading, setLoading] = useState(true);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [plains, setPlains] = useState<IPlains[]>([]);
+  const [seller, setSeller] = useState<ISeller | null>(null);
+  const [modules, setModules] = useState<IModules[] | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const plainsData = await PlainService.getAll();
+        const modulesData = await ModuleServices.getAllModules();
+        if (cargo === 'Vendedor') {
+          const responseSeller = await SellerServices.getSupervisorByIdCompany(
+            companyId,
+            idEmployee
+          );
+          setPlains(plainsData);
+          setModules(modulesData);
+          setSeller(responseSeller);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleNavigator = () => {
-    setState(state + 1);
+    setIsVisible(!isVisible);
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#3E63DD" />
+      </View>
+    );
+  }
 
   return (
     <S.ViewWrapper>
-      {state === 0 && (
+      {!isVisible && (
         <S.Wrapper>
-          <CardsMentory />
-          <CardsMentory />
-          <CardsMentory />
-          <CardsMentory />
-          <CardsMentory />
-          <CardsMentory />
-          <CardsMentory />
-          <CardsMentory />
-          <CardsMentory />
+          {plains.map((plainsData) => (
+            <CardsMentory title={plainsData.title} prize={plainsData.prize} />
+          ))}
           <S.BtnCriarAction onPress={handleNavigator}>
             <S.TextBtn>criar plano de ação</S.TextBtn>
           </S.BtnCriarAction>
         </S.Wrapper>
       )}
-      {state === 1 && <PlainMentory state={state} />}
-      {state === 2 && <PlainMentory state={state} />}
+      {isVisible && (
+        <PlainMentory
+          setState={handleNavigator}
+          seller={seller}
+          modules={modules}
+        />
+      )}
     </S.ViewWrapper>
   );
 };
 
 export default Action;
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

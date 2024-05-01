@@ -21,8 +21,10 @@ const Select: React.FC<SelectProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState<string>('');
+  const [selectedLabel, setSelectedLabel] = useState<string>('');
 
-  const handleSelectOption = (value: string) => {
+  const handleSelectOption = (label: string, value: string) => {
+    setSelectedLabel(label);
     setSelectedValue(value);
     onChange && onChange(value);
     setIsOpen(false);
@@ -33,7 +35,7 @@ const Select: React.FC<SelectProps> = ({
       <S.DivFields>
         <S.CustomDropdown isOpen={isOpen} setIsOpen={setIsOpen}>
           <S.DropDownButton onPress={() => setIsOpen(!isOpen)}>
-            <S.Selected>{selectedValue || placeholder}</S.Selected>
+            <S.Selected>{selectedLabel || placeholder}</S.Selected>
             <FontAwesome
               name={isOpen ? 'caret-up' : 'caret-down'}
               size={20}
@@ -41,11 +43,11 @@ const Select: React.FC<SelectProps> = ({
             />
           </S.DropDownButton>
           {isOpen && (
-            <S.DropdownList maxHeight={options?.length > 1 ? 200 : null}>
+            <S.DropdownList maxHeight={options?.length > 1 ? 300 : null}>
               {options.map((option, index) => (
                 <S.DropdownItem
                   key={index}
-                  onPress={() => handleSelectOption(option.value)}
+                  onPress={() => handleSelectOption(option.label, option.value)}
                 >
                   <S.Selected>{option.label}</S.Selected>
                 </S.DropdownItem>
