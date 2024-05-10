@@ -13,7 +13,6 @@ const Question: React.FC<IQuestion> = ({ title, textAsk }) => {
 
   const handleInputChange = (value: number) => {
     setInputValue(value);
-    console.log('Novo valor do InputRange:', value);
   };
   return (
     <S.Wrapper>

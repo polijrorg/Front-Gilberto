@@ -99,6 +99,21 @@ export const DivPicker = styled(View)`
   flex-direction: row;
 `;
 
+export const BtnData = styled(TouchableOpacity)`
+  border-radius: 8px;
+  border-radius: 1px;
+  color: #687076;
+  background-color: #f1f3f5;
+  border: 1px solid #d7dbdf;
+  padding: 8px 12px;
+  border: 1px solid #ccc2;
+`;
+
+export const TextBtnData = styled(Text)`
+  font-size: 16px;
+  font-family: Poppins;
+`;
+
 export const BtnConcluirPlano = styled(TouchableOpacity)`
   width: 80%;
   padding: 10px 8px;

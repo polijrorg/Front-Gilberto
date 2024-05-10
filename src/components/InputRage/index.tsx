@@ -31,14 +31,13 @@ const InputRange: React.FC<askProps> = ({
           maximumTrackTintColor="#D9E2FC"
           thumbTintColor="#3E63DD"
           value={value}
-          step={1}
           onValueChange={(newValue) => {
             setValue(newValue);
             onChangeValue(moduleId, newValue);
           }}
         />
         <Text style={styles.sliderValue}>
-          {value.toFixed(0).replace('.', ',')}
+          {value.toFixed(1).replace('.', ',')}
         </Text>
       </S.SliderContainer>
     </S.Container>

@@ -3,12 +3,15 @@ import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import * as S from './styles';
 import { useRoute, RouteProp } from '@react-navigation/native';
-import { Picker } from '@react-native-picker/picker';
 import ModuleGradeServices from '@services/ModuleGradeService';
 import DivGradient from '@components/DivGradient';
 import HeaderPages from '@components/HeaderPages';
 import ISeller from '@interfaces/Seller';
 import { useToast } from 'react-native-toast-notifications';
+import PlainService from '@services/PlainService';
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from '@react-native-community/datetimepicker';
 
 interface RouteParams {
   ModulesEvaluate: Array<{
@@ -23,35 +26,87 @@ interface RouteParams {
 const CompleteMentoship: React.FC = () => {
   const route = useRoute<RouteProp<{ ModuloAsk: RouteParams }, 'ModuloAsk'>>();
   const { ModulesEvaluate, Seller } = route.params;
-  console.log(ModulesEvaluate, Seller);
   const [selectedAction, setSelectedAction] = useState('');
-  const [selectedDay, setSelectedDay] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState('');
-  const [selectedYear, setSelectedYear] = useState('');
+  const [selectedValue, setSelectedValue] = useState<string>('');
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
   const [comment, setComment] = useState('');
 
   const toast = useToast();
 
-  const days = Array.from(Array(30), (_, i) => (i + 1).toString());
-  const months = [
-    'Janeiro',
-    'Fevereiro',
-    'Março',
-    'Abril',
-    'Maio',
-    'Junho',
-    'Julho',
-    'Agosto',
-    'Setembro',
-    'Outubro',
-    'Novembro',
-    'Dezembro',
-  ];
-  const years = Array.from(Array(8), (_, i) => (2020 + i).toString());
+  const handleModuleChange = (value: string) => {
+    setSelectedValue(value);
+  };
+
+  const handleDateChange = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date
+  ) => {
+    const currentDate = selectedDate || date;
+    setShowDatePicker(false);
+    setDate(currentDate);
+  };
+
+  const showDatePickerModal = () => {
+    setShowDatePicker(true);
+  };
 
   const handleComplete = async () => {
-    console.log('complete');
-    // Aqui você pode enviar os valores selecionados para onde for necessário
+    try {
+      await Promise.all(
+        ModulesEvaluate.map(async (element) => {
+          try {
+            if (element) {
+              const moduleGrades =
+                await ModuleGradeServices.getModuleGradesByIdSeller(Seller.id);
+              const existingModuleGrade = moduleGrades.find(
+                (grade) => grade.moduleId === element.idModule
+              );
+              if (existingModuleGrade) {
+                await ModuleGradeServices.updateModuleGrade(
+                  existingModuleGrade.id,
+                  element.comment,
+                  element.implementacao,
+                  element.conhecimento
+                );
+              } else {
+                await ModuleGradeServices.create(
+                  comment,
+                  element.idModule,
+                  Seller.id,
+                  element.implementacao,
+                  element.conhecimento
+                );
+              }
+
+              /* await PlainService.createPlain({
+                title: selectedAction,
+                comments: comment,
+                prize: date.toLocaleDateString(),
+                sellerId: Seller.id,
+                supervisorId: Seller.supervisorId,
+                moduleId: selectedValue,
+              }); */
+            }
+          } catch (error) {
+            console.error(
+              'Erro ao criar ou atualizar módulo de avaliação:',
+              error
+            );
+          }
+        })
+      );
+      console.log('Módulos avaliados com sucesso');
+      toast.show('Módulos avaliados com sucesso', {
+        type: 'success',
+        placement: 'bottom',
+        duration: 3500,
+        animationType: 'zoom-in',
+      });
+    } catch (error) {
+      console.error('Erro ao completar o mentorado:', error);
+    }
   };
 
   const handleCompleteWithoutActionPlan = async () => {
@@ -125,45 +180,20 @@ const CompleteMentoship: React.FC = () => {
           </S.DivInputs>
           <S.DivInputs>
             <S.Label>Data Limite</S.Label>
-            <S.DivPicker>
-              <Picker
-                style={{ flex: 1, marginRight: 5 }}
-                selectedValue={selectedDay}
-                onValueChange={(itemValue, _itemIndex) =>
-                  setSelectedDay(itemValue)
-                }
-              >
-                {days.map((day) => (
-                  <Picker.Item key={day} label={day} value={day} />
-                ))}
-              </Picker>
-              <Picker
-                style={{ flex: 2, marginRight: 5 }}
-                selectedValue={selectedMonth}
-                onValueChange={(itemValue, _itemIndex) =>
-                  setSelectedMonth(itemValue)
-                }
-              >
-                {months.map((month, index) => (
-                  <Picker.Item
-                    key={index.toString()}
-                    label={month}
-                    value={index.toString()}
-                  />
-                ))}
-              </Picker>
-              <Picker
-                style={{ flex: 1 }}
-                selectedValue={selectedYear}
-                onValueChange={(itemValue, _itemIndex) =>
-                  setSelectedYear(itemValue)
-                }
-              >
-                {years.map((year) => (
-                  <Picker.Item key={year} label={year} value={year} />
-                ))}
-              </Picker>
-            </S.DivPicker>
+            <S.BtnData onPress={showDatePickerModal}>
+              <S.TextBtnData>
+                {date ? date.toLocaleDateString() : 'Selecione a Data'}
+              </S.TextBtnData>
+            </S.BtnData>
+            {showDatePicker && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode="date"
+                display="default"
+                onChange={handleDateChange}
+              />
+            )}
           </S.DivInputs>
           <S.DivInputs>
             <S.Label>Comentário</S.Label>

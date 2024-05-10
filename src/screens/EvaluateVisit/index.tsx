@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import * as S from './styles';
+import { ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Breadcrumb from '@components/Breadcrumb';
 import Dropdown from '@components/Dropdown';
-import useAuth from '@hooks/useAuth';
-import SellerService from '@services/SellerServices';
-import CompanyService from '@services/CompanyService';
-import VisitService from '@services/VisitService';
-import ICompany from '@interfaces/Company';
-import ISeller from '@interfaces/Seller';
 import HeaderPages from '@components/HeaderPages';
 import Question from '@components/Question';
+
+import useAuth from '@hooks/useAuth';
+
+import SellerService from '@services/SellerServices';
+import VisitService from '@services/VisitService';
+
+import ISeller from '@interfaces/Seller';
+import ICategories from '@interfaces/Visit/Categories';
+import IQuestions from '@interfaces/Visit/Questions';
 
 const EvaluateVisit = () => {
   const navigation = useNavigation();
@@ -18,7 +22,9 @@ const EvaluateVisit = () => {
   const [sellers, setSellers] = useState<ISeller[]>([]);
   const [indexScreen, setIndexScreen] = useState(1);
   const [selectedSeller, setSelectedSeller] = useState<ISeller | null>(null);
-  const [company, setCompany] = useState<ICompany | null>();
+  const [categories, setCategories] = useState<ICategories[]>([]);
+  const [questions, setQuestions] = useState<IQuestions[]>([]);
+  const [storeName, setStoreName] = useState('');
 
   useEffect(() => {
     const fetchSellers = async () => {
@@ -38,32 +44,30 @@ const EvaluateVisit = () => {
 
   const handleSelectSeller = async (seller: ISeller) => {
     setSelectedSeller(seller);
-    setCompany(await findCompanyById(seller));
-    const visitTemplate = await VisitService.getTemplateByCompanyId(
-      seller.companyId
-    );
-    const categories = await VisitService.getCategoriesByIdTemplate(
-      visitTemplate[0].id
-    );
-    const questions = await VisitService.getQuestionsByIdCategory(
-      categories[0].id
-    );
-    console.log(questions, categories, visitTemplate);
-  };
-
-  const findCompanyById = async (seller: ISeller) => {
-    const companyResponse = await CompanyService.getCompanyById(
-      seller.companyId
-    );
-    return companyResponse;
+    const templates = await VisitService.getTemplateByCompanyId(seller.companyId);
+    const fetchedCategories: ICategories[] = [];
+    
+    await Promise.all(templates.map(async (template) => {
+      const categories = await VisitService.getCategoriesByIdTemplate(template.id);
+      
+      categories.forEach(category => {
+        fetchedCategories.push(category);
+      });
+    }));
+    
+    setCategories(fetchedCategories);
   };
 
   const handleAdvance = () => {
-    setIndexScreen(indexScreen < 7 ? indexScreen + 1 : 1);
+    setIndexScreen(indexScreen < categories.length + 1 ? indexScreen + 1 : 1);
   };
 
   const handleNavigation = (index: number) => {
     setIndexScreen(index);
+  };
+
+  const handleStoreNameChange = (text: string) => {
+    setStoreName(text);
   };
 
   return (
@@ -72,7 +76,7 @@ const EvaluateVisit = () => {
         <HeaderPages title="Visita" />
         <S.ContainerFields>
           <Breadcrumb
-            size={7}
+            size={categories?.length}
             handleNavigation={handleNavigation}
             selected={indexScreen}
           />
@@ -93,76 +97,85 @@ const EvaluateVisit = () => {
               sellers={sellers}
               onSelectSeller={handleSelectSeller}
               onAdvance={handleAdvance}
+              storeName={storeName}
+              onStoreNameChange={handleStoreNameChange}
             />
           )}
-          {[2, 3, 4, 5, 6, 7].map((screen) => (
+          {indexScreen !== 1 && categories.map((category, idx) => (
             <QuestionSection
-              key={screen}
-              indexScreen={indexScreen}
-              screen={screen}
-              onAdvance={handleAdvance}
+              key={category.id}
+              category={category}
+              index={idx + 2}
+              selectedIndex={indexScreen}
             />
           ))}
+          {indexScreen <= categories.length && (
+            <S.ButtonIniciar onPress={handleAdvance} disabled={storeName === ''}>
+              <S.TextBtn>Próximo</S.TextBtn>
+            </S.ButtonIniciar>
+          )}
+          {indexScreen > categories.length && (
+            <FinishedSection />
+          )}
         </S.ContainerFields>
       </S.WrapperView>
     </>
+  );  
+};
+
+const QuestionSection = ({ category, index, selectedIndex }) => {
+  const [categoryQuestions, setCategoryQuestions] = useState<IQuestions[]>([]);
+  
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      const questions = await VisitService.getQuestionsByIdCategory(category.id);
+      setCategoryQuestions(questions);
+    };
+    fetchQuestions();
+  }, [category.id]);
+
+  return (
+    selectedIndex === index && (
+      <ScrollView style={{height: 400, paddingHorizontal: 8}}>
+          <S.TemaQuestion>{category.name}</S.TemaQuestion>
+          {categoryQuestions.map((question, index) => (
+            <Question
+              textAsk={question.question}
+            />
+          ))}
+      </ScrollView>
+    )
   );
 };
 
-const SellerSelection = ({ sellers, onSelectSeller, onAdvance }) => {
+const FinishedSection = () => {
+
+  const finishedVisit = async () => {
+  }
+
+  return (
+    <S.ContainerFields>
+      <S.BtnFinished onPress={finishedVisit}>
+        <S.TextBtn>Finalizar dia com com esse vendedor</S.TextBtn>
+      </S.BtnFinished>
+      <S.Outline>
+        <S.TextBtnNova>Iniciar nova visita</S.TextBtnNova>
+      </S.Outline>
+    </S.ContainerFields>
+  )
+};
+
+const SellerSelection = ({ sellers, onSelectSeller, onAdvance, storeName, onStoreNameChange }) => {
   return (
     <S.DivContainer>
       <S.TitleInput>Nome do Vendedor</S.TitleInput>
       <Dropdown sellers={sellers} onSelectSeller={onSelectSeller} />
       <S.TitleInput>Loja</S.TitleInput>
-      <S.Input placeholder="Nome da Loja" />
-      <S.ButtonFirst onPress={onAdvance}>
+      <S.Input placeholder="Nome da Loja" value={storeName} onChangeText={onStoreNameChange} />
+      <S.ButtonFirst onPress={onAdvance} disabled={storeName === ''} style={{opacity: storeName ? 1 : 0.5}}>
         <S.TextBtn>iniciar Avaliação</S.TextBtn>
       </S.ButtonFirst>
     </S.DivContainer>
-  );
-};
-
-const QuestionSection = ({ indexScreen, screen, onAdvance }) => {
-  const titles = [
-    'Planejamento',
-    'Aproximação',
-    'Apresentação',
-    'Identificação de objeções',
-    'Cobranças',
-    'Acompanhamento',
-  ];
-  const questions = [
-    'O material de trabalho está em ordem (tablet, política comercial, catálogo)?',
-    'Apresentou plano de vendas para o cliente visitado?',
-    'Apresentou planos alinhados à expectativa (S.M.A.R.T)?',
-    'Realizou verificação de produtos em gôndola?',
-    'Buscou formas de melhorar visibilidade de itens?',
-    'Verificou se precificação aplicada pelo cliente é coerente com objetivos?',
-    'Pesquisou novos meios de promoção para produtos?',
-    'Identificou rupturas de itens já cadastrados?',
-    'Fez revisão de sua proposta inicial, após checagem de loja?',
-    'Elencou prioridades de acordo com as estratégias comerciais?',
-    'Conduziu a apresentação com segurança e coerência?',
-    'Enfatizou os benefícios da proposta para o cliente?',
-    'Surgiram objeções durante a apresentação da proposta de vendas?',
-    'Utilizou as técnicas de comunicação para identificar objeções (falsas/verdadeiras)?',
-    'Iniciou processo de cobrança relativo a pendências financeiras?',
-    'Estabeleceu agenda de acompanhamento para os acordos firmados?',
-  ];
-
-  return (
-    indexScreen === screen && (
-      <S.DivContainer>
-        <Question
-          title={`${screen}. ${titles[screen - 2]}`}
-          textAsk={questions[screen - 2]}
-        />
-        <S.ButtonIniciar onPress={onAdvance}>
-          <S.TextBtn>Próximo</S.TextBtn>
-        </S.ButtonIniciar>
-      </S.DivContainer>
-    )
   );
 };
 

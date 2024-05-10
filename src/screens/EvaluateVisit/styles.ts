@@ -17,8 +17,7 @@ export const WrapperView = styled(View)`
 
 export const ContainerFields = styled(View)`
   max-width: 100%;
-  height: 100%;
-  display: flex;
+  gap: 16px;
 `;
 
 export const DivSellerInfo = styled(View)`
@@ -98,18 +97,21 @@ export const ButtonFirst = styled(TouchableOpacity)`
   margin-top: 80%;
 `;
 
+export const TemaQuestion = styled(Text)`
+  font-family: Poppins;
+  font-size: 16px;
+`;
+
 export const ButtonIniciar = styled(TouchableOpacity)`
   padding: 8px 24px;
   background-color: #3e63dd;
-  width: 100%;
+  width: 90%;
   height: auto;
   display: flex;
   justify-content: center;
-  margin: 0;
-  scroll-behavior: auto;
   align-items: center;
   border-radius: 8px;
-  margin: 16px auto;
+  margin: 0px auto;
 `;
 
 export const TextBtn = styled(Text)`
@@ -117,4 +119,36 @@ export const TextBtn = styled(Text)`
   text-transform: uppercase;
   color: #fff;
   font-size: 16px;
+`;
+
+export const Outline = styled(TouchableOpacity)`
+  padding: 8px 24px;
+  width: 90%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  margin: 0px auto;
+  border-width: 1px;
+  border-color: #3451B2;
+`;
+
+export const TextBtnNova = styled(Text)`
+  font-family: Poppins;
+  text-transform: uppercase;
+  color: #3451B2;
+  font-size: 16px;
+`;
+
+export const BtnFinished = styled(TouchableOpacity)`
+  padding: 8px 24px;
+  background-color: #3e63dd;
+  width: 90%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  margin: 0px auto;
 `;

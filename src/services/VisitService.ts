@@ -3,10 +3,28 @@ import { AxiosResponse } from 'axios';
 import ITemplateVisit from '@interfaces/Visit/TemplateVisit';
 import ICategories from '@interfaces/Visit/Categories';
 import IQuestions from '@interfaces/Visit/Questions';
+import IQuestionGrade from '@interfaces/Visit/QuestionGrade';
+
 
 import api from './api';
 
 export default class VisitService {
+
+  static async createQuestionsGrade(questionGrade: IQuestionGrade): Promise<void>{
+    await api.post(
+      `/questionsGrades/create`,
+      questionGrade
+    );
+  }
+
+  static async updateQuestionGrade(
+    questionGrade: IQuestionGrade
+  ): Promise<void> {
+    await api.patch(`/questionsGrades/update/`, {
+      questionGrade
+    });
+  }
+
   static async getTemplateByCompanyId(
     idCompany: string
   ): Promise<ITemplateVisit[]> {
