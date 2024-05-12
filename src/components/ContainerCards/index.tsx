@@ -1,185 +1,90 @@
-/* eslint-disable react-native/no-inline-styles */
+import React from 'react';
+import { ActivityIndicator } from 'react-native';
 import Card from '@components/Cards';
 import * as S from './styles';
-import React, { useEffect, useState } from 'react';
 import ISeller from '@interfaces/Seller';
 import ISupervisor from '@interfaces/Supervisor';
-import useAuth from '@hooks/useAuth';
-import SellerServices from '@services/SellerServices';
-import SupervisorServices from '@services/SupervisorServices';
-import { View, Text, ActivityIndicator } from 'react-native';
-import ModulesServices from '@services/ModuleServices';
 
-type IContainerSeller = {
+const Container: React.FC<{
   search?: string;
-  sellers: ISeller[];
+  data: Array<ISeller | ISupervisor>;
+  loading: boolean;
+  title: string;
+  media?: { [key: string]: number };
+}> = ({ search, data, loading, title, media = {} }) => {
+  let filteredData: Array<ISeller | ISupervisor> = data;
+
+  const removeAccents = (str: string) => {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  };
+
+  if (search) {
+    const searchTerm = removeAccents(search.toLowerCase());
+    filteredData = data.filter((item) =>
+      removeAccents(item.name.toLowerCase()).includes(searchTerm)
+    );
+  }
+  // Verificar se o item é um supervisor antes de aplicar o filtro de média
+  if (media && filteredData.some((item) => 'supervisorId' in item)) {
+    filteredData = filteredData.filter((item) => media[item.id] !== undefined);
+    filteredData.sort((a, b) => (media[b.id] || 0) - (media[a.id] || 0));
+  }
+
+  return (
+    <S.DivWrapper>
+      <S.TitleSlider>{title}</S.TitleSlider>
+      <S.Cards>
+        {loading ? (
+          <LoadingIndicator />
+        ) : filteredData.length > 0 ? (
+          filteredData.map((item, index) => (
+            <CardItem key={index} item={item} media={media} />
+          ))
+        ) : (
+          <NoDataMessage title={title} />
+        )}
+      </S.Cards>
+    </S.DivWrapper>
+  );
+};
+
+const LoadingIndicator: React.FC = () => (
+  <S.CenteredView>
+    <ActivityIndicator size="large" color="#0000ff" />
+  </S.CenteredView>
+);
+
+const NoDataMessage: React.FC<{ title: string }> = ({ title }) => (
+  <S.CenteredView>
+    <S.TitleSellers>Não há {title.toLowerCase()} cadastrados</S.TitleSellers>
+  </S.CenteredView>
+);
+
+const CardItem: React.FC<{
+  item: ISeller | ISupervisor;
   media: { [key: string]: number };
-  loading: boolean;
-};
-
-const SellersContainer: React.FC<IContainerSeller> = ({
-  search,
-  sellers,
-  media,
-  loading,
-}) => {
-  let filteredSellers: ISeller[] = sellers;
-
-  const removeAccents = (str: string) => {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  };
-
-  if (search) {
-    const searchTerm = removeAccents(search.toLowerCase());
-    filteredSellers = sellers.filter((seller) =>
-      removeAccents(seller.name.toLowerCase()).includes(searchTerm)
-    );
+}> = ({ item, media }) => {
+  const fullName = item.name || 'Usuário';
+  const nameParts = fullName.split(' ');
+  let displayName = '';
+  if (nameParts.length > 1) {
+    const firstName = nameParts[0];
+    const lastName = nameParts[nameParts.length - 1];
+    displayName = `${firstName} ${lastName}`;
+  } else {
+    displayName = fullName;
   }
-
-  filteredSellers.sort((a, b) => media[b.id] - media[a.id]);
+  const sellerMedia = media[item.id] || 0;
 
   return (
-    <S.DivWrapper>
-      <S.TitleSlider>{'Vendedores'}</S.TitleSlider>
-      <S.Cards>
-        {loading ? (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              margin: 24,
-            }}
-          >
-            <ActivityIndicator size="large" color="#0000ff" />
-          </View>
-        ) : filteredSellers.length > 0 ? (
-          filteredSellers.map((seller, index) => {
-            const fullName = seller.name || 'Usuário';
-            const nameParts = fullName.split(' ');
-            let displayName = '';
-            if (nameParts.length > 1) {
-              const firstName = nameParts[0];
-              const lastName = nameParts[nameParts.length - 1];
-              displayName = `${firstName} ${lastName}`;
-            } else {
-              displayName = fullName;
-            }
-
-            const sellerMedia = media[seller.id] || 0;
-
-            return (
-              <Card
-                key={index}
-                id={seller.id}
-                nome={displayName}
-                cargo={seller.job}
-                supervisorId={seller.supervisorId}
-                companyId={seller.companyId}
-                nota={sellerMedia}
-              />
-            );
-          })
-        ) : (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              margin: 24,
-            }}
-          >
-            <Text style={{ textTransform: 'uppercase', fontFamily: 'Poppins' }}>
-              Não há vendedores cadastrados
-            </Text>
-          </View>
-        )}
-      </S.Cards>
-    </S.DivWrapper>
+    <Card
+      id={item.id}
+      nome={displayName}
+      cargo={item.job}
+      companyId={item.companyId}
+      nota={sellerMedia || 0}
+    />
   );
 };
 
-type IContainerSupervisor = {
-  search?: string;
-  supervisors: ISupervisor[];
-  loading: boolean;
-};
-
-const SupervisorsContainer: React.FC<IContainerSupervisor> = ({
-  search,
-  supervisors,
-  loading,
-}) => {
-  let filteredSupervisors: ISupervisor[] = supervisors;
-
-  const removeAccents = (str: string) => {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  };
-
-  if (search) {
-    const searchTerm = removeAccents(search.toLowerCase());
-    filteredSupervisors = supervisors.filter((supervisor) =>
-      removeAccents(supervisor.name.toLowerCase()).includes(searchTerm)
-    );
-  }
-
-  return (
-    <S.DivWrapper>
-      <S.TitleSlider>{'Supervisores'}</S.TitleSlider>
-      <S.Cards>
-        {loading ? (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              margin: 24,
-            }}
-          >
-            <ActivityIndicator size="large" color="#0000ff" />
-          </View>
-        ) : filteredSupervisors.length > 0 ? (
-          filteredSupervisors.map((supervisor, index) => {
-            const fullName = supervisor.name || 'Usuário';
-            const nameParts = fullName.split(' ');
-
-            let displayName = '';
-            if (nameParts.length > 1) {
-              const firstName = nameParts[0];
-              const lastName = nameParts[nameParts.length - 1];
-              displayName = `${firstName} ${lastName}`;
-            } else {
-              displayName = fullName;
-            }
-
-            return (
-              <Card
-                key={index}
-                id={supervisor.id}
-                nome={displayName}
-                cargo={supervisor.job}
-                companyId={supervisor.companyId}
-                nota={3.2} // Ajuste isso para obter a nota correta de cada tipo de dados (supervisor ou vendedor)
-              />
-            );
-          })
-        ) : (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              margin: 24,
-            }}
-          >
-            <Text style={{ textTransform: 'uppercase', fontFamily: 'Poppins' }}>
-              Não há supervisores cadastrados
-            </Text>
-          </View>
-        )}
-      </S.Cards>
-    </S.DivWrapper>
-  );
-};
-
-export { SellersContainer, SupervisorsContainer };
+export default Container;

@@ -4,10 +4,7 @@ import * as S from './styles';
 import Header from '@components/HeaderMenu';
 import ContainerActions from '@components/ContainerActions';
 import MatrizSlider from '@components/MatrizSlider';
-import {
-  SellersContainer,
-  SupervisorsContainer,
-} from '@components/ContainerCards';
+import Container from '@components/ContainerCards';
 import ButtonAdded from '@components/ButtonAdded';
 import useAuth from '@hooks/useAuth';
 import SupervisorServices from '@services/SupervisorServices';
@@ -71,11 +68,12 @@ const Home = () => {
         <Header />
         <ContainerActions />
         <MatrizSlider />
-        {user.job === 'Gerente' ? (
-          <SupervisorsContainer loading={loading} supervisors={supervisors} />
-        ) : (
-          <SellersContainer loading={loading} media={media} sellers={sellers} />
-        )}
+        <Container
+          title={user.job === 'Gerente' ? 'Supervisores' : 'Vendedores'}
+          loading={loading}
+          data={user.job === 'Gerente' ? supervisors : sellers}
+          media={media}
+        />
       </S.Wrapper>
       <ButtonAdded />
     </>

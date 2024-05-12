@@ -41,7 +41,7 @@ const Mentoring = ({ route }) => {
   }, [cargo, idEmployee]);
 
   const formatScore = (score: number) =>
-    score === 0 ? '0,0' : score.toFixed(2).replace('.', ',');
+    score === 0 ? '0,0' : score?.toFixed(2).replace('.', ',');
 
   return (
     <S.Wrapper>
@@ -61,10 +61,12 @@ const Mentoring = ({ route }) => {
                 key={index}
                 comment={moduleGrade[index]?.supervisorComment || 'Comentários'}
                 title={module.name || `Módulo ${index + 1}: Tema`}
-                implementation={formatScore(
-                  moduleGrade[index]?.implementationScore
-                )}
-                knowledge={formatScore(moduleGrade[index]?.knowledgeScore)}
+                implementation={
+                  formatScore(moduleGrade[index]?.implementationScore) || 'X,X'
+                }
+                knowledge={
+                  formatScore(moduleGrade[index]?.knowledgeScore) || 'Y,Y'
+                }
               />
             ))}
           </S.WrapperView>

@@ -1,24 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import {
-  SellersContainer,
-  SupervisorsContainer,
-} from '@components/ContainerCards';
 import DivGradient from '@components/DivGradient';
-import SupervisorServices from '@services/SupervisorServices';
-import SellerServices from '@services/SellerServices';
-import ModulesServices from '@services/ModuleServices';
-import useAuth from '@hooks/useAuth';
-import HeaderPages from '@components/HeaderPages';
 import * as S from './styles';
 import { useNavigation } from '@react-navigation/native';
 import Seller from '@interfaces/Seller';
+import Container from '@components/ContainerCards';
+import useAuth from '@hooks/useAuth';
+import SellerServices from '@services/SellerServices';
+import SupervisorServices from '@services/SupervisorServices';
+import ModulesServices from '@services/ModuleServices';
+import HeaderPages from '@components/HeaderPages';
+import ISupervisor from '@interfaces/Supervisor';
+import ISeller from '@interfaces/Seller';
 
 const MyTeam = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [sellers, setSellers] = useState([]);
-  const [supervisors, setSupervisors] = useState([]);
+  const [sellers, setSellers] = useState<ISeller[]>([]);
+  const [supervisors, setSupervisors] = useState<ISupervisor[]>([]);
   const [search, setSearch] = useState('');
   const [media, setMedia] = useState({});
   const navigation = useNavigation();
@@ -90,28 +89,22 @@ const MyTeam = () => {
             <S.Lupa source={require('@assets/img/myteam/lupa.png')} />
           </S.ButtonLupa>
         </S.DivContainerInput>
-        {user.job === 'Gerente' ? (
-          <>
-            <SupervisorsContainer
-              search={search}
-              loading={loading}
-              supervisors={supervisors}
-            />
-            <SellersContainer
-              search={search}
-              loading={loading}
-              media={media}
-              sellers={sellers}
-            />
-          </>
-        ) : (
-          <SellersContainer
-            search={search}
+        {user.job === 'Gerente' && (
+          <Container
+            title="Supervisores"
             loading={loading}
-            media={media}
-            sellers={sellers}
+            data={supervisors}
+            search={search}
           />
         )}
+
+        <Container
+          media={media}
+          title="Vendedores"
+          loading={loading}
+          data={sellers}
+          search={search}
+        />
       </S.Wrapper>
       <S.BtnAddColaborador onPress={handlePressAddedSeller}>
         <S.TextBtn>Adicionar COLABORADORES</S.TextBtn>
