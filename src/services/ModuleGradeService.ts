@@ -1,16 +1,33 @@
 import { AxiosResponse } from 'axios';
 import IModuleGrade from '@interfaces/ModuleGrade';
 
+interface ModuleGradeCreate {
+  implementationScore: number;
+  knowledgeScore: number;
+  supervisorComment: string;
+  moduleId: string;
+  sellerId: string;
+}
+
+interface ModuleGradeUpdate {
+  id: string;
+  implementationScore: number;
+  knowledgeScore: number;
+  supervisorComment: string;
+  moduleId: string;
+  sellerId: string;
+}
+
 import api from './api';
 
 export default class ModuleGradeServices {
-  static async create(
-    supervisorComment: string,
-    moduleId: string,
-    sellerId: string,
-    implementationScore: number,
-    knowledgeScore: number
-  ): Promise<void> {
+  static async create({
+    supervisorComment,
+    moduleId,
+    sellerId,
+    implementationScore,
+    knowledgeScore,
+  }: ModuleGradeCreate): Promise<void> {
     await api.post('/moduleGrades/create', {
       supervisorComment,
       moduleId,
@@ -20,13 +37,13 @@ export default class ModuleGradeServices {
     });
   }
 
-  static async updateModuleGrade(
-    moduleGradesId: string,
-    supervisorComment: string,
-    implementationScore: number,
-    knowledgeScore: number
-  ): Promise<void> {
-    await api.patch(`/moduleGrades/update/${moduleGradesId}`, {
+  static async updateModuleGrade({
+    id,
+    supervisorComment,
+    implementationScore,
+    knowledgeScore,
+  }: ModuleGradeUpdate): Promise<void> {
+    await api.patch(`/moduleGrades/update/${id}`, {
       supervisorComment,
       implementationScore,
       knowledgeScore,

@@ -1,6 +1,5 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useState } from 'react';
-import { View, ActivityIndicator, Text, ScrollView } from 'react-native';
+import { ActivityIndicator, Text, ScrollView } from 'react-native';
 import * as S from './styles';
 import Accordion from '@components/AccordionMentory';
 import ModulesServices from '@services/ModuleServices';
@@ -30,43 +29,30 @@ const Mentoring = ({ route }) => {
               : await ModulesServices.getAllModules();
 
           setModules(modulesData);
-          setIsLoading(false); // Informa que o carregamento foi concluído
         }
       } catch (error) {
         console.error('Erro ao buscar dados de supervisores:', error);
-        setIsLoading(false); // Se ocorrer um erro, também encerra o carregamento
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData();
   }, [cargo, idEmployee]);
 
+  const formatScore = (score: number) =>
+    score === 0 ? '0,0' : score.toFixed(2).replace('.', ',');
+
   return (
     <S.Wrapper>
       {isLoading ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '100%',
-            height: '100%',
-          }}
-        >
+        <S.ViewContainer>
           <ActivityIndicator color="#3E63DD" />
-        </View>
+        </S.ViewContainer>
       ) : modules.length === 0 ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '100%',
-            height: '100%',
-          }}
-        >
+        <S.ViewContainer>
           <Text>Nenhum módulo disponível</Text>
-        </View>
+        </S.ViewContainer>
       ) : (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <S.WrapperView>
@@ -74,19 +60,11 @@ const Mentoring = ({ route }) => {
               <Accordion
                 key={index}
                 comment={moduleGrade[index]?.supervisorComment || 'Comentários'}
-                title={
-                  `Módulo ${index + 1}: ${module.name}` || 'Módulo X: Tema'
-                }
-                implementation={
-                  moduleGrade[index]?.implementationScore === 0
-                    ? '0,0'
-                    : moduleGrade[index]?.implementationScore || 'X.X'
-                }
-                knowledge={
-                  moduleGrade[index]?.knowledgeScore === 0
-                    ? '0,0'
-                    : moduleGrade[index]?.knowledgeScore || 'X.X'
-                }
+                title={module.name || `Módulo ${index + 1}: Tema`}
+                implementation={formatScore(
+                  moduleGrade[index]?.implementationScore
+                )}
+                knowledge={formatScore(moduleGrade[index]?.knowledgeScore)}
               />
             ))}
           </S.WrapperView>

@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import * as S from './styles';
@@ -8,7 +7,6 @@ import DivGradient from '@components/DivGradient';
 import HeaderPages from '@components/HeaderPages';
 import ISeller from '@interfaces/Seller';
 import { useToast } from 'react-native-toast-notifications';
-import PlainService from '@services/PlainService';
 import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
@@ -23,16 +21,14 @@ interface RouteParams {
   Seller: ISeller;
 }
 
-const CompleteMentoship: React.FC = () => {
+const CompleteMentorship: React.FC = () => {
   const route = useRoute<RouteProp<{ ModuloAsk: RouteParams }, 'ModuloAsk'>>();
   const { ModulesEvaluate, Seller } = route.params;
   const [selectedAction, setSelectedAction] = useState('');
   const [selectedValue, setSelectedValue] = useState<string>('');
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-
   const [comment, setComment] = useState('');
-
   const toast = useToast();
 
   const handleModuleChange = (value: string) => {
@@ -54,107 +50,57 @@ const CompleteMentoship: React.FC = () => {
 
   const handleComplete = async () => {
     try {
-      await Promise.all(
-        ModulesEvaluate.map(async (element) => {
-          try {
-            if (element) {
-              const moduleGrades =
-                await ModuleGradeServices.getModuleGradesByIdSeller(Seller.id);
-              const existingModuleGrade = moduleGrades.find(
-                (grade) => grade.moduleId === element.idModule
-              );
-              if (existingModuleGrade) {
-                await ModuleGradeServices.updateModuleGrade(
-                  existingModuleGrade.id,
-                  element.comment,
-                  element.implementacao,
-                  element.conhecimento
-                );
-              } else {
-                await ModuleGradeServices.create(
-                  comment,
-                  element.idModule,
-                  Seller.id,
-                  element.implementacao,
-                  element.conhecimento
-                );
-              }
-
-              /* await PlainService.createPlain({
-                title: selectedAction,
-                comments: comment,
-                prize: date.toLocaleDateString(),
-                sellerId: Seller.id,
-                supervisorId: Seller.supervisorId,
-                moduleId: selectedValue,
-              }); */
-            }
-          } catch (error) {
-            console.error(
-              'Erro ao criar ou atualizar módulo de avaliação:',
-              error
-            );
-          }
-        })
-      );
+      await Promise.all(ModulesEvaluate.map(updateModuleGrade));
       console.log('Módulos avaliados com sucesso');
-      toast.show('Módulos avaliados com sucesso', {
-        type: 'success',
-        placement: 'bottom',
-        duration: 3500,
-        animationType: 'zoom-in',
-      });
+      showToast('Módulos avaliados com sucesso', 'success');
     } catch (error) {
       console.error('Erro ao completar o mentorado:', error);
     }
   };
 
-  const handleCompleteWithoutActionPlan = async () => {
+  const updateModuleGrade = async (element: any) => {
     try {
-      await Promise.all(
-        ModulesEvaluate.map(async (element) => {
-          try {
-            if (element) {
-              const moduleGrades =
-                await ModuleGradeServices.getModuleGradesByIdSeller(Seller.id);
-              const existingModuleGrade = moduleGrades.find(
-                (grade) => grade.moduleId === element.idModule
-              );
-              if (existingModuleGrade) {
-                await ModuleGradeServices.updateModuleGrade(
-                  existingModuleGrade.id,
-                  element.comment,
-                  element.implementacao,
-                  element.conhecimento
-                );
-              } else {
-                await ModuleGradeServices.create(
-                  comment,
-                  element.idModule,
-                  Seller.id,
-                  element.implementacao,
-                  element.conhecimento
-                );
-              }
-            }
-          } catch (error) {
-            console.error(
-              'Erro ao criar ou atualizar módulo de avaliação:',
-              error
-            );
-          }
-        })
-      );
-      console.log('Módulos avaliados com sucesso');
-      toast.show('Módulos avaliados com sucesso', {
-        type: 'success',
-        placement: 'bottom',
-        duration: 3500,
-        animationType: 'zoom-in',
-      });
+      if (element) {
+        const moduleGrades =
+          await ModuleGradeServices.getModuleGradesByIdSeller(Seller.id);
+        const existingModuleGrade = moduleGrades.find(
+          (grade) => grade.moduleId === element.idModule
+        );
+        if (existingModuleGrade) {
+          await ModuleGradeServices.updateModuleGrade({
+            id: existingModuleGrade.id,
+            supervisorComment: element.comment,
+            implementationScore: element.implementacao,
+            knowledgeScore: element.conhecimento,
+            moduleId: element.idModule,
+            sellerId: element.idModule,
+          });
+        } else {
+          await ModuleGradeServices.create({
+            supervisorComment: element.comment,
+            moduleId: element.idModule,
+            sellerId: Seller.id,
+            implementationScore: element.implementacao,
+            knowledgeScore: element.conhecimento,
+          });
+        }
+      }
     } catch (error) {
-      console.error('Erro ao completar o mentorado:', error);
+      console.error('Erro ao criar ou atualizar módulo de avaliação:', error);
     }
+  };
+
+  const handleCompleteWithoutActionPlan = async () => {
+    console.log('Completo');
+  };
+
+  const showToast = (message: string, type: string) => {
+    toast.show(message, {
+      type: type,
+      placement: 'bottom',
+      duration: 3500,
+      animationType: 'zoom-in',
+    });
   };
 
   return (
@@ -162,61 +108,107 @@ const CompleteMentoship: React.FC = () => {
       <StatusBar />
       <S.Wrapper>
         <HeaderPages title="Avaliar Mentorado" />
-        <S.DivFields>
-          <S.ImageUser source={require('@assets/img/cardVendedor/foto.png')} />
-          <S.DivTexts>
-            <S.TextName>{Seller?.name}</S.TextName>
-            <S.TextFunction>{Seller?.job}</S.TextFunction>
-          </S.DivTexts>
-        </S.DivFields>
-        <S.Container>
-          <S.DivInputs>
-            <S.Label>Ação Programada</S.Label>
-            <S.InputAction
-              placeholder="Ex: Aumentar a comunicação pós venda "
-              value={selectedAction}
-              onChangeText={(text) => setSelectedAction(text)}
-            />
-          </S.DivInputs>
-          <S.DivInputs>
-            <S.Label>Data Limite</S.Label>
-            <S.BtnData onPress={showDatePickerModal}>
-              <S.TextBtnData>
-                {date ? date.toLocaleDateString() : 'Selecione a Data'}
-              </S.TextBtnData>
-            </S.BtnData>
-            {showDatePicker && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={date}
-                mode="date"
-                display="default"
-                onChange={handleDateChange}
-              />
-            )}
-          </S.DivInputs>
-          <S.DivInputs>
-            <S.Label>Comentário</S.Label>
-            <S.TextArea
-              placeholder="Digite aqui..."
-              multiline={true}
-              numberOfLines={5}
-              value={comment}
-              onChangeText={(text) => setComment(text)}
-            />
-          </S.DivInputs>
-        </S.Container>
-        <S.BtnConcluirPlano onPress={handleComplete}>
-          <S.TextBtnPlano>CONCLUIR PLANO DE AÇÃO</S.TextBtnPlano>
-        </S.BtnConcluirPlano>
-
-        <S.BtnConcluirSemPlano onPress={handleCompleteWithoutActionPlan}>
-          <S.TextBtnSemPlano>FINALIZAR SEM PLANO</S.TextBtnSemPlano>
-        </S.BtnConcluirSemPlano>
+        <SellerInfo seller={Seller} />
+        <InputsSection
+          selectedAction={selectedAction}
+          setSelectedAction={setSelectedAction}
+          date={date}
+          showDatePickerModal={showDatePickerModal}
+          showDatePicker={showDatePicker}
+          handleDateChange={handleDateChange}
+          comment={comment}
+          setComment={setComment}
+        />
+        <ButtonsSection
+          handleComplete={handleComplete}
+          handleCompleteWithoutActionPlan={handleCompleteWithoutActionPlan}
+        />
       </S.Wrapper>
       <DivGradient />
     </>
   );
 };
 
-export default CompleteMentoship;
+const SellerInfo: React.FC<{ seller: ISeller }> = ({ seller }) => (
+  <S.DivFields>
+    <S.ImageUser source={require('@assets/img/cardVendedor/foto.png')} />
+    <S.DivTexts>
+      <S.TextName>{seller?.name}</S.TextName>
+      <S.TextFunction>{seller?.job}</S.TextFunction>
+    </S.DivTexts>
+  </S.DivFields>
+);
+
+const InputsSection: React.FC<{
+  selectedAction: string;
+  setSelectedAction: React.Dispatch<React.SetStateAction<string>>;
+  date: Date;
+  showDatePickerModal: () => void;
+  showDatePicker: boolean;
+  handleDateChange: (event: DateTimePickerEvent, selectedDate?: Date) => void;
+  comment: string;
+  setComment: React.Dispatch<React.SetStateAction<string>>;
+}> = ({
+  selectedAction,
+  setSelectedAction,
+  date,
+  showDatePickerModal,
+  showDatePicker,
+  handleDateChange,
+  comment,
+  setComment,
+}) => (
+  <S.Container>
+    <S.DivInputs>
+      <S.Label>Ação Programada</S.Label>
+      <S.InputAction
+        placeholder="Ex: Aumentar a comunicação pós venda "
+        value={selectedAction}
+        onChangeText={(text) => setSelectedAction(text)}
+      />
+    </S.DivInputs>
+    <S.DivInputs>
+      <S.Label>Data Limite</S.Label>
+      <S.BtnData onPress={showDatePickerModal}>
+        <S.TextBtnData>
+          {date ? date.toLocaleDateString() : 'Selecione a Data'}
+        </S.TextBtnData>
+      </S.BtnData>
+      {showDatePicker && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={date}
+          mode="date"
+          display="default"
+          onChange={handleDateChange}
+        />
+      )}
+    </S.DivInputs>
+    <S.DivInputs>
+      <S.Label>Comentário</S.Label>
+      <S.TextArea
+        placeholder="Digite aqui..."
+        multiline={true}
+        numberOfLines={5}
+        value={comment}
+        onChangeText={(text) => setComment(text)}
+      />
+    </S.DivInputs>
+  </S.Container>
+);
+
+const ButtonsSection: React.FC<{
+  handleComplete: () => void;
+  handleCompleteWithoutActionPlan: () => void;
+}> = ({ handleComplete, handleCompleteWithoutActionPlan }) => (
+  <>
+    <S.BtnConcluirPlano onPress={handleCompleteWithoutActionPlan}>
+      <S.TextBtnPlano>CONCLUIR PLANO DE AÇÃO</S.TextBtnPlano>
+    </S.BtnConcluirPlano>
+    <S.BtnConcluirSemPlano onPress={handleComplete}>
+      <S.TextBtnSemPlano>FINALIZAR SEM PLANO</S.TextBtnSemPlano>
+    </S.BtnConcluirSemPlano>
+  </>
+);
+
+export default CompleteMentorship;

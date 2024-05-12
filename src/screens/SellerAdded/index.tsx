@@ -77,7 +77,6 @@ const SellerAdded = () => {
         supervisorId,
         companyId,
       });
-
       setName('');
       setEmail('');
       setSelectedSupervisor(null);

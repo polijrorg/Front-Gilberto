@@ -8,56 +8,21 @@ import useAuth from '@hooks/useAuth';
 import SellerServices from '@services/SellerServices';
 import SupervisorServices from '@services/SupervisorServices';
 import { View, Text, ActivityIndicator } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
 import ModulesServices from '@services/ModuleServices';
 
-type IContainer = {
+type IContainerSeller = {
   search?: string;
+  sellers: ISeller[];
+  media: { [key: string]: number };
+  loading: boolean;
 };
 
-const SellersContainer: React.FC<IContainer> = ({ search }) => {
-  const { user } = useAuth();
-  const [sellers, setSellers] = useState<ISeller[]>([]);
-  const [media, setMedia] = useState<{ [key: string]: number }>({});
-  const [loading, setLoading] = useState(true);
-
-  const isFocused = useIsFocused();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const sellersData: ISeller[] =
-          user.job === 'Supervisor'
-            ? await SellerServices.getAllSellerFromSupervisor(user.id)
-            : await SellerServices.getAllSellerFromManager(user.id);
-
-        const mediaData: { [key: string]: number } = {};
-        for (const seller of sellersData) {
-          const moduleGrades = await ModulesServices.getModuleGradesByIdSeller(
-            seller.id
-          );
-          const totalGrade = moduleGrades.reduce(
-            (sum, grade) => sum + grade.media,
-            0
-          );
-          const averageGrade =
-            moduleGrades.length > 0 ? totalGrade / moduleGrades.length : 0;
-          mediaData[seller.id] = averageGrade;
-        }
-
-        setSellers(sellersData);
-        setMedia(mediaData);
-      } catch (error) {
-        console.error('Erro ao buscar dados de vendedores:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [user.id, user.job]);
-
+const SellersContainer: React.FC<IContainerSeller> = ({
+  search,
+  sellers,
+  media,
+  loading,
+}) => {
   let filteredSellers: ISeller[] = sellers;
 
   const removeAccents = (str: string) => {
@@ -111,7 +76,7 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
                 cargo={seller.job}
                 supervisorId={seller.supervisorId}
                 companyId={seller.companyId}
-                nota={sellerMedia} // Aqui exibimos a média do vendedor
+                nota={sellerMedia}
               />
             );
           })
@@ -134,29 +99,17 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
   );
 };
 
-const SupervisorsContainer: React.FC<IContainer> = ({ search }) => {
-  const { user } = useAuth();
-  const isFocused = useIsFocused();
-  const [supervisors, setSupervisors] = useState<ISupervisor[]>([]);
-  const [loading, setLoading] = useState(true);
+type IContainerSupervisor = {
+  search?: string;
+  supervisors: ISupervisor[];
+  loading: boolean;
+};
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const supervisorsData =
-          await SupervisorServices.getAllSupervisorsFromManager(user.id);
-        setSupervisors(supervisorsData);
-      } catch (error) {
-        console.error('Erro ao buscar dados de supervisores:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [user.id]);
-
+const SupervisorsContainer: React.FC<IContainerSupervisor> = ({
+  search,
+  supervisors,
+  loading,
+}) => {
   let filteredSupervisors: ISupervisor[] = supervisors;
 
   const removeAccents = (str: string) => {

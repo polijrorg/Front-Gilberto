@@ -44,17 +44,23 @@ const EvaluateVisit = () => {
 
   const handleSelectSeller = async (seller: ISeller) => {
     setSelectedSeller(seller);
-    const templates = await VisitService.getTemplateByCompanyId(seller.companyId);
+    const templates = await VisitService.getTemplateByCompanyId(
+      seller.companyId
+    );
     const fetchedCategories: ICategories[] = [];
-    
-    await Promise.all(templates.map(async (template) => {
-      const categories = await VisitService.getCategoriesByIdTemplate(template.id);
-      
-      categories.forEach(category => {
-        fetchedCategories.push(category);
-      });
-    }));
-    
+
+    await Promise.all(
+      templates.map(async (template) => {
+        const categories = await VisitService.getCategoriesByIdTemplate(
+          template.id
+        );
+
+        categories.forEach((category) => {
+          fetchedCategories.push(category);
+        });
+      })
+    );
+
     setCategories(fetchedCategories);
   };
 
@@ -71,7 +77,7 @@ const EvaluateVisit = () => {
   };
 
   const handleUpdateAnswers = (updatedAnswers: any[]) => {
-    console.log("", updatedAnswers);
+    console.log('', updatedAnswers);
     setAnswers(updatedAnswers);
   };
 
@@ -106,28 +112,32 @@ const EvaluateVisit = () => {
               onStoreNameChange={handleStoreNameChange}
             />
           )}
-          {indexScreen !== 1 && categories.map((category, idx) => (
-            <QuestionSection
-              key={category.id}
-              sellerId={selectedSeller.id as string}
-              category={category}
-              index={idx + 2}
-              selectedIndex={indexScreen}
-              onUpdateAnswers={handleUpdateAnswers} // Passando a função para o componente QuestionSection
-            />
-          ))}
+          {indexScreen !== 1 &&
+            categories.map((category, idx) => (
+              <QuestionSection
+                key={category.id}
+                sellerId={selectedSeller.id as string}
+                category={category}
+                index={idx + 2}
+                selectedIndex={indexScreen}
+                onUpdateAnswers={handleUpdateAnswers} // Passando a função para o componente QuestionSection
+              />
+            ))}
           {indexScreen <= categories.length && (
-            <S.ButtonIniciar onPress={handleAdvance} disabled={storeName === ''}>
+            <S.ButtonIniciar
+              onPress={handleAdvance}
+              disabled={storeName === ''}
+            >
               <S.TextBtn>Próximo</S.TextBtn>
             </S.ButtonIniciar>
           )}
-          {indexScreen > categories.length && (
+          {indexScreen > categories.length && user.job === 'Supervisor' && (
             <FinishedSection />
           )}
         </S.ContainerFields>
       </S.WrapperView>
     </>
-  );  
+  );
 };
 
 const FinishedSection = () => {
@@ -140,17 +150,31 @@ const FinishedSection = () => {
         <S.TextBtnNova>Iniciar nova visita</S.TextBtnNova>
       </S.Outline>
     </S.ContainerFields>
-  )
+  );
 };
 
-const SellerSelection = ({ sellers, onSelectSeller, onAdvance, storeName, onStoreNameChange }) => {
+const SellerSelection = ({
+  sellers,
+  onSelectSeller,
+  onAdvance,
+  storeName,
+  onStoreNameChange,
+}) => {
   return (
     <S.DivContainer>
       <S.TitleInput>Nome do Vendedor</S.TitleInput>
       <Dropdown sellers={sellers} onSelectSeller={onSelectSeller} />
       <S.TitleInput>Loja</S.TitleInput>
-      <S.Input placeholder="Nome da Loja" value={storeName} onChangeText={onStoreNameChange} />
-      <S.ButtonFirst onPress={onAdvance} disabled={storeName === ''} style={{opacity: storeName ? 1 : 0.5}}>
+      <S.Input
+        placeholder="Nome da Loja"
+        value={storeName}
+        onChangeText={onStoreNameChange}
+      />
+      <S.ButtonFirst
+        onPress={onAdvance}
+        disabled={storeName === ''}
+        style={{ opacity: storeName ? 1 : 0.5 }}
+      >
         <S.TextBtn>iniciar Avaliação</S.TextBtn>
       </S.ButtonFirst>
     </S.DivContainer>

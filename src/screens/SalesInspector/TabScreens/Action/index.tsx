@@ -218,12 +218,12 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontFamily: 'Poppins',
-    fontSize: 18,
+    fontSize: 16,
     textAlign: 'center',
   },
   sectionHeader: {
     fontFamily: 'Poppins',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     marginVertical: 16,
     paddingHorizontal: 16,

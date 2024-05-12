@@ -14,3 +14,9 @@ export const WrapperView = styled(View)`
   height: 100%;
   margin: 8px auto;
 `;
+
+export const ViewContainer = styled(View)`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
