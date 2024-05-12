@@ -5,14 +5,14 @@ import Slider from '@react-native-community/slider';
 
 interface askProps {
   textAsk?: string;
-  moduleId?: string;
-  onChangeValue?: (moduleId: string, newValue: number) => void;
-  initialValue?: number; // Propriedade para receber o valor inicial
+  id?: string;
+  onChangeValue?: (id: string, newValue: number) => void;
+  initialValue?: number;
 }
 
 const InputRange: React.FC<askProps> = ({
   textAsk,
-  moduleId,
+  id,
   onChangeValue,
   initialValue = 1,
 }) => {
@@ -33,7 +33,7 @@ const InputRange: React.FC<askProps> = ({
           value={value}
           onValueChange={(newValue) => {
             setValue(newValue);
-            onChangeValue(moduleId, newValue);
+            onChangeValue(id, newValue);
           }}
         />
         <Text style={styles.sliderValue}>

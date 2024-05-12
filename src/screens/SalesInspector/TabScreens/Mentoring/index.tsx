@@ -73,7 +73,7 @@ const Mentoring = ({ route }) => {
             {modules.map((module, index) => (
               <Accordion
                 key={index}
-                comment={moduleGrade[index]?.supervisorComment}
+                comment={moduleGrade[index]?.supervisorComment || 'Comentários'}
                 title={
                   `Módulo ${index + 1}: ${module.name}` || 'Módulo X: Tema'
                 }

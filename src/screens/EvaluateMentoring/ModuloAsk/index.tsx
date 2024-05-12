@@ -114,12 +114,12 @@ const ModuloAsk: React.FC<Props> = ({ route }) => {
                 Módulo {index + 1}: {module.name}
               </S.TitleModule>
               <InputRange
-                moduleId={module.id}
+                id={module.id}
                 textAsk="Conhecimento"
                 initialValue={moduleGrade?.knowledgeScore || 1}
-                onChangeValue={(moduleId, value) =>
+                onChangeValue={(id, value) =>
                   handleUpdateModuleValues(
-                    moduleId,
+                    id,
                     index,
                     value,
                     moduleValues[index]?.implementacao || 0,
@@ -128,12 +128,12 @@ const ModuloAsk: React.FC<Props> = ({ route }) => {
                 }
               />
               <InputRange
-                moduleId={module.id}
+                id={module.id}
                 textAsk="Implementação"
                 initialValue={moduleGrade?.implementationScore || 1}
-                onChangeValue={(moduleId, value) =>
+                onChangeValue={(id, value) =>
                   handleUpdateModuleValues(
-                    moduleId,
+                    id,
                     index,
                     moduleValues[index]?.conhecimento || 0,
                     value,

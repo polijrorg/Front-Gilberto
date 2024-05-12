@@ -9,6 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import styled from 'styled-components/native';
+import Select from '@components/Select';
 
 export const Wrapper = styled(ScrollView)`
   width: 100%;
@@ -21,7 +22,7 @@ export const WrapperView = styled(View)`
   max-height: 100%;
   flex: 1;
   padding: 12px;
-  gap: 16px;
+  gap: 8px;
   margin: 0 auto;
 `;
 
@@ -75,6 +76,26 @@ export const TextBtn = styled(Text)`
   color: #fff;
 `;
 
+export const Outline = styled(TouchableOpacity)`
+  padding: 8px 24px;
+  width: 90%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  margin: 0px auto;
+  border-width: 1px;
+  border-color: #3451b2;
+`;
+
+export const TextBtnNova = styled(Text)`
+  font-family: Poppins;
+  text-transform: uppercase;
+  color: #3451b2;
+  font-size: 16px;
+`;
+
 export const BtnData = styled(TouchableOpacity)`
   border-radius: 8px;
   border-radius: 1px;
@@ -93,8 +114,20 @@ export const TextBtnData = styled(Text)`
 export const DivContainer = styled(View)`
   gap: 12px;
 `;
-export const SelectScrollView = styled(ScrollView)`
-  flex: 1;
-  height: auto; /* Permitir que o ScrollView se ajuste dinamicamente ao conteúdo */
-  max-height: 200px; /* Definir uma altura máxima para evitar que ocupe muito espaço na tela */
+
+export const ActionTypeSwitch = styled(View)`
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+`;
+
+interface ActionTypeLabelProps {
+  selected: boolean;
+}
+
+export const ActionTypeLabel = styled(Text)<ActionTypeLabelProps>`
+  font-size: 16px;
+  font-family: Poppins;
+  margin-left: 16px;
+  color: ${(props) => (props.selected ? '#687076' : '#687076')};
 `;

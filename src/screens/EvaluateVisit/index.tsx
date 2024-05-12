@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import Breadcrumb from '@components/Breadcrumb';
 import Dropdown from '@components/Dropdown';
 import HeaderPages from '@components/HeaderPages';
-import Question from '@components/Question';
+import QuestionSection from '@components/QuestionSection';
 
 import useAuth from '@hooks/useAuth';
 
@@ -23,8 +23,8 @@ const EvaluateVisit = () => {
   const [indexScreen, setIndexScreen] = useState(1);
   const [selectedSeller, setSelectedSeller] = useState<ISeller | null>(null);
   const [categories, setCategories] = useState<ICategories[]>([]);
-  const [questions, setQuestions] = useState<IQuestions[]>([]);
   const [storeName, setStoreName] = useState('');
+  const [answers, setAnswers] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchSellers = async () => {
@@ -70,6 +70,11 @@ const EvaluateVisit = () => {
     setStoreName(text);
   };
 
+  const handleUpdateAnswers = (updatedAnswers: any[]) => {
+    console.log("", updatedAnswers);
+    setAnswers(updatedAnswers);
+  };
+
   return (
     <>
       <S.WrapperView>
@@ -104,9 +109,11 @@ const EvaluateVisit = () => {
           {indexScreen !== 1 && categories.map((category, idx) => (
             <QuestionSection
               key={category.id}
+              sellerId={selectedSeller.id as string}
               category={category}
               index={idx + 2}
               selectedIndex={indexScreen}
+              onUpdateAnswers={handleUpdateAnswers} // Passando a função para o componente QuestionSection
             />
           ))}
           {indexScreen <= categories.length && (
@@ -123,39 +130,10 @@ const EvaluateVisit = () => {
   );  
 };
 
-const QuestionSection = ({ category, index, selectedIndex }) => {
-  const [categoryQuestions, setCategoryQuestions] = useState<IQuestions[]>([]);
-  
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      const questions = await VisitService.getQuestionsByIdCategory(category.id);
-      setCategoryQuestions(questions);
-    };
-    fetchQuestions();
-  }, [category.id]);
-
-  return (
-    selectedIndex === index && (
-      <ScrollView style={{height: 400, paddingHorizontal: 8}}>
-          <S.TemaQuestion>{category.name}</S.TemaQuestion>
-          {categoryQuestions.map((question, index) => (
-            <Question
-              textAsk={question.question}
-            />
-          ))}
-      </ScrollView>
-    )
-  );
-};
-
 const FinishedSection = () => {
-
-  const finishedVisit = async () => {
-  }
-
   return (
     <S.ContainerFields>
-      <S.BtnFinished onPress={finishedVisit}>
+      <S.BtnFinished>
         <S.TextBtn>Finalizar dia com com esse vendedor</S.TextBtn>
       </S.BtnFinished>
       <S.Outline>

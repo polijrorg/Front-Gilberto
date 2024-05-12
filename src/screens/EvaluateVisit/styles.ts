@@ -31,6 +31,16 @@ export const DivSellerInfo = styled(View)`
   justify-content: space-around;
 `;
 
+export const Wrapper = styled(View)`
+  width: 100%;
+  height: auto;
+`;
+
+export const TemaQuestion = styled(Text)`
+  font-family: Poppins;
+  font-size: 16px;
+`;
+
 export const DivSellerImage = styled(View)`
   width: 64px;
   height: 64px;
@@ -95,11 +105,6 @@ export const ButtonFirst = styled(TouchableOpacity)`
   border-radius: 8px;
 
   margin-top: 80%;
-`;
-
-export const TemaQuestion = styled(Text)`
-  font-family: Poppins;
-  font-size: 16px;
 `;
 
 export const ButtonIniciar = styled(TouchableOpacity)`

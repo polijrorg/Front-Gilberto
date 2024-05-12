@@ -4,24 +4,27 @@ import ITemplateVisit from '@interfaces/Visit/TemplateVisit';
 import ICategories from '@interfaces/Visit/Categories';
 import IQuestions from '@interfaces/Visit/Questions';
 import IQuestionGrade from '@interfaces/Visit/QuestionGrade';
-
+import IVisit from '@interfaces/Visit/Visit';
 
 import api from './api';
 
 export default class VisitService {
+  static async createQuestionsGrade(
+    questionGrade: IQuestionGrade
+  ): Promise<void> {
+    await api.post(`/questionsGrades/create`, questionGrade);
+  }
 
-  static async createQuestionsGrade(questionGrade: IQuestionGrade): Promise<void>{
-    await api.post(
-      `/questionsGrades/create`,
-      questionGrade
-    );
+  static async getAll(): Promise<IVisit[]> {
+    const visits: AxiosResponse<IVisit[]> = await api.get('visit/getAll');
+    return visits.data;
   }
 
   static async updateQuestionGrade(
     questionGrade: IQuestionGrade
   ): Promise<void> {
     await api.patch(`/questionsGrades/update/`, {
-      questionGrade
+      questionGrade,
     });
   }
 

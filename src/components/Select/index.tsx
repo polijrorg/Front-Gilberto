@@ -9,7 +9,7 @@ interface Option {
 }
 
 interface SelectProps {
-  options: Option[];
+  options?: Option[];
   onChange: (value: string) => void;
   placeholder?: string;
 }
@@ -44,7 +44,7 @@ const Select: React.FC<SelectProps> = ({
           </S.DropDownButton>
           {isOpen && (
             <S.DropdownList maxHeight={options?.length > 1 ? 300 : null}>
-              {options.map((option, index) => (
+              {options?.map((option, index) => (
                 <S.DropdownItem
                   key={index}
                   onPress={() => handleSelectOption(option.label, option.value)}

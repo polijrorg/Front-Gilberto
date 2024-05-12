@@ -11,7 +11,20 @@ export default class PlainService {
     return plainResponse.data;
   }
 
-  static async createPlain(newPlain: Partial<IPlain>): Promise<void> {
-    await api.post('/actionPlans/create', newPlain);
+  static async getByIdSellerPlain(idSeller: string): Promise<IPlain[]> {
+    const plainsArray: AxiosResponse<IPlain[]> = await api.get(
+      `/actionPlans/getAll/${idSeller}`
+    );
+    return plainsArray.data;
+  }
+
+  static async createPlain(newPlain: Partial<IPlain>): Promise<IPlain> {
+    const plainResponse = await api.post('/actionPlans/create', newPlain);
+    return plainResponse.data;
+  }
+
+  static async markDone(idPlain: string): Promise<IPlain> {
+    const responsePlain = await api.patch(`/actionPlans/markAsDone/${idPlain}`);
+    return responsePlain.data;
   }
 }

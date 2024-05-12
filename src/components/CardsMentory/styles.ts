@@ -4,7 +4,9 @@ import styled from 'styled-components/native';
 export const StyledWrapper = styled(View)`
   width: 95%;
   height: auto;
-  background-color: #f1f3f5;
+  background-color: #f1f3f3;
+  border-width: 1px;
+  border-color: #8c8c8c;
   margin: 10px auto;
   padding: 10px 20px;
   display: flex;
@@ -15,7 +17,7 @@ export const StyledWrapper = styled(View)`
 `;
 
 export const DivText = styled(View)`
-  padding: 8px;
+  padding: 4px;
 `;
 
 export const Title = styled(Text)`

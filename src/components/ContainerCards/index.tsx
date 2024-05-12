@@ -55,10 +55,8 @@ const SellersContainer: React.FC<IContainer> = ({ search }) => {
       }
     };
 
-    if (isFocused) {
-      fetchData();
-    }
-  }, [user.id, isFocused, user.job]);
+    fetchData();
+  }, [user.id, user.job]);
 
   let filteredSellers: ISeller[] = sellers;
 
@@ -156,10 +154,8 @@ const SupervisorsContainer: React.FC<IContainer> = ({ search }) => {
       }
     };
 
-    if (isFocused) {
-      fetchData();
-    }
-  }, [user.id, isFocused]);
+    fetchData();
+  }, [user.id]);
 
   let filteredSupervisors: ISupervisor[] = supervisors;
 
