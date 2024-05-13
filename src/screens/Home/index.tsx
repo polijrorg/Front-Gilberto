@@ -11,9 +11,11 @@ import SupervisorServices from '@services/SupervisorServices';
 import SellerServices from '@services/SellerServices';
 import ModulesServices from '@services/ModuleServices';
 import Seller from '@interfaces/Seller';
+import { useDataContext } from '../../context/DataContext';
 
 const Home = () => {
   const { user } = useAuth();
+  const { data } = useDataContext();
   const [loading, setLoading] = useState(true);
   const [sellers, setSellers] = useState([]);
   const [supervisors, setSupervisors] = useState([]);
@@ -42,7 +44,7 @@ const Home = () => {
       }
     };
     fetchData();
-  }, [user.id, user.job]);
+  }, [user.id, user.job, data]);
 
   const fetchMediaData = async (sellersData: Seller[]) => {
     const mediaData = {};

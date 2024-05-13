@@ -56,7 +56,8 @@ export default class SellerService {
   }
 
   // Função para criar um novo vendedor
-  static async createSeller(newSeller: Partial<ISeller>): Promise<void> {
-    await api.post('/seller/create', newSeller);
+  static async createSeller(newSeller: Partial<ISeller>): Promise<ISeller> {
+    const sellerResponse = await api.post('/seller/create', newSeller);
+    return sellerResponse.data;
   }
 }

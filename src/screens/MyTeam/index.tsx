@@ -12,9 +12,11 @@ import ModulesServices from '@services/ModuleServices';
 import HeaderPages from '@components/HeaderPages';
 import ISupervisor from '@interfaces/Supervisor';
 import ISeller from '@interfaces/Seller';
+import { useDataContext } from '../../context/DataContext';
 
 const MyTeam = () => {
   const { user } = useAuth();
+  const { data } = useDataContext();
   const [loading, setLoading] = useState(true);
   const [sellers, setSellers] = useState<ISeller[]>([]);
   const [supervisors, setSupervisors] = useState<ISupervisor[]>([]);
@@ -54,7 +56,7 @@ const MyTeam = () => {
       }
     };
     fetchData();
-  }, [user.id, user.job]);
+  }, [user.id, user.job, data]);
 
   const fetchMediaData = async (sellersData: Seller[]) => {
     const mediaData = {};

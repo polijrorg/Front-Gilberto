@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import * as S from './styles';
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import ModuleGradeServices from '@services/ModuleGradeService';
 import DivGradient from '@components/DivGradient';
 import HeaderPages from '@components/HeaderPages';
@@ -10,6 +10,8 @@ import { useToast } from 'react-native-toast-notifications';
 import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useDataContext } from '../../../context/DataContext';
 
 interface RouteParams {
   ModulesEvaluate: Array<{
@@ -30,6 +32,8 @@ const CompleteMentorship: React.FC = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [comment, setComment] = useState('');
   const toast = useToast();
+  const { data, setData } = useDataContext();
+  const navigation = useNavigation();
 
   const handleModuleChange = (value: string) => {
     setSelectedValue(value);
@@ -51,6 +55,11 @@ const CompleteMentorship: React.FC = () => {
   const handleComplete = async () => {
     try {
       await Promise.all(ModulesEvaluate.map(updateModuleGrade));
+
+      setData({
+        ...data,
+        seller: Seller,
+      });
       console.log('Módulos avaliados com sucesso');
       showToast('Módulos avaliados com sucesso', 'success');
     } catch (error) {
@@ -94,6 +103,10 @@ const CompleteMentorship: React.FC = () => {
     console.log('Completo');
   };
 
+  const handleBackHome = () => {
+    navigation.navigate('Home' as never);
+  };
+
   const showToast = (message: string, type: string) => {
     toast.show(message, {
       type: type,
@@ -108,7 +121,7 @@ const CompleteMentorship: React.FC = () => {
       <StatusBar />
       <S.Wrapper>
         <HeaderPages title="Avaliar Mentorado" />
-        <SellerInfo seller={Seller} />
+        <SellerInfo seller={Seller} handleBackHome={handleBackHome} />
         <InputsSection
           selectedAction={selectedAction}
           setSelectedAction={setSelectedAction}
@@ -129,13 +142,21 @@ const CompleteMentorship: React.FC = () => {
   );
 };
 
-const SellerInfo: React.FC<{ seller: ISeller }> = ({ seller }) => (
+const SellerInfo: React.FC<{ seller: ISeller; handleBackHome: () => void }> = ({
+  seller,
+  handleBackHome,
+}) => (
   <S.DivFields>
-    <S.ImageUser source={require('@assets/img/cardVendedor/foto.png')} />
-    <S.DivTexts>
-      <S.TextName>{seller?.name}</S.TextName>
-      <S.TextFunction>{seller?.job}</S.TextFunction>
-    </S.DivTexts>
+    <S.UserInfoContainer>
+      <S.ImageUser source={require('@assets/img/cardVendedor/foto.png')} />
+      <S.DivTexts>
+        <S.TextName>{seller?.name}</S.TextName>
+        <S.TextFunction>{seller?.job}</S.TextFunction>
+      </S.DivTexts>
+    </S.UserInfoContainer>
+    <S.BtnHomeScreen onPress={handleBackHome}>
+      <MaterialCommunityIcons name="home-outline" size={28} color="#fff" />
+    </S.BtnHomeScreen>
   </S.DivFields>
 );
 
@@ -205,6 +226,7 @@ const ButtonsSection: React.FC<{
     <S.BtnConcluirPlano onPress={handleCompleteWithoutActionPlan}>
       <S.TextBtnPlano>CONCLUIR PLANO DE AÇÃO</S.TextBtnPlano>
     </S.BtnConcluirPlano>
+
     <S.BtnConcluirSemPlano onPress={handleComplete}>
       <S.TextBtnSemPlano>FINALIZAR SEM PLANO</S.TextBtnSemPlano>
     </S.BtnConcluirSemPlano>

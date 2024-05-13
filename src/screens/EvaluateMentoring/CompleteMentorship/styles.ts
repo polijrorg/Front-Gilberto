@@ -21,10 +21,16 @@ export const Wrapper = styled(ScrollView)`
 export const DivFields = styled(View)`
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  padding: 24px 24px;
+  justify-content: space-between;
   align-items: center;
   background-color: ${theme.colors.secundary.main};
-  padding: 24px;
+`;
+
+export const UserInfoContainer = styled(View)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 export const ImageUser = styled(Image)`
@@ -59,6 +65,8 @@ export const Container = styled(View)`
   margin: 24px auto;
   gap: 24px;
 `;
+
+export const BtnHomeScreen = styled(TouchableOpacity)``;
 
 export const DivInputs = styled(View)`
   display: flex;

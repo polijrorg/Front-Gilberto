@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import Routes from '@routes/index';
 import { useFonts } from 'expo-font';
 import { ToastProvider } from 'react-native-toast-notifications';
+import { DataProvider } from 'src/context/DataContext';
 
 import React from 'react';
 
@@ -18,9 +19,11 @@ export default function App() {
   return (
     <NavigationContainer>
       <ToastProvider>
-        <AppProvider>
-          <Routes />
-        </AppProvider>
+        <DataProvider>
+          <AppProvider>
+            <Routes />
+          </AppProvider>
+        </DataProvider>
       </ToastProvider>
     </NavigationContainer>
   );
