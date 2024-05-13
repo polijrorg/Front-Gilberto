@@ -1,6 +1,7 @@
 import * as S from './styles';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { ActivityIndicator } from 'react-native';
 import Modal from 'react-native-modal';
 import useAuth from '@hooks/useAuth';
 
@@ -8,16 +9,19 @@ const HeaderMenu: React.FC = () => {
   const navigation = useNavigation();
   const { user, logout } = useAuth();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
 
   const handleClick = () => {
+    setLoading(!loading);
     setTimeout(() => {
       navigation.navigate('Login' as never);
       logout();
     }, 1000);
+    setLoading(!loading);
   };
 
   return (
@@ -32,8 +36,15 @@ const HeaderMenu: React.FC = () => {
             <S.ImageWarning source={require('@assets/img/warnnign.png')} />
             <S.TextModal>Deseja Sair?</S.TextModal>
           </S.WrapperConteudo>
-          <S.BtnYes onPress={handleClick}>
-            <S.TitleBtnYes>Sim</S.TitleBtnYes>
+          <S.BtnYes
+            onPress={!loading ? handleClick : undefined}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <S.TitleBtnYes>Sim</S.TitleBtnYes>
+            )}
           </S.BtnYes>
           <S.BtnBack onPress={toggleModal}>
             <S.TitleBtnBack>Não</S.TitleBtnBack>

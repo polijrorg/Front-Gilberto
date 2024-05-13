@@ -6,17 +6,19 @@ import SellerServices from '@services/SellerServices';
 import ISeller from '@interfaces/Seller';
 import ISupervisor from '@interfaces/Supervisor';
 
-import { View } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import Modal from 'react-native-modal';
 import SupervisorServices from '@services/SupervisorServices';
+import { useDataContext } from '../../context/DataContext';
 
 const SalesInspector = ({ route }) => {
   const navigation = useNavigation();
   const { idEmployee, cargo, companyId } = route.params;
   const { user } = useAuth();
+  const { data, setData } = useDataContext();
   const [seller, setSeller] = useState<ISeller | null>(null);
   const [supervisors, setSupervisors] = useState<ISupervisor | null>(null);
-
+  const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
@@ -52,11 +54,17 @@ const SalesInspector = ({ route }) => {
 
   const handleDelete = async () => {
     try {
+      setLoading(true);
       if (cargo === 'Supervisor' && supervisors) {
         await SupervisorServices.delete(supervisors.id);
       } else if (cargo === 'Vendedor' && seller) {
         await SellerServices.delete(seller.id);
       }
+      setData({
+        ...data,
+        seller: seller,
+      });
+      setLoading(false);
       navigation.goBack();
     } catch (error) {
       console.error('Erro ao excluir vendedor:', error);
@@ -101,8 +109,15 @@ const SalesInspector = ({ route }) => {
                     Tem certeza que deseja excluir esse vendedor?
                   </S.TextModal>
                 </S.WrapperConteudo>
-                <S.BtnYes onPress={handleDelete}>
-                  <S.TitleBtnYes>Sim</S.TitleBtnYes>
+                <S.BtnYes
+                  onPress={!loading ? handleDelete : undefined}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <S.TitleBtnYes>Sim</S.TitleBtnYes>
+                  )}
                 </S.BtnYes>
                 <S.BtnBack onPress={toggleModal}>
                   <S.TitleBtnBack>Voltar</S.TitleBtnBack>

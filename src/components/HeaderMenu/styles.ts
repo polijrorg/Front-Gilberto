@@ -87,7 +87,7 @@ export const TitleBtnYes = styled(Text)`
 `;
 
 export const BtnBack = styled(TouchableOpacity)`
-  border: 2px solid ${theme.colors.secundary.main};
+  border: 2px solid #e5484d;
   border-radius: 8px;
   padding: 16px;
   display: flex;
@@ -96,7 +96,7 @@ export const BtnBack = styled(TouchableOpacity)`
 `;
 
 export const TitleBtnBack = styled(Text)`
-  color: ${theme.colors.secundary.main};
+  color: #e5484d;
   font-family: PoppinsBold;
   font-size: 14px;
   text-transform: uppercase;

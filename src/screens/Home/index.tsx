@@ -5,7 +5,6 @@ import Header from '@components/HeaderMenu';
 import ContainerActions from '@components/ContainerActions';
 import MatrizSlider from '@components/MatrizSlider';
 import Container from '@components/ContainerCards';
-import ButtonAdded from '@components/ButtonAdded';
 import useAuth from '@hooks/useAuth';
 import SupervisorServices from '@services/SupervisorServices';
 import SellerServices from '@services/SellerServices';
@@ -77,7 +76,6 @@ const Home = () => {
           media={media}
         />
       </S.Wrapper>
-      <ButtonAdded />
     </>
   );
 };

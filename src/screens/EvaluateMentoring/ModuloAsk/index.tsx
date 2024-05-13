@@ -92,7 +92,6 @@ const ModuloAsk: React.FC<Props> = ({ route }) => {
     const editedModules = moduleValues.filter(
       (moduleValue) => moduleValue !== undefined
     );
-    console.log(editedModules);
     navigation.navigate('CompleteMentoring', {
       Seller: seller,
       ModulesEvaluate: editedModules,

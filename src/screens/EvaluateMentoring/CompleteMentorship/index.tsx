@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import { theme } from '@styles/default.theme';
 import * as S from './styles';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import ModuleGradeServices from '@services/ModuleGradeService';
@@ -7,6 +8,7 @@ import DivGradient from '@components/DivGradient';
 import HeaderPages from '@components/HeaderPages';
 import ISeller from '@interfaces/Seller';
 import { useToast } from 'react-native-toast-notifications';
+import { ActivityIndicator } from 'react-native';
 import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
@@ -34,6 +36,7 @@ const CompleteMentorship: React.FC = () => {
   const toast = useToast();
   const { data, setData } = useDataContext();
   const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
 
   const handleModuleChange = (value: string) => {
     setSelectedValue(value);
@@ -54,12 +57,14 @@ const CompleteMentorship: React.FC = () => {
 
   const handleComplete = async () => {
     try {
+      setLoading(true);
       await Promise.all(ModulesEvaluate.map(updateModuleGrade));
 
       setData({
         ...data,
         seller: Seller,
       });
+      setLoading(false);
       console.log('Módulos avaliados com sucesso');
       showToast('Módulos avaliados com sucesso', 'success');
     } catch (error) {
@@ -133,6 +138,7 @@ const CompleteMentorship: React.FC = () => {
           setComment={setComment}
         />
         <ButtonsSection
+          loading={loading}
           handleComplete={handleComplete}
           handleCompleteWithoutActionPlan={handleCompleteWithoutActionPlan}
         />
@@ -221,14 +227,22 @@ const InputsSection: React.FC<{
 const ButtonsSection: React.FC<{
   handleComplete: () => void;
   handleCompleteWithoutActionPlan: () => void;
-}> = ({ handleComplete, handleCompleteWithoutActionPlan }) => (
+  loading: boolean;
+}> = ({ handleComplete, handleCompleteWithoutActionPlan, loading }) => (
   <>
     <S.BtnConcluirPlano onPress={handleCompleteWithoutActionPlan}>
       <S.TextBtnPlano>CONCLUIR PLANO DE AÇÃO</S.TextBtnPlano>
     </S.BtnConcluirPlano>
 
-    <S.BtnConcluirSemPlano onPress={handleComplete}>
-      <S.TextBtnSemPlano>FINALIZAR SEM PLANO</S.TextBtnSemPlano>
+    <S.BtnConcluirSemPlano
+      onPress={!loading ? handleComplete : undefined}
+      disabled={loading}
+    >
+      {loading ? (
+        <ActivityIndicator color={theme.colors.secundary.main} />
+      ) : (
+        <S.TextBtnSemPlano>FINALIZAR SEM PLANO</S.TextBtnSemPlano>
+      )}
     </S.BtnConcluirSemPlano>
   </>
 );

@@ -99,9 +99,8 @@ const FormsLogin: React.FC = () => {
               loading || isEnviarDisabled ? undefined : handleEnviarPress
             }
             disabled={loading || isEnviarDisabled}
-            style={{ opacity: buttonOpacity }} // Define a opacidade do botão
+            style={{ opacity: buttonOpacity }}
           >
-            {/* Desabilita o botão quando o carregamento estiver ocorrendo ou algum dos campos estiver vazio */}
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
