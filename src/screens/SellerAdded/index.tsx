@@ -9,6 +9,8 @@ import SellerService from '@services/SellerServices';
 import { useToast } from 'react-native-toast-notifications';
 import HeaderPages from '@components/HeaderPages';
 import DropdownData from '@components/Dropdown';
+import { useDataContext } from '../../context/DataContext';
+import ISeller from '@interfaces/Seller';
 
 interface SupervisorState {
   single: ISupervisor | null;
@@ -20,6 +22,8 @@ const SellerAdded = () => {
     single: null,
     list: [],
   });
+  const { data, setData } = useDataContext();
+
   const { user } = useAuth();
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -70,12 +74,17 @@ const SellerAdded = () => {
       const companyId = user.companyId;
       console.log(name, email, image, supervisorId);
 
-      await SellerService.createSeller({
+      const seller: ISeller = await SellerService.createSeller({
         name,
         image,
         email,
         supervisorId,
         companyId,
+      });
+
+      setData({
+        ...data,
+        seller: seller,
       });
 
       setName('');
@@ -97,7 +106,7 @@ const SellerAdded = () => {
 
   return (
     <>
-      <StatusBar />
+      <StatusBar backgroundColor="#3E63DD" style="light" />
       <S.Wrapper>
         <HeaderPages title="Adicionar Vendedor" />
         <S.Main>

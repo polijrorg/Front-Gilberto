@@ -4,14 +4,14 @@ import { theme } from '@styles/default.theme';
 
 export const Wrapper = styled(ScrollView)`
   width: 100%;
-  max-height: 65% !important;
+  max-height: 100% !important;
   background-color: ${theme.colors.primary.main};
 `;
 
-export const WrapperView = styled(View)`
+export const ViewWrapper = styled(View)`
   display: flex;
-  width: 90%;
-  max-height: 90%;
+  width: 100%;
+  height: 75%;
   margin: 0 auto;
 `;
 

@@ -1,14 +1,19 @@
-import { Alert } from 'react-native';
 import * as S from './styles';
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import Modal from 'react-native-modal';
 import useAuth from '@hooks/useAuth';
 
 const HeaderMenu: React.FC = () => {
   const navigation = useNavigation();
   const { user, logout } = useAuth();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+  };
+
   const handleClick = () => {
-    Alert.alert('Logout', 'Volte Sempre');
     setTimeout(() => {
       navigation.navigate('Login' as never);
       logout();
@@ -18,9 +23,23 @@ const HeaderMenu: React.FC = () => {
   return (
     <S.StyledWrapper>
       <S.StyledHeading>Olá, {user.name}</S.StyledHeading>
-      <S.ButtonLogout onPress={handleClick}>
+      <S.ButtonLogout onPress={toggleModal}>
         <S.IconLogout source={require('@assets/img/header/Exit.png')} />
       </S.ButtonLogout>
+      <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
+        <S.ContentModal>
+          <S.WrapperConteudo>
+            <S.ImageWarning source={require('@assets/img/warnnign.png')} />
+            <S.TextModal>Deseja Sair?</S.TextModal>
+          </S.WrapperConteudo>
+          <S.BtnYes onPress={handleClick}>
+            <S.TitleBtnYes>Sim</S.TitleBtnYes>
+          </S.BtnYes>
+          <S.BtnBack onPress={toggleModal}>
+            <S.TitleBtnBack>Não</S.TitleBtnBack>
+          </S.BtnBack>
+        </S.ContentModal>
+      </Modal>
     </S.StyledWrapper>
   );
 };

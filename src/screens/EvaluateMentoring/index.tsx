@@ -19,7 +19,6 @@ const EvaluateMentoring = () => {
   const [modules, setModules] = useState<IModule[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSeller, setSelectedSeller] = useState<ISeller | null>(null);
-
   const [buttonOpacity, setButtonOpacity] = useState(0.5);
 
   useEffect(() => {
@@ -36,6 +35,7 @@ const EvaluateMentoring = () => {
           setLoading(false);
         }
       } catch (error) {
+        console.error('Error fetching data:', error);
         setLoading(false);
       }
     };
@@ -49,11 +49,7 @@ const EvaluateMentoring = () => {
   };
 
   const updateButtonOpacity = (seller: ISeller | null) => {
-    if (seller) {
-      setButtonOpacity(1);
-    } else {
-      setButtonOpacity(0.5);
-    }
+    setButtonOpacity(seller ? 1 : 0.5);
   };
 
   const handleSetAsk = () => {
@@ -68,34 +64,49 @@ const EvaluateMentoring = () => {
       <S.Wrapper>
         <HeaderPages title="Avaliar Mentorado" />
         <S.Container>
-          <S.DivContainerSeller>
-            <S.NameField>Nome do Vendedor</S.NameField>
-            <Dropdown sellers={sellers} onSelectSeller={handleSelectSeller} />
-          </S.DivContainerSeller>
-          <S.DivContainerSeller>
-            <S.NameField>Veja quais módulos estão disponíveis</S.NameField>
-            <S.ContainerButton>
-              {loading ? (
-                <ActivityIndicator color="#3E63DD" />
-              ) : modules.length > 0 ? (
-                modules.map((_module, index) => (
-                  <S.BtnModule key={index} disabled>
-                    <S.TextBtn>{`Módulo ${index + 1}`}</S.TextBtn>
-                  </S.BtnModule>
-                ))
-              ) : (
-                <S.StyledText>Nenhum módulo cadastrado</S.StyledText>
-              )}
-            </S.ContainerButton>
-          </S.DivContainerSeller>
+          <SellerSelection
+            sellers={sellers}
+            onSelectSeller={handleSelectSeller}
+          />
+          <ModuleList loading={loading} modules={modules} />
         </S.Container>
       </S.Wrapper>
-      <S.BtnAvaliar onPress={handleSetAsk} style={{ opacity: buttonOpacity }}>
-        <S.TextBtnAvaliar>Avaliar</S.TextBtnAvaliar>
-      </S.BtnAvaliar>
+      <EvaluationButton onPress={handleSetAsk} opacity={buttonOpacity} />
       <DivGradient />
     </>
   );
 };
+
+const SellerSelection = ({ sellers, onSelectSeller }) => (
+  <S.DivContainerSeller>
+    <S.NameField>Nome do Vendedor</S.NameField>
+    <Dropdown sellers={sellers} onSelectSeller={onSelectSeller} />
+  </S.DivContainerSeller>
+);
+
+const ModuleList = ({ loading, modules }) => (
+  <S.DivContainerSeller>
+    <S.NameField>Veja quais módulos estão disponíveis</S.NameField>
+    <S.ContainerButton>
+      {loading ? (
+        <ActivityIndicator color="#3E63DD" />
+      ) : modules.length > 0 ? (
+        modules.map((_module, index) => (
+          <S.BtnModule key={index} disabled>
+            <S.TextBtn>{`Módulo ${index + 1}`}</S.TextBtn>
+          </S.BtnModule>
+        ))
+      ) : (
+        <S.StyledText>Nenhum módulo cadastrado</S.StyledText>
+      )}
+    </S.ContainerButton>
+  </S.DivContainerSeller>
+);
+
+const EvaluationButton = ({ onPress, opacity }) => (
+  <S.BtnAvaliar onPress={onPress} style={{ opacity }}>
+    <S.TextBtnAvaliar>Avaliar</S.TextBtnAvaliar>
+  </S.BtnAvaliar>
+);
 
 export default EvaluateMentoring;

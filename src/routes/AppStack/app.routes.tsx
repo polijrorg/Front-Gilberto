@@ -11,6 +11,7 @@ import CompleteMentorship from '@screens/EvaluateMentoring/CompleteMentorship';
 import EvaluateVisit from '@screens/EvaluateVisit';
 import useAuth from '@hooks/useAuth';
 import ModuloAsk from '@screens/EvaluateMentoring/ModuloAsk';
+import PlainAction from '@screens/SalesInspector/TabScreens/Action/Plain/Mentory';
 
 const AppStack = createNativeStackNavigator();
 

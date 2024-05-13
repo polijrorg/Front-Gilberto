@@ -1,104 +1,119 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import * as S from './styles';
-import { useRoute, RouteProp } from '@react-navigation/native';
-import { Picker } from '@react-native-picker/picker';
+import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import ModuleGradeServices from '@services/ModuleGradeService';
 import DivGradient from '@components/DivGradient';
 import HeaderPages from '@components/HeaderPages';
 import ISeller from '@interfaces/Seller';
 import { useToast } from 'react-native-toast-notifications';
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from '@react-native-community/datetimepicker';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useDataContext } from '../../../context/DataContext';
 
 interface RouteParams {
   ModulesEvaluate: Array<{
     idModule: string;
     conhecimento: number;
     implementacao: number;
+    comment: string;
   }>;
   Seller: ISeller;
 }
 
-const CompleteMentoship: React.FC = () => {
+const CompleteMentorship: React.FC = () => {
   const route = useRoute<RouteProp<{ ModuloAsk: RouteParams }, 'ModuloAsk'>>();
   const { ModulesEvaluate, Seller } = route.params;
-
   const [selectedAction, setSelectedAction] = useState('');
-  const [selectedDay, setSelectedDay] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState('');
-  const [selectedYear, setSelectedYear] = useState('');
+  const [selectedValue, setSelectedValue] = useState<string>('');
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [comment, setComment] = useState('');
-
   const toast = useToast();
+  const { data, setData } = useDataContext();
+  const navigation = useNavigation();
 
-  const days = Array.from(Array(30), (_, i) => (i + 1).toString());
-  const months = [
-    'Janeiro',
-    'Fevereiro',
-    'Março',
-    'Abril',
-    'Maio',
-    'Junho',
-    'Julho',
-    'Agosto',
-    'Setembro',
-    'Outubro',
-    'Novembro',
-    'Dezembro',
-  ];
-  const years = Array.from(Array(8), (_, i) => (2020 + i).toString());
-
-  const handleComplete = async () => {
-    console.log('complete');
+  const handleModuleChange = (value: string) => {
+    setSelectedValue(value);
   };
 
-  const handleCompleteWithoutActionPlan = async () => {
+  const handleDateChange = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date
+  ) => {
+    const currentDate = selectedDate || date;
+    setShowDatePicker(false);
+    setDate(currentDate);
+  };
+
+  const showDatePickerModal = () => {
+    setShowDatePicker(true);
+  };
+
+  const handleComplete = async () => {
     try {
-      await Promise.all(
-        ModulesEvaluate.map(async (element) => {
-          try {
-            if (element) {
-              // Verifica se element não é indefinido
-              const moduleGrades =
-                await ModuleGradeServices.getModuleGradesByIdSeller(Seller.id);
-              const existingModuleGrade = moduleGrades.find(
-                (grade) => grade.moduleId === element.idModule
-              );
-              if (existingModuleGrade) {
-                await ModuleGradeServices.updateModuleGrade(
-                  existingModuleGrade.id,
-                  comment,
-                  element.conhecimento,
-                  element.implementacao
-                );
-              } else {
-                await ModuleGradeServices.create(
-                  comment,
-                  element.idModule,
-                  Seller.id,
-                  element.conhecimento,
-                  element.implementacao
-                );
-              }
-            }
-          } catch (error) {
-            console.error(
-              'Erro ao criar ou atualizar módulo de avaliação:',
-              error
-            );
-          }
-        })
-      );
-      console.log('Módulos avaliados com sucesso');
-      toast.show('Módulos avaliados com sucesso', {
-        type: 'success',
-        placement: 'bottom',
-        duration: 3500,
-        animationType: 'zoom-in',
+      await Promise.all(ModulesEvaluate.map(updateModuleGrade));
+
+      setData({
+        ...data,
+        seller: Seller,
       });
+      console.log('Módulos avaliados com sucesso');
+      showToast('Módulos avaliados com sucesso', 'success');
     } catch (error) {
       console.error('Erro ao completar o mentorado:', error);
     }
+  };
+
+  const updateModuleGrade = async (element: any) => {
+    try {
+      if (element) {
+        const moduleGrades =
+          await ModuleGradeServices.getModuleGradesByIdSeller(Seller.id);
+        const existingModuleGrade = moduleGrades.find(
+          (grade) => grade.moduleId === element.idModule
+        );
+        if (existingModuleGrade) {
+          await ModuleGradeServices.updateModuleGrade({
+            id: existingModuleGrade.id,
+            supervisorComment: element.comment,
+            implementationScore: element.implementacao,
+            knowledgeScore: element.conhecimento,
+            moduleId: element.idModule,
+            sellerId: element.idModule,
+          });
+        } else {
+          await ModuleGradeServices.create({
+            supervisorComment: element.comment,
+            moduleId: element.idModule,
+            sellerId: Seller.id,
+            implementationScore: element.implementacao,
+            knowledgeScore: element.conhecimento,
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao criar ou atualizar módulo de avaliação:', error);
+    }
+  };
+
+  const handleCompleteWithoutActionPlan = async () => {
+    console.log('Completo');
+  };
+
+  const handleBackHome = () => {
+    navigation.navigate('Home' as never);
+  };
+
+  const showToast = (message: string, type: string) => {
+    toast.show(message, {
+      type: type,
+      placement: 'bottom',
+      duration: 3500,
+      animationType: 'zoom-in',
+    });
   };
 
   return (
@@ -106,86 +121,116 @@ const CompleteMentoship: React.FC = () => {
       <StatusBar />
       <S.Wrapper>
         <HeaderPages title="Avaliar Mentorado" />
-        <S.DivFields>
-          <S.ImageUser source={require('@assets/img/cardVendedor/foto.png')} />
-          <S.DivTexts>
-            <S.TextName>{Seller?.name}</S.TextName>
-            <S.TextFunction>{Seller?.job}</S.TextFunction>
-          </S.DivTexts>
-        </S.DivFields>
-        <S.Container>
-          <S.DivInputs>
-            <S.Label>Ação Programada</S.Label>
-            <S.InputAction
-              placeholder="Ex: Aumentar a comunicação pós venda "
-              value={selectedAction}
-              onChangeText={(text) => setSelectedAction(text)}
-            />
-          </S.DivInputs>
-          <S.DivInputs>
-            <S.Label>Data Limite</S.Label>
-            <S.DivPicker>
-              <Picker
-                style={{ flex: 1, marginRight: 5 }}
-                selectedValue={selectedDay}
-                onValueChange={(itemValue, _itemIndex) =>
-                  setSelectedDay(itemValue)
-                }
-              >
-                {days.map((day) => (
-                  <Picker.Item key={day} label={day} value={day} />
-                ))}
-              </Picker>
-              <Picker
-                style={{ flex: 2, marginRight: 5 }}
-                selectedValue={selectedMonth}
-                onValueChange={(itemValue, _itemIndex) =>
-                  setSelectedMonth(itemValue)
-                }
-              >
-                {months.map((month, index) => (
-                  <Picker.Item
-                    key={index.toString()}
-                    label={month}
-                    value={index.toString()}
-                  />
-                ))}
-              </Picker>
-              <Picker
-                style={{ flex: 1 }}
-                selectedValue={selectedYear}
-                onValueChange={(itemValue, _itemIndex) =>
-                  setSelectedYear(itemValue)
-                }
-              >
-                {years.map((year) => (
-                  <Picker.Item key={year} label={year} value={year} />
-                ))}
-              </Picker>
-            </S.DivPicker>
-          </S.DivInputs>
-          <S.DivInputs>
-            <S.Label>Comentário</S.Label>
-            <S.TextArea
-              placeholder="Digite aqui..."
-              multiline={true}
-              numberOfLines={5}
-              value={comment}
-              onChangeText={(text) => setComment(text)}
-            />
-          </S.DivInputs>
-        </S.Container>
-        <S.BtnConcluirPlano onPress={handleComplete}>
-          <S.TextBtnPlano>CONCLUIR PLANO DE AÇÃO</S.TextBtnPlano>
-        </S.BtnConcluirPlano>
-
-        <S.BtnConcluirSemPlano onPress={handleCompleteWithoutActionPlan}>
-          <S.TextBtnSemPlano>FINALIZAR SEM PLANO</S.TextBtnSemPlano>
-        </S.BtnConcluirSemPlano>
+        <SellerInfo seller={Seller} handleBackHome={handleBackHome} />
+        <InputsSection
+          selectedAction={selectedAction}
+          setSelectedAction={setSelectedAction}
+          date={date}
+          showDatePickerModal={showDatePickerModal}
+          showDatePicker={showDatePicker}
+          handleDateChange={handleDateChange}
+          comment={comment}
+          setComment={setComment}
+        />
+        <ButtonsSection
+          handleComplete={handleComplete}
+          handleCompleteWithoutActionPlan={handleCompleteWithoutActionPlan}
+        />
       </S.Wrapper>
       <DivGradient />
     </>
   );
 };
 
-export default CompleteMentoship;
+const SellerInfo: React.FC<{ seller: ISeller; handleBackHome: () => void }> = ({
+  seller,
+  handleBackHome,
+}) => (
+  <S.DivFields>
+    <S.UserInfoContainer>
+      <S.ImageUser source={require('@assets/img/cardVendedor/foto.png')} />
+      <S.DivTexts>
+        <S.TextName>{seller?.name}</S.TextName>
+        <S.TextFunction>{seller?.job}</S.TextFunction>
+      </S.DivTexts>
+    </S.UserInfoContainer>
+    <S.BtnHomeScreen onPress={handleBackHome}>
+      <MaterialCommunityIcons name="home-outline" size={28} color="#fff" />
+    </S.BtnHomeScreen>
+  </S.DivFields>
+);
+
+const InputsSection: React.FC<{
+  selectedAction: string;
+  setSelectedAction: React.Dispatch<React.SetStateAction<string>>;
+  date: Date;
+  showDatePickerModal: () => void;
+  showDatePicker: boolean;
+  handleDateChange: (event: DateTimePickerEvent, selectedDate?: Date) => void;
+  comment: string;
+  setComment: React.Dispatch<React.SetStateAction<string>>;
+}> = ({
+  selectedAction,
+  setSelectedAction,
+  date,
+  showDatePickerModal,
+  showDatePicker,
+  handleDateChange,
+  comment,
+  setComment,
+}) => (
+  <S.Container>
+    <S.DivInputs>
+      <S.Label>Ação Programada</S.Label>
+      <S.InputAction
+        placeholder="Ex: Aumentar a comunicação pós venda "
+        value={selectedAction}
+        onChangeText={(text) => setSelectedAction(text)}
+      />
+    </S.DivInputs>
+    <S.DivInputs>
+      <S.Label>Data Limite</S.Label>
+      <S.BtnData onPress={showDatePickerModal}>
+        <S.TextBtnData>
+          {date ? date.toLocaleDateString() : 'Selecione a Data'}
+        </S.TextBtnData>
+      </S.BtnData>
+      {showDatePicker && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={date}
+          mode="date"
+          display="default"
+          onChange={handleDateChange}
+        />
+      )}
+    </S.DivInputs>
+    <S.DivInputs>
+      <S.Label>Comentário</S.Label>
+      <S.TextArea
+        placeholder="Digite aqui..."
+        multiline={true}
+        numberOfLines={5}
+        value={comment}
+        onChangeText={(text) => setComment(text)}
+      />
+    </S.DivInputs>
+  </S.Container>
+);
+
+const ButtonsSection: React.FC<{
+  handleComplete: () => void;
+  handleCompleteWithoutActionPlan: () => void;
+}> = ({ handleComplete, handleCompleteWithoutActionPlan }) => (
+  <>
+    <S.BtnConcluirPlano onPress={handleCompleteWithoutActionPlan}>
+      <S.TextBtnPlano>CONCLUIR PLANO DE AÇÃO</S.TextBtnPlano>
+    </S.BtnConcluirPlano>
+
+    <S.BtnConcluirSemPlano onPress={handleComplete}>
+      <S.TextBtnSemPlano>FINALIZAR SEM PLANO</S.TextBtnSemPlano>
+    </S.BtnConcluirSemPlano>
+  </>
+);
+
+export default CompleteMentorship;

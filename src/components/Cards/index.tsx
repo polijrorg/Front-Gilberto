@@ -70,9 +70,11 @@ const Cards: React.FC<IVendedor> = ({
           <S.StyledText>{'Responsável: ' + supervisor?.name}</S.StyledText>
         )}
       </S.DivText>
-      <S.DivAvalia nota={nota}>
-        <S.Nota nota={nota}>{formattedNota}</S.Nota>
-      </S.DivAvalia>
+      {cargo !== 'Supervisor' && cargo !== 'Diretor' && (
+        <S.DivAvalia nota={nota}>
+          <S.Nota nota={nota}>{formattedNota}</S.Nota>
+        </S.DivAvalia>
+      )}
     </S.DivWrapper>
   );
 };

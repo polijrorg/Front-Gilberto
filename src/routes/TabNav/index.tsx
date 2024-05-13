@@ -36,8 +36,16 @@ const TabNav: React.FC = ({ route }) => {
             component={Mentoring}
             initialParams={{ idEmployee, cargo, companyId }}
           />
-          <Tab.Screen name="Visita" component={Visit} />
-          <Tab.Screen name="Planos de Ação" component={Action} />
+          <Tab.Screen
+            name="Visita"
+            component={Visit}
+            initialParams={{ idEmployee, cargo, companyId }}
+          />
+          <Tab.Screen
+            name="Planos de Ação"
+            component={Action}
+            initialParams={{ idEmployee, cargo, companyId }}
+          />
         </Tab.Navigator>
       </S.Container>
     </View>

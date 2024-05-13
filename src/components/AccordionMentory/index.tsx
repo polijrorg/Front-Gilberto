@@ -1,4 +1,4 @@
-/* eslint-disable react-native/no-inline-styles */
+ /* eslint-disable react-native/no-inline-styles */
 import React, { useState } from 'react';
 import { View, Text, TouchableWithoutFeedback, TextInput } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
@@ -7,20 +7,20 @@ type AccordionProps = {
   title: string;
   implementation: number | string;
   knowledge: number | string;
+  comment?: string;
 };
 
-const Accordion: React.FC<AccordionProps> = ({
+const AccordionMentory: React.FC<AccordionProps> = ({
   title,
   implementation,
   knowledge,
+  comment,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showText, setShowText] = useState(true); // Estado para controlar a visibilidade do texto
-  const [comentario, setComentario] = useState<string>();
-
+  const [showText, setShowText] = useState(true);
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
-    setShowText(isExpanded); // Alterna a visibilidade do texto
+    setShowText(isExpanded);
   };
 
   const formatNumber = (number: number | string) => {
@@ -108,10 +108,10 @@ const Accordion: React.FC<AccordionProps> = ({
           </View>
           <TextInput
             placeholder="Comentários"
-            value={comentario}
-            onChangeText={(text) => setComentario(text)}
+            value={`${comment}`}
             multiline={true}
-            numberOfLines={5}
+            numberOfLines={2}
+            readOnly
             style={{
               backgroundColor: '#E6E8EB',
               padding: 16,
@@ -119,6 +119,7 @@ const Accordion: React.FC<AccordionProps> = ({
               fontFamily: 'Poppins',
               color: '#687076',
               textAlignVertical: 'top',
+              fontStyle: 'italic',
             }}
           />
         </View>
@@ -127,4 +128,4 @@ const Accordion: React.FC<AccordionProps> = ({
   );
 };
 
-export default Accordion;
+export default AccordionMentory;

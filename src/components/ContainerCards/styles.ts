@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import styled from 'styled-components/native';
 import { theme } from '@styles/default.theme';
 
@@ -24,4 +24,16 @@ export const TitleSlider = styled(Text)`
 export const Cards = styled(View)`
   height: auto;
   gap: 14px;
+`;
+
+export const CenteredView = styled(View)`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  margin: 24px;
+`;
+
+export const TitleSellers = styled(Text)`
+  text-transform: uppercase;
+  font-family: Poppins;
 `;

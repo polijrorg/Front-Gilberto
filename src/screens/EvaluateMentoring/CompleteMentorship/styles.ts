@@ -21,10 +21,16 @@ export const Wrapper = styled(ScrollView)`
 export const DivFields = styled(View)`
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  padding: 24px 24px;
+  justify-content: space-between;
   align-items: center;
   background-color: ${theme.colors.secundary.main};
-  padding: 24px;
+`;
+
+export const UserInfoContainer = styled(View)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 export const ImageUser = styled(Image)`
@@ -59,6 +65,8 @@ export const Container = styled(View)`
   margin: 24px auto;
   gap: 24px;
 `;
+
+export const BtnHomeScreen = styled(TouchableOpacity)``;
 
 export const DivInputs = styled(View)`
   display: flex;
@@ -97,6 +105,21 @@ export const TextArea = styled(TextInput)`
 export const DivPicker = styled(View)`
   display: flex;
   flex-direction: row;
+`;
+
+export const BtnData = styled(TouchableOpacity)`
+  border-radius: 8px;
+  border-radius: 1px;
+  color: #687076;
+  background-color: #f1f3f5;
+  border: 1px solid #d7dbdf;
+  padding: 8px 12px;
+  border: 1px solid #ccc2;
+`;
+
+export const TextBtnData = styled(Text)`
+  font-size: 16px;
+  font-family: Poppins;
 `;
 
 export const BtnConcluirPlano = styled(TouchableOpacity)`

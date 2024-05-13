@@ -1,8 +1,7 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useState } from 'react';
-import { View, ActivityIndicator, Text, ScrollView } from 'react-native';
+import { ActivityIndicator, Text, ScrollView } from 'react-native';
 import * as S from './styles';
-import Accordion from '@components/Accordion';
+import Accordion from '@components/AccordionMentory';
 import ModulesServices from '@services/ModuleServices';
 import IModuleGrade from '@interfaces/ModuleGrade';
 import IModule from '@interfaces/Module';
@@ -30,59 +29,44 @@ const Mentoring = ({ route }) => {
               : await ModulesServices.getAllModules();
 
           setModules(modulesData);
-          setIsLoading(false); // Informa que o carregamento foi concluído
         }
       } catch (error) {
         console.error('Erro ao buscar dados de supervisores:', error);
-        setIsLoading(false); // Se ocorrer um erro, também encerra o carregamento
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData();
   }, [cargo, idEmployee]);
 
+  const formatScore = (score: number) =>
+    score === 0 ? '0,0' : score?.toFixed(2).replace('.', ',');
+
   return (
     <S.Wrapper>
       {isLoading ? (
-        // Se isLoading for verdadeiro, exibe o ActivityIndicator centralizado
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '100%',
-            height: '100%',
-          }}
-        >
+        <S.ViewContainer>
           <ActivityIndicator color="#3E63DD" />
-        </View>
+        </S.ViewContainer>
       ) : modules.length === 0 ? (
-        // Se não houver módulos disponíveis, exibe uma mensagem
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '100%',
-            height: '100%',
-          }}
-        >
+        <S.ViewContainer>
           <Text>Nenhum módulo disponível</Text>
-        </View>
+        </S.ViewContainer>
       ) : (
-        // Se houver módulos, exibe os módulos
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <S.WrapperView>
             {modules.map((module, index) => (
               <Accordion
                 key={index}
-                title={
-                  `Módulo ${index + 1}: ${module.name}` || 'Módulo X: Tema'
-                }
+                comment={moduleGrade[index]?.supervisorComment || 'Comentários'}
+                title={module.name || `Módulo ${index + 1}: Tema`}
                 implementation={
-                  moduleGrade[index]?.implementationScore || 'X,X'
+                  formatScore(moduleGrade[index]?.implementationScore) || 'X,X'
                 }
-                knowledge={moduleGrade[index]?.knowledgeScore || 'X,X'}
+                knowledge={
+                  formatScore(moduleGrade[index]?.knowledgeScore) || 'Y,Y'
+                }
               />
             ))}
           </S.WrapperView>
