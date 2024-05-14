@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
+import { theme } from '@styles/default.theme';
 import * as S from './styles';
 import SupervisorServices from '@services/SupervisorServices';
 import useAuth from '@hooks/useAuth';
@@ -11,6 +12,7 @@ import HeaderPages from '@components/HeaderPages';
 import DropdownData from '@components/Dropdown';
 import { useDataContext } from '../../context/DataContext';
 import ISeller from '@interfaces/Seller';
+import { ActivityIndicator } from 'react-native';
 
 interface SupervisorState {
   single: ISupervisor | null;
@@ -23,7 +25,7 @@ const SellerAdded = () => {
     list: [],
   });
   const { data, setData } = useDataContext();
-
+  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -70,6 +72,7 @@ const SellerAdded = () => {
 
   const handleCreate = async () => {
     try {
+      setLoading(true);
       const supervisorId = selectedSupervisor?.id;
       const companyId = user.companyId;
       console.log(name, email, image, supervisorId);
@@ -92,6 +95,7 @@ const SellerAdded = () => {
       setSelectedSupervisor(null);
       setIsButtonEnabled(false);
       setIsModalVisible(false);
+      setLoading(false);
 
       toast.show('Vendedor cadastrado com sucesso', {
         type: 'success',
@@ -153,7 +157,11 @@ const SellerAdded = () => {
               </S.TextModal>
             </S.WrapperConteudo>
             <S.BtnYes onPress={handleCreate}>
-              <S.TitleBtnYes>ADICIONAR</S.TitleBtnYes>
+              {loading ? (
+                <ActivityIndicator color={theme.colors.primary.main} />
+              ) : (
+                <S.TitleBtnYes>ADICIONAR</S.TitleBtnYes>
+              )}
             </S.BtnYes>
             <S.BtnBackModal onPress={toggleModal}>
               <S.TitleBtnBack>Voltar</S.TitleBtnBack>
