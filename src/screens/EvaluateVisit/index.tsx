@@ -22,6 +22,7 @@ const EvaluateVisit = () => {
   const { user } = useAuth();
   const [sellers, setSellers] = useState<ISeller[]>([]);
   const [indexScreen, setIndexScreen] = useState(1);
+  const [evaluationStarted, setEvaluationStarted] = useState(false);
   const [selectedSeller, setSelectedSeller] = useState<ISeller | null>(null);
   const [categories, setCategories] = useState<ICategories[]>([]);
   const [storeName, setStoreName] = useState('');
@@ -78,6 +79,8 @@ const EvaluateVisit = () => {
 
   const handleAdvance = () => {
     setIndexScreen(indexScreen < categories.length + 1 ? indexScreen + 1 : 1);
+    if (!selectedSeller) return;
+    setEvaluationStarted(true);
   };
 
   const handleNavigation = (index: number) => {
@@ -158,9 +161,11 @@ const EvaluateVisit = () => {
         <HeaderPages title="Visita" />
         <S.ContainerFields>
           <Breadcrumb
+            key={indexScreen}
             size={categories?.length}
             handleNavigation={handleNavigation}
             selected={indexScreen}
+            style={{ opacity: evaluationStarted ? 1 : 0 }} // Definindo a opacidade com base no estado
           />
           <S.DivSellerInfo>
             <S.DivSellerImage>

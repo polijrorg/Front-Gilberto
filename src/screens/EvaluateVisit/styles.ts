@@ -17,7 +17,8 @@ export const WrapperView = styled(View)`
 
 export const ContainerFields = styled(View)`
   max-width: 100%;
-  gap: 16px;
+
+  gap: 8px;
 `;
 
 export const DivSellerInfo = styled(View)`
@@ -26,7 +27,7 @@ export const DivSellerInfo = styled(View)`
   margin: 0 auto;
   display: flex;
   flex-direction: row;
-  padding: 8px 0px;
+  padding: 4px 16px;
   align-items: center;
   justify-content: space-around;
 `;
