@@ -136,13 +136,13 @@ export const Outline = styled(TouchableOpacity)`
   border-radius: 8px;
   margin: 0px auto;
   border-width: 1px;
-  border-color: #3451B2;
+  border-color: #3451b2;
 `;
 
 export const TextBtnNova = styled(Text)`
   font-family: Poppins;
   text-transform: uppercase;
-  color: #3451B2;
+  color: #3451b2;
   font-size: 16px;
 `;
 
@@ -150,7 +150,7 @@ export const BtnFinished = styled(TouchableOpacity)`
   padding: 8px 24px;
   background-color: #3e63dd;
   width: 90%;
-  height: auto;
+  height: 50px;
   display: flex;
   justify-content: center;
   align-items: center;

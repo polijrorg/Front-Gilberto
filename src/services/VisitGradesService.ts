@@ -8,6 +8,12 @@ import IVisit from '@interfaces/Visit/Visit';
 
 import api from './api';
 
+interface QuestionsGradeCreate {
+  grade: number;
+  sellerId: string;
+  questionsId: string;
+}
+
 export default class VisitGradeService {
   static async getQuestionsByIdCategory(
     idSeller: string
@@ -17,5 +23,34 @@ export default class VisitGradeService {
     );
 
     return questionsResponse.data;
+  }
+
+  static async create({
+    grade,
+    sellerId,
+    questionsId,
+  }: QuestionsGradeCreate): Promise<IQuestionGrade> {
+    const gradeResponse = await api.post(`/questionsGrades/create`, {
+      grade,
+      sellerId,
+      questionsId,
+    });
+    return gradeResponse.data;
+  }
+
+  static async getAllQuestionsBySeller(
+    idSeller: string
+  ): Promise<IQuestionGrade[]> {
+    const questionsResponse: AxiosResponse<IQuestionGrade[]> = await api.get(
+      `questionsGrades/getAllBySeller/${idSeller}`
+    );
+
+    return questionsResponse.data;
+  }
+
+  static async update(idQuestion: string, grade: number): Promise<void> {
+    await api.patch(`/questionsGrades/update/${idQuestion}`, {
+      grade,
+    });
   }
 }
