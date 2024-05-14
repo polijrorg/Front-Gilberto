@@ -9,6 +9,7 @@ export const Container = styled(View)`
   justify-content: center;
   border-radius: 8px;
   margin: 16px 0;
+  position: absolute;
 `;
 
 export const Button = styled(TouchableOpacity)<{

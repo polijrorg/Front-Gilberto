@@ -22,12 +22,13 @@ export const ContainerFields = styled(View)`
 `;
 
 export const DivSellerInfo = styled(View)`
-  width: 50%;
+  width: 100%;
   height: auto;
   margin: 0 auto;
+  margin-top: 64px;
   display: flex;
   flex-direction: row;
-  padding: 4px 16px;
+  padding: 4px 20%;
   align-items: center;
   justify-content: space-around;
 `;

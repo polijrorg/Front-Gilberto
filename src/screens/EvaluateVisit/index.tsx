@@ -165,7 +165,7 @@ const EvaluateVisit = () => {
             size={categories?.length}
             handleNavigation={handleNavigation}
             selected={indexScreen}
-            style={{ opacity: evaluationStarted ? 1 : 0 }} // Definindo a opacidade com base no estado
+            style={{ opacity: evaluationStarted ? 1 : 0 }}
           />
           <S.DivSellerInfo>
             <S.DivSellerImage>
