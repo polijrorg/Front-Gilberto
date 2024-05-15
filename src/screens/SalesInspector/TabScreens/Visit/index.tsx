@@ -1,6 +1,6 @@
 import * as S from './styles';
 import { StatusBar } from 'expo-status-bar';
-import { ScrollView } from 'react-native';
+import { ActivityIndicator, ScrollView, View, StyleSheet } from 'react-native';
 import AccordionVisit from '@components/AccordionVisit';
 import React, { useEffect, useState } from 'react';
 
@@ -72,6 +72,14 @@ const Visit = ({ route }) => {
     fetchData();
   }, [cargo, idEmployee]);
 
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#3E63DD" />
+      </View>
+    );
+  }
+
   const calculateMedia = (categoryId: string) => {
     const relevantQuestions = questions.filter(
       (question) => question.categoriesId === categoryId
@@ -133,5 +141,13 @@ const Visit = ({ route }) => {
     </S.Wrapper>
   );
 };
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default Visit;

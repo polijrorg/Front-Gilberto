@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import * as S from './styles';
-import { ScrollView, TouchableOpacity } from 'react-native';
+import {
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  View,
+  StyleSheet,
+} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { theme } from '@styles/default.theme';
 
@@ -30,16 +36,33 @@ const QuestionSection: React.FC<Props> = ({
   const [categoryQuestions, setCategoryQuestions] = useState<IQuestions[]>([]);
   const [answers, setAnswers] = useState<any[]>([]);
   const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchQuestions = async () => {
-      const questions = await VisitService.getQuestionsByIdCategory(
-        category.id
-      );
-      setCategoryQuestions(questions);
-    };
-    fetchQuestions();
+    try {
+      setLoading(true);
+
+      const fetchQuestions = async () => {
+        const questions = await VisitService.getQuestionsByIdCategory(
+          category.id
+        );
+        setCategoryQuestions(questions);
+      };
+      fetchQuestions();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   }, [category.id]);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#3E63DD" />
+      </View>
+    );
+  }
 
   const handleInputChange = (
     questionId: string,
@@ -113,5 +136,13 @@ const QuestionSection: React.FC<Props> = ({
     )
   );
 };
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default QuestionSection;
