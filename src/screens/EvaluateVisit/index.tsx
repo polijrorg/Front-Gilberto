@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as S from './styles';
-import { ActivityIndicator } from 'react-native'; // Importando o ActivityIndicator
-import { useNavigation } from '@react-navigation/native';
+import { ActivityIndicator } from 'react-native';
 import Breadcrumb from '@components/Breadcrumb';
 import Dropdown from '@components/Dropdown';
 import HeaderPages from '@components/HeaderPages';
@@ -16,9 +15,15 @@ import VisitGradesService from '@services/VisitGradesService';
 
 import ISeller from '@interfaces/Seller';
 import ICategories from '@interfaces/Visit/Categories';
+import QuestionsGrade from '@interfaces/Visit/QuestionGrade';
+
+interface VisitGrade {
+  questionId: string;
+  sellerId: string;
+  grade: number;
+}
 
 const EvaluateVisit = () => {
-  const navigation = useNavigation();
   const { user } = useAuth();
   const [sellers, setSellers] = useState<ISeller[]>([]);
   const [indexScreen, setIndexScreen] = useState(1);
@@ -26,8 +31,8 @@ const EvaluateVisit = () => {
   const [selectedSeller, setSelectedSeller] = useState<ISeller | null>(null);
   const [categories, setCategories] = useState<ICategories[]>([]);
   const [storeName, setStoreName] = useState('');
-  const [editedAnswers, setEditedAnswers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [fetchedVisitGrade, setFetchedVisitGrade] = useState<VisitGrade[]>([]);
   const toast = useToast();
 
   useEffect(() => {
@@ -99,8 +104,7 @@ const EvaluateVisit = () => {
       }
 
       setLoading(true);
-
-      for (const answer of editedAnswers) {
+      for (const answer of fetchedVisitGrade) {
         const questions = await VisitGradesService.getAllQuestionsBySeller(
           selectedSeller.id
         );
@@ -121,13 +125,17 @@ const EvaluateVisit = () => {
     } finally {
       setLoading(false);
       showToast('Visita avaliada com sucesso', 'success');
-      setEditedAnswers([]);
+      setFetchedVisitGrade([]);
     }
   };
 
-  const createGrades = async (answer) => {
+  const createGrades = async (answer: {
+    grade: number;
+    sellerId: string;
+    questionId: string;
+  }) => {
     try {
-      const result = await VisitGradesService.create({
+      await VisitGradesService.create({
         grade: answer.grade,
         sellerId: answer.sellerId,
         questionsId: answer.questionId,
@@ -137,22 +145,39 @@ const EvaluateVisit = () => {
     }
   };
 
-  const updateGrades = async (questionGrade, answer) => {
+  const updateGrades = async (
+    questionGrade: QuestionsGrade,
+    answer: { grade: number }
+  ) => {
     try {
-      const { grade } = answer;
-      await VisitGradesService.update(questionGrade.id, grade);
+      await VisitGradesService.update(questionGrade.id, answer.grade);
     } catch (error) {
       console.error('Erro ao atualizar as notas:', error);
     }
   };
 
   const handleUpdateAnswers = (updatedAnswers: any[]) => {
-    const formattedAnswers = updatedAnswers.map((answer) => ({
-      questionId: answer.questionId,
-      sellerId: selectedSeller.id,
-      grade: answer.value,
-    }));
-    setEditedAnswers(formattedAnswers); // Armazena as respostas editadas
+    const updatedGrades = [...fetchedVisitGrade];
+
+    updatedAnswers.forEach((answer) => {
+      const existingIndex = updatedGrades.findIndex(
+        (grade) =>
+          grade.questionId === answer.questionId &&
+          grade.sellerId === selectedSeller?.id
+      );
+
+      if (existingIndex !== -1) {
+        updatedGrades[existingIndex].grade = answer.value;
+      } else {
+        updatedGrades.push({
+          questionId: answer.questionId,
+          sellerId: selectedSeller?.id || '',
+          grade: answer.value,
+        });
+      }
+    });
+
+    setFetchedVisitGrade(updatedGrades);
   };
 
   return (
@@ -192,7 +217,7 @@ const EvaluateVisit = () => {
             categories.map((category, idx) => (
               <QuestionSection
                 key={category.id}
-                sellerId={selectedSeller.id as string}
+                sellerId={selectedSeller?.id || ''}
                 category={category}
                 index={idx + 2}
                 selectedIndex={indexScreen}
@@ -210,7 +235,7 @@ const EvaluateVisit = () => {
           {indexScreen > categories.length && user.job === 'Supervisor' && (
             <FinishedSection
               finishedVisit={finishedVisit}
-              array={editedAnswers}
+              array={fetchedVisitGrade} // Pass fetchedVisitGrade as a prop
               loading={loading}
             />
           )}
@@ -225,7 +250,7 @@ const FinishedSection = ({ finishedVisit, array, loading }) => {
     <S.ContainerFields>
       <S.BtnFinished
         onPress={finishedVisit}
-        disabled={array.length === 0 || loading}
+        disabled={loading || array.length === 0} // Disable button if loading or array is empty
         style={{ opacity: array.length === 0 ? 0.7 : 1 }}
       >
         {loading ? (

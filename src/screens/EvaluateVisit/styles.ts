@@ -62,8 +62,10 @@ export const DivInfoSeller = styled(View)`
 `;
 
 export const InfoSeller = styled(Text)`
-  font-size: 16px;
+  font-size: 18px;
   max-width: 75%;
+  font-weight: bold;
+  text-transform: uppercase;
   font-family: Poppins;
   margin-left: 24px;
 `;

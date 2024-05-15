@@ -43,20 +43,35 @@ const QuestionSection: React.FC<Props> = ({
 
   const handleInputChange = (
     questionId: string,
-    questionCategoryId: string,
-    value: number
+    value: number,
+    question: string
   ) => {
-    const updatedAnswers = [
-      ...answers,
-      {
-        questionId: questionId,
-        sellerId: sellerId,
-        questionCategoryId: questionCategoryId,
+    const existingAnswerIndex = answers.findIndex(
+      (answer) =>
+        answer.questionId === questionId && answer.sellerId === sellerId
+    );
+
+    if (existingAnswerIndex !== -1) {
+      const updatedAnswers = [...answers];
+      updatedAnswers[existingAnswerIndex] = {
+        ...updatedAnswers[existingAnswerIndex],
         value: value,
-      },
-    ];
-    setAnswers(updatedAnswers);
-    onUpdateAnswers(updatedAnswers);
+      };
+      setAnswers(updatedAnswers);
+      onUpdateAnswers(updatedAnswers);
+    } else {
+      const updatedAnswers = [
+        ...answers,
+        {
+          name: question,
+          questionId: questionId,
+          sellerId: sellerId,
+          value: value,
+        },
+      ];
+      setAnswers(updatedAnswers);
+      onUpdateAnswers(updatedAnswers);
+    }
   };
 
   const handleEditQuestion = () => {
@@ -83,12 +98,12 @@ const QuestionSection: React.FC<Props> = ({
             />
           </TouchableOpacity>
         )}
-
+        <S.TemaQuestion>{category?.name || 'Tema Question'}</S.TemaQuestion>
         {categoryQuestions.map((question, index) => (
           <S.Wrapper key={question.id}>
             <InputRange
               onChangeValue={(id: string, value: number) =>
-                handleInputChange(question.id, question.categoriesId, value)
+                handleInputChange(question.id, value, question.question)
               }
               textAsk={question.question}
             />

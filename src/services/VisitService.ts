@@ -20,14 +20,6 @@ export default class VisitService {
     return visits.data;
   }
 
-  static async updateQuestionGrade(
-    questionGrade: IQuestionGrade
-  ): Promise<void> {
-    await api.patch(`/questionsGrades/update/`, {
-      questionGrade,
-    });
-  }
-
   static async getTemplateByCompanyId(
     idCompany: string
   ): Promise<ITemplateVisit[]> {

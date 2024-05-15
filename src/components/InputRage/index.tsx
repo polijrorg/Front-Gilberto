@@ -46,7 +46,7 @@ const InputRange: React.FC<askProps> = ({
 
 const styles = StyleSheet.create({
   slider: {
-    minWidth: '80%',
+    minWidth: '70%',
     height: 40,
   },
   sliderValue: {

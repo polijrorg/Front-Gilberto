@@ -55,9 +55,9 @@ const SalesInspector = ({ route }) => {
   const handleDelete = async () => {
     try {
       setLoading(true);
-      if (cargo === 'Supervisor' && supervisors) {
+      if (cargo === 'Supervisor') {
         await SupervisorServices.delete(supervisors.id);
-      } else if (cargo === 'Vendedor' && seller) {
+      } else if (cargo === 'Vendedor') {
         await SellerServices.delete(seller.id);
       }
       setData({
