@@ -74,6 +74,7 @@ const Home = () => {
           loading={loading}
           data={user.job === 'Gerente' ? supervisors : sellers}
           media={media}
+          userType={user.job}
         />
       </S.Wrapper>
     </>

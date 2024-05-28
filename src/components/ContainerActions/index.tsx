@@ -14,7 +14,7 @@ const ContainerActions: React.FC = () => {
       visita: 'Editar Visita',
     },
     default: {
-      mentorado: 'Avaliar um Mentorado',
+      mentorado: 'Avaliar um Mentoreado',
       visita: 'Auditar uma Visita',
     },
   };
@@ -42,16 +42,16 @@ const ContainerActions: React.FC = () => {
     <S.ContainerActions>
       <S.TitleActions>O que você vai fazer hoje?</S.TitleActions>
       <S.DivActions>
+        <ButtonWhite
+            text={getButtonText('visita')}
+            duty={handleEnviarEvaluateVisit}
+          />
+          <ButtonWhite
+            text={getButtonText('mentorado')}
+            duty={handleEnviarEvaluateMentoring}
+          />
         <ButtonWhite text={'Ver Planos de Ação'} />
         <ButtonWhite text="Visualizar Equipe" duty={handleEnviarMyTeam} />
-        <ButtonWhite
-          text={getButtonText('mentorado')}
-          duty={handleEnviarEvaluateMentoring}
-        />
-        <ButtonWhite
-          text={getButtonText('visita')}
-          duty={handleEnviarEvaluateVisit}
-        />
       </S.DivActions>
     </S.ContainerActions>
   );

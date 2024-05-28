@@ -12,6 +12,7 @@ type IVendedor = {
   id: string;
   supervisorId?: string;
   companyId: string;
+  stage:string
 };
 
 const Cards: React.FC<IVendedor> = ({
@@ -21,6 +22,7 @@ const Cards: React.FC<IVendedor> = ({
   id,
   supervisorId,
   companyId,
+  stage
 }) => {
   const { user } = useAuth();
   const navigation = useNavigation();
@@ -31,6 +33,7 @@ const Cards: React.FC<IVendedor> = ({
       idEmployee: id,
       cargo: cargo,
       companyId: companyId,
+      stage: stage
     });
   };
   const formattedNota =
@@ -61,11 +64,16 @@ const Cards: React.FC<IVendedor> = ({
       </S.DivImage>
       <S.DivText>
         <S.Name>{nome}</S.Name>
-        <S.Cargo>
-          {cargo === 'Supervisor'
-            ? `Cargo: ${cargo || 'Supervisor'}`
-            : `Cargo: ${cargo || 'Vendedor'}`}
-        </S.Cargo>
+        {cargo === 'Vendedor' && (
+          <S.Stage>
+            Estágio: {stage}
+          </S.Stage>
+        )}
+        {cargo === 'Supervisor' && (
+          <S.Stage>
+            Cargo: {cargo}
+          </S.Stage>
+        )}
         {supervisor && (
           <S.StyledText>{'Responsável: ' + supervisor?.name}</S.StyledText>
         )}

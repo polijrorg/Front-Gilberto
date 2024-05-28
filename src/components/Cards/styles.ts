@@ -35,7 +35,7 @@ export const Name = styled(Text)`
   font-family: Poppins;
 `;
 
-export const Cargo = styled(Text)`
+export const Stage = styled(Text)`
   color: #687076;
   font-size: 12px;
   font-weight: 400;

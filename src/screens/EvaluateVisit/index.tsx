@@ -42,7 +42,8 @@ const EvaluateVisit = () => {
           user.job === 'Supervisor'
             ? await SellerService.getAllSellerFromSupervisor(user.id)
             : await SellerService.getAllSellerFromManager(user.id);
-        setSellers(sellersData);
+          const visitsSellers = sellersData.filter(seller => seller.stage === 'Visita');
+        setSellers(visitsSellers);
       } catch (error) {
         console.error('Erro ao buscar dados de vendedores:', error);
       }

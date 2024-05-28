@@ -37,3 +37,18 @@ export const TitleSellers = styled(Text)`
   text-transform: uppercase;
   font-family: Poppins;
 `;
+
+export const DivVisita = styled(View)`
+  margin-bottom: 20px;
+`;
+
+export const DivMentoria = styled(View)`
+  margin-bottom: 20px;
+`;
+
+export const TitleSection = styled(Text)`
+  font-size: 18px;
+  font-weight: normal;
+  margin-left: 26px;
+  font-family: Poppins;
+`;

@@ -20,6 +20,11 @@ export default class VisitService {
     return visits.data;
   }
 
+  static async getVisitByIdSeller(sellerId: string): Promise<IVisit[]> {
+    const visits: AxiosResponse<IVisit[]> = await api.get(`/visit/getAll/${sellerId}`);
+    return visits.data;
+  }
+
   static async getTemplateByCompanyId(
     idCompany: string
   ): Promise<ITemplateVisit[]> {

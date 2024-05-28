@@ -11,24 +11,26 @@ const Container: React.FC<{
   loading: boolean;
   title: string;
   media?: { [key: string]: number };
-}> = ({ search, data, loading, title, media = {} }) => {
+  userType?: string;
+}> = ({ search, data, loading, title, media = {}, userType }) => {
   let filteredData: Array<ISeller | ISupervisor> = data;
 
-  const removeAccents = (str: string) => {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const filterData = () => {
+    if (userType !== 'Supervisor') {
+      const removeAccents = (str: string) => {
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      };
+
+      const searchTerm = search ? removeAccents(search.toLowerCase()) : '';
+
+      filteredData = data.filter((item) => {
+        const itemName = removeAccents(item.name.toLowerCase());
+        return !search || itemName.includes(searchTerm);
+      });
+    }
   };
 
-  if (search) {
-    const searchTerm = removeAccents(search.toLowerCase());
-    filteredData = data.filter((item) =>
-      removeAccents(item.name.toLowerCase()).includes(searchTerm)
-    );
-  }
-  // Verificar se o item é um supervisor antes de aplicar o filtro de média
-  if (media && filteredData.some((item) => 'supervisorId' in item)) {
-    filteredData = filteredData.filter((item) => media[item.id] !== undefined);
-    filteredData.sort((a, b) => (media[b.id] || 0) - (media[a.id] || 0));
-  }
+  filterData();
 
   return (
     <S.DivWrapper>
@@ -37,11 +39,32 @@ const Container: React.FC<{
         {loading ? (
           <LoadingIndicator />
         ) : filteredData.length > 0 ? (
-          filteredData.map((item, index) => (
-            <CardItem key={index} item={item} media={media} />
-          ))
+          userType === 'Supervisor' ? (
+            <>
+              <S.DivVisita>
+                <S.TitleSection>Visita</S.TitleSection>
+                {filteredData
+                  .filter((item): item is ISeller => 'stage' in item && item.stage === 'Visita')
+                  .map((item, index) => (
+                    <CardItem key={index} item={item} media={media} />
+                  ))}
+              </S.DivVisita>
+              <S.DivMentoria>
+                <S.TitleSection>Mentoria</S.TitleSection>
+                {filteredData
+                  .filter((item): item is ISeller => 'stage' in item && item.stage === 'Mentoria')
+                  .map((item, index) => (
+                    <CardItem key={index} item={item} media={media} />
+                  ))}
+              </S.DivMentoria>
+            </>
+          ) : (
+            filteredData.map((item, index) => (
+              <CardItem key={index} item={item} media={media} />
+            ))
+          )
         ) : (
-          <NoDataMessage title={title} />
+          <NoDataMessage title={userType === 'Supervisor' ? 'Visita' : 'Dados'} />
         )}
       </S.Cards>
     </S.DivWrapper>
@@ -67,6 +90,7 @@ const CardItem: React.FC<{
   const fullName = item.name || 'Usuário';
   const nameParts = fullName.split(' ');
   let displayName = '';
+
   if (nameParts.length > 1) {
     const firstName = nameParts[0];
     const lastName = nameParts[nameParts.length - 1];
@@ -74,12 +98,15 @@ const CardItem: React.FC<{
   } else {
     displayName = fullName;
   }
+
   const sellerMedia = media[item.id] || 0;
+  const isSeller = 'stage' in item;
 
   return (
     <Card
       id={item.id}
       nome={displayName}
+      stage={isSeller ? (item as ISeller).stage : 'Pendente'}
       cargo={item.job}
       companyId={item.companyId}
       nota={sellerMedia || 0}

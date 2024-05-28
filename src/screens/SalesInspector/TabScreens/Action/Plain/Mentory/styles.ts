@@ -125,9 +125,8 @@ interface ActionTypeLabelProps {
   selected: boolean;
 }
 
-export const ActionTypeLabel = styled(Text)<ActionTypeLabelProps>`
+export const ActionTypeLabel = styled(Text)`
   font-size: 16px;
   font-family: Poppins;
   margin-left: 16px;
-  color: ${(props) => (props.selected ? '#687076' : '#687076')};
 `;

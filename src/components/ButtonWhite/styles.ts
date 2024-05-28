@@ -5,14 +5,14 @@ export const StyledHeading = styled(Text)`
   font-size: 12px;
   text-transform: uppercase;
   color: #687076;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.1px;
   font-weight: 400;
   font-family: Poppins;
 `;
 
 export const StyleButton = styled(TouchableOpacity)<{ isPressed: boolean }>`
   background-color: #f1f3f5;
-  width: 170px;
+  width: 47%;
   display: flex;
   align-items: center;
   justify-content: center;
