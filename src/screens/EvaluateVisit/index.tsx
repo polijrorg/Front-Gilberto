@@ -16,6 +16,7 @@ import VisitGradesService from '@services/VisitGradesService';
 import ISeller from '@interfaces/Seller';
 import ICategories from '@interfaces/Visit/Categories';
 import QuestionsGrade from '@interfaces/Visit/QuestionGrade';
+import ITemplateVisit from '@interfaces/Visit/TemplateVisit';
 
 interface VisitGrade {
   questionId: string;
@@ -30,6 +31,7 @@ const EvaluateVisit = () => {
   const [evaluationStarted, setEvaluationStarted] = useState(false);
   const [selectedSeller, setSelectedSeller] = useState<ISeller | null>(null);
   const [categories, setCategories] = useState<ICategories[]>([]);
+  const [template, setTemplate] = useState<ITemplateVisit[]>([]);
   const [storeName, setStoreName] = useState('');
   const [loading, setLoading] = useState(false);
   const [fetchedVisitGrade, setFetchedVisitGrade] = useState<VisitGrade[]>([]);
@@ -42,7 +44,7 @@ const EvaluateVisit = () => {
           user.job === 'Supervisor'
             ? await SellerService.getAllSellerFromSupervisor(user.id)
             : await SellerService.getAllSellerFromManager(user.id);
-          const visitsSellers = sellersData.filter(seller => seller.stage === 'Visita');
+        const visitsSellers = sellersData.filter(seller => seller.stage === 'Visita');
         setSellers(visitsSellers);
       } catch (error) {
         console.error('Erro ao buscar dados de vendedores:', error);
@@ -54,23 +56,18 @@ const EvaluateVisit = () => {
 
   const handleSelectSeller = async (seller: ISeller) => {
     setSelectedSeller(seller);
-    const templates = await VisitService.getTemplateByCompanyId(
-      seller.companyId
-    );
+    const templates = await VisitService.getTemplateByCompanyId(seller.companyId);
     const fetchedCategories: ICategories[] = [];
 
     await Promise.all(
       templates.map(async (template) => {
-        const categories = await VisitService.getCategoriesByIdTemplate(
-          template.id
-        );
-
+        const categories = await VisitService.getCategoriesByIdTemplate(template.id);
         categories.forEach((category) => {
           fetchedCategories.push(category);
         });
       })
     );
-
+    setTemplate(templates);
     setCategories(fetchedCategories);
   };
 
@@ -83,10 +80,31 @@ const EvaluateVisit = () => {
     });
   };
 
-  const handleAdvance = () => {
-    setIndexScreen(indexScreen < categories.length + 1 ? indexScreen + 1 : 1);
+  const handleAdvance = async () => {
     if (!selectedSeller) return;
+
     setEvaluationStarted(true);
+    if (indexScreen === 1) {
+      try {
+        if (template.length > 0) {
+          const dateVisited = new Date().toISOString();
+          await VisitService.createVisit({
+            sellerId: selectedSeller.id,
+            visitTemplateId: template[0].id, // Verifica se há pelo menos um template
+            storeVisited: storeName,
+            dateVisited: dateVisited
+          });
+        } else {
+          showToast('Nenhum template disponível para criar a visita', 'warning');
+          return;
+        }
+      } catch (error) {
+        console.error('Erro ao criar a visita:', error);
+        showToast('Erro ao criar a visita', 'warning');
+        return;
+      }
+    }
+    setIndexScreen(indexScreen < categories.length + 1 ? indexScreen + 1 : 1);
   };
 
   const handleNavigation = (index: number) => {
@@ -106,10 +124,7 @@ const EvaluateVisit = () => {
 
       setLoading(true);
       for (const answer of fetchedVisitGrade) {
-        const questions = await VisitGradesService.getAllQuestionsBySeller(
-          selectedSeller.id
-        );
-
+        const questions = await VisitGradesService.getAllQuestionsBySeller(selectedSeller.id);
         const existingQuestion = questions.find(
           (question) => question.questionsId === answer.questionId
         );
@@ -130,11 +145,7 @@ const EvaluateVisit = () => {
     }
   };
 
-  const createGrades = async (answer: {
-    grade: number;
-    sellerId: string;
-    questionId: string;
-  }) => {
+  const createGrades = async (answer: { grade: number; sellerId: string; questionId: string }) => {
     try {
       await VisitGradesService.create({
         grade: answer.grade,
@@ -236,7 +247,7 @@ const EvaluateVisit = () => {
           {indexScreen > categories.length && user.job === 'Supervisor' && (
             <FinishedSection
               finishedVisit={finishedVisit}
-              array={fetchedVisitGrade} // Pass fetchedVisitGrade as a prop
+              array={fetchedVisitGrade}
               loading={loading}
             />
           )}
@@ -257,7 +268,7 @@ const FinishedSection = ({ finishedVisit, array, loading }) => {
         {loading ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (
-          <S.TextBtn>Finalizar dia com com esse vendedor</S.TextBtn>
+          <S.TextBtn>Finalizar dia com esse vendedor</S.TextBtn>
         )}
       </S.BtnFinished>
       <S.Outline>
@@ -289,7 +300,7 @@ const SellerSelection = ({
         disabled={storeName === ''}
         style={{ opacity: storeName ? 1 : 0.5 }}
       >
-        <S.TextBtn>iniciar Avaliação</S.TextBtn>
+        <S.TextBtn>Iniciar Avaliação</S.TextBtn>
       </S.ButtonFirst>
     </S.DivContainer>
   );

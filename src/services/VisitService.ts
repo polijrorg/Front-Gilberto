@@ -8,11 +8,24 @@ import IVisit from '@interfaces/Visit/Visit';
 
 import api from './api';
 
+interface VisitCreate{
+  sellerId: string;
+  visitTemplateId: string;
+  storeVisited: string;
+  dateVisited: string
+}
+
 export default class VisitService {
   static async createQuestionsGrade(
     questionGrade: IQuestionGrade
   ): Promise<void> {
     await api.post(`/questionsGrades/create`, questionGrade);
+  }
+
+  static async createVisit(
+    {visitTemplateId, sellerId, dateVisited,storeVisited}: VisitCreate
+  ): Promise<void> {
+    await api.post(`/visit/create`, {visitTemplateId, sellerId, dateVisited,storeVisited});
   }
 
   static async getAll(): Promise<IVisit[]> {

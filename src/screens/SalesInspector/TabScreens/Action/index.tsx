@@ -45,7 +45,7 @@ const Action = ({ route }) => {
           const plainsData = await PlainService.getByIdSellerPlain(
             responseSeller.id
           );
-          console.log(visits)
+          console.log(visits, responseSeller.id)
           setPlains(plainsData.filter((plain) => !plain.done));
           setVisits(visits);
           setCompletedPlains(plainsData.filter((plain) => plain.done));
