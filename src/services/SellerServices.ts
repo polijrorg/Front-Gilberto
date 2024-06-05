@@ -55,9 +55,13 @@ export default class SellerService {
     await api.delete(`/seller/delete/${sellerId}`);
   }
 
-  // Função para criar um novo vendedor
   static async createSeller(newSeller: Partial<ISeller>): Promise<ISeller> {
     const sellerResponse = await api.post('/seller/create', newSeller);
+    return sellerResponse.data;
+  }
+
+  static async updateSeller(newSeller: Partial<ISeller>): Promise<ISeller> {
+    const sellerResponse = await api.patch(`/seller/update/${newSeller.id}`, newSeller);
     return sellerResponse.data;
   }
 }

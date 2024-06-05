@@ -14,6 +14,9 @@ import DateTimePicker, {
 } from '@react-native-community/datetimepicker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDataContext } from '../../../context/DataContext';
+import SellerServices from '@services/SellerServices';
+import PlainService from '@services/PlainService';
+import ModulesServices from '@services/ModuleServices';
 
 interface RouteParams {
   ModulesEvaluate: Array<{
@@ -59,7 +62,7 @@ const CompleteMentorship: React.FC = () => {
     try {
       setLoading(true);
       await Promise.all(ModulesEvaluate.map(updateModuleGrade));
-
+  
       setData({
         ...data,
         seller: Seller,
@@ -67,8 +70,38 @@ const CompleteMentorship: React.FC = () => {
       setLoading(false);
       console.log('Módulos avaliados com sucesso');
       showToast('Módulos avaliados com sucesso', 'success');
+  
+      const allModulesEvaluated = await checkAllModulesEvaluated();
+      console.log(allModulesEvaluated);
+      if (allModulesEvaluated) {
+        console.log('Todos os módulos foram avaliados. Atualizando estágio para "Visita"...');
+        showToast('Todos os módulos avaliados', 'success');
+        showToast('Alterando Estado para Visita', 'success');
+        await SellerServices.updateSeller({ ...Seller, stage: 'Visita' });
+        setData({
+          ...data,
+          seller: { ...Seller, stage: 'Visita' },
+        });        
+      }
     } catch (error) {
       console.error('Erro ao completar o mentorado:', error);
+    }
+  };
+
+  const checkAllModulesEvaluated = async () => {
+    try {
+      const modules = await ModulesServices.getAllModules();
+  
+      const moduleGrades = await ModuleGradeServices.getModuleGradesByIdSeller(Seller.id);
+  
+      const allModulesEvaluated = modules.every(module =>
+        moduleGrades.some(grade => grade.moduleId === module.id)
+      );
+  
+      return allModulesEvaluated;
+    } catch (error) {
+      console.error('Erro ao verificar se todos os módulos foram avaliados:', error);
+      return false;
     }
   };
 
@@ -105,7 +138,30 @@ const CompleteMentorship: React.FC = () => {
   };
 
   const handleCompleteWithoutActionPlan = async () => {
-    console.log('Completo');
+    try {
+      await Promise.all(ModulesEvaluate.map(createActionPlan));
+    } catch (error) {
+      console.error('Erro ao criar plano de ação:', error);
+    }
+    console.log('Completo sem plano');
+  };
+
+  const createActionPlan = async (element: any) => {
+    try {
+      const newPlan = {
+        title: selectedAction,
+        prize: date.toISOString(),
+        comments: element.comment,
+        sellerId: Seller.id,
+        supervisorId: Seller.supervisorId,
+        visitId: '',
+        moduleId: element.moduleId,
+        done: false,
+      };
+      await PlainService.createPlain(newPlan);
+    } catch (error) {
+      console.error('Erro ao criar plano de ação:', error);
+    }
   };
 
   const handleBackHome = () => {

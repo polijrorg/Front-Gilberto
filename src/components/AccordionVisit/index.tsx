@@ -29,7 +29,7 @@ const AccordionHeader: React.FC<{
     <View style={styles.header}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.media}>
-        {media !== 0 ? formatNumber(media) : 'Y,Y'}
+        {media !== 0 ? formatNumber(media) : 'N.A'}
       </Text>
       <FontAwesome
         name={isExpanded ? 'angle-up' : 'angle-down'}
@@ -74,7 +74,7 @@ const AccordionContent: React.FC<AccordionContentProps> = ({
           >
             <Text style={styles.questionText}>{item.question}</Text>
             <Text style={styles.gradeText}>
-              {formatNumber(item.grade) || 'X,X'}
+              {formatNumber(item.grade) || 'N.A'}
             </Text>
           </View>
         ))}
