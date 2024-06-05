@@ -10,7 +10,7 @@ import {
 import * as S from './styles';
 
 import CardsMentory from '@components/CardsMentory';
-import PlainMentory from './Plain/Mentory';
+import PlainMentory from './Plain/MentoryAndVisit';
 
 import PlainService from '@services/PlainService';
 import SellerServices from '@services/SellerServices';

@@ -30,7 +30,11 @@ const ContainerActions: React.FC = () => {
   };
 
   const handleEnviarEvaluateVisit = () => {
-    navigation.navigate('EvaluateVisit' as never);
+    if (user.job === 'Supervisor') {    
+      navigation.navigate('EvaluateVisit' as never);
+    }else if (user.job === 'Gerente'){
+      navigation.navigate('EvaluateVisitManager' as never);
+    }
   };
 
   const getButtonText = (buttonType: string) => {
