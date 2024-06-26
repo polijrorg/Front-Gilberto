@@ -1,5 +1,6 @@
-export default interface QuestionsGrade{
-    grade: number,
-    sellerId: string,
-    questionsId: string
-  }
+export default interface QuestionsGrade {
+  id: string;
+  grade: number;
+  sellerId: string;
+  questionsId: string;
+}

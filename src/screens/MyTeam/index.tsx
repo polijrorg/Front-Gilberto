@@ -97,6 +97,7 @@ const MyTeam = () => {
             loading={loading}
             data={supervisors}
             search={search}
+            userType={user.job}
           />
         )}
 

@@ -56,3 +56,10 @@ export const Selected = styled(Text)`
   font-size: 12px;
   margin-right: 8px;
 `;
+
+export const NoOptionsMessage = styled(Text)`
+  color: #687076;
+  font-size: 12px;
+  padding: 10px;
+  text-align: center;
+`;

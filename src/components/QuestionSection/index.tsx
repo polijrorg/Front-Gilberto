@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import * as S from './styles';
-import { ScrollView, TouchableOpacity } from 'react-native';
+import {
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  View,
+  StyleSheet,
+} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { theme } from '@styles/default.theme';
 
@@ -30,33 +36,65 @@ const QuestionSection: React.FC<Props> = ({
   const [categoryQuestions, setCategoryQuestions] = useState<IQuestions[]>([]);
   const [answers, setAnswers] = useState<any[]>([]);
   const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchQuestions = async () => {
-      const questions = await VisitService.getQuestionsByIdCategory(
-        category.id
-      );
-      setCategoryQuestions(questions);
-    };
-    fetchQuestions();
+    try {
+      setLoading(true);
+
+      const fetchQuestions = async () => {
+        const questions = await VisitService.getQuestionsByIdCategory(
+          category.id
+        );
+        setCategoryQuestions(questions);
+      };
+      fetchQuestions();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   }, [category.id]);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#3E63DD" />
+      </View>
+    );
+  }
 
   const handleInputChange = (
     questionId: string,
-    questionCategoryId: string,
-    value: number
+    value: number,
+    question: string
   ) => {
-    const updatedAnswers = [
-      ...answers,
-      {
-        questionId: questionId,
-        sellerId: sellerId,
-        questionCategoryId: questionCategoryId,
+    const existingAnswerIndex = answers.findIndex(
+      (answer) =>
+        answer.questionId === questionId && answer.sellerId === sellerId
+    );
+
+    if (existingAnswerIndex !== -1) {
+      const updatedAnswers = [...answers];
+      updatedAnswers[existingAnswerIndex] = {
+        ...updatedAnswers[existingAnswerIndex],
         value: value,
-      },
-    ];
-    setAnswers(updatedAnswers);
-    onUpdateAnswers(updatedAnswers);
+      };
+      setAnswers(updatedAnswers);
+      onUpdateAnswers(updatedAnswers);
+    } else {
+      const updatedAnswers = [
+        ...answers,
+        {
+          name: question,
+          questionId: questionId,
+          sellerId: sellerId,
+          value: value,
+        },
+      ];
+      setAnswers(updatedAnswers);
+      onUpdateAnswers(updatedAnswers);
+    }
   };
 
   const handleEditQuestion = () => {
@@ -83,12 +121,12 @@ const QuestionSection: React.FC<Props> = ({
             />
           </TouchableOpacity>
         )}
-
+        <S.TemaQuestion>{category?.name || 'Tema Question'}</S.TemaQuestion>
         {categoryQuestions.map((question, index) => (
           <S.Wrapper key={question.id}>
             <InputRange
               onChangeValue={(id: string, value: number) =>
-                handleInputChange(question.id, question.categoriesId, value)
+                handleInputChange(question.id, value, question.question)
               }
               textAsk={question.question}
             />
@@ -98,5 +136,13 @@ const QuestionSection: React.FC<Props> = ({
     )
   );
 };
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default QuestionSection;

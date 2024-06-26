@@ -9,9 +9,10 @@ import TabNav from '@routes/TabNav';
 import EvaluateMentoring from '@screens/EvaluateMentoring';
 import CompleteMentorship from '@screens/EvaluateMentoring/CompleteMentorship';
 import EvaluateVisit from '@screens/EvaluateVisit';
+import EvaluateVisitManager from '@screens/EvaluateVisit/EvaluateVisitManager';
 import useAuth from '@hooks/useAuth';
 import ModuloAsk from '@screens/EvaluateMentoring/ModuloAsk';
-import PlainAction from '@screens/SalesInspector/TabScreens/Action/Plain/Mentory';
+import PlainAction from '@screens/SalesInspector/TabScreens/Action/Plain/MentoryAndVisit';
 
 const AppStack = createNativeStackNavigator();
 
@@ -50,6 +51,11 @@ const AppRoutes: React.FC = () => {
         component={EvaluateVisit}
         options={{ header: () => <></> }}
       />
+      <AppStack.Screen
+        name="EvaluateVisitManager"
+        component={EvaluateVisitManager}
+        options={{ header: () => <></> }}
+      />  
       <AppStack.Screen
         name="AskEvaluateMentoring"
         component={ModuloAsk}

@@ -3,11 +3,15 @@ import styled from 'styled-components/native';
 import { theme } from '@styles/default.theme';
 
 export const Wrapper = styled(View)`
-  width: 100%;
+  width: 90%;
   height: auto;
+  margin: 0 auto;
 `;
 
 export const TemaQuestion = styled(Text)`
   font-family: Poppins;
-  font-size: 16px;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: bolder;
+  margin: 16px 8px;
 `;

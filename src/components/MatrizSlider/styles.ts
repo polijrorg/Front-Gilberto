@@ -4,12 +4,10 @@ import { theme } from '@styles/default.theme';
 
 export const Wrapper = styled(View)`
   background-color: ${theme.colors.primary.main};
-  width: 85%;
-  height: auto;
+  width: 100%;
+  height: 300px; // Altura ajustada para o carrossel
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom-width: 1px;
-  border-bottom-color: #d1d1d1; // Cor ajustada
 `;

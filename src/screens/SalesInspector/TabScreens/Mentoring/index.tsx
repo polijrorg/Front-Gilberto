@@ -60,12 +60,12 @@ const Mentoring = ({ route }) => {
               <Accordion
                 key={index}
                 comment={moduleGrade[index]?.supervisorComment || 'Comentários'}
-                title={module.name || `Módulo ${index + 1}: Tema`}
+                title={module.name || `Módulo: Tema`}
                 implementation={
-                  formatScore(moduleGrade[index]?.implementationScore) || 'X,X'
+                  formatScore(moduleGrade[index]?.implementationScore) || 'N.A'
                 }
                 knowledge={
-                  formatScore(moduleGrade[index]?.knowledgeScore) || 'Y,Y'
+                  formatScore(moduleGrade[index]?.knowledgeScore) || 'N.A'
                 }
               />
             ))}

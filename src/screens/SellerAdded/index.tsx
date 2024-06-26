@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
+import { theme } from '@styles/default.theme';
 import * as S from './styles';
 import SupervisorServices from '@services/SupervisorServices';
 import useAuth from '@hooks/useAuth';
@@ -11,6 +12,8 @@ import HeaderPages from '@components/HeaderPages';
 import DropdownData from '@components/Dropdown';
 import { useDataContext } from '../../context/DataContext';
 import ISeller from '@interfaces/Seller';
+import { ActivityIndicator } from 'react-native';
+import StateSelect from '@components/Select';
 
 interface SupervisorState {
   single: ISupervisor | null;
@@ -23,7 +26,7 @@ const SellerAdded = () => {
     list: [],
   });
   const { data, setData } = useDataContext();
-
+  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -33,10 +36,14 @@ const SellerAdded = () => {
     useState<ISupervisor | null>(null);
   const [isButtonEnabled, setIsButtonEnabled] = useState<boolean>(false);
   const toast = useToast();
+  const [selectedValue, setSelectedValue] = useState<string>('');
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const isCreateDisabled = !name;
-
+  const isCreateDisabled = !name && !selectedValue;
+  const options = [
+    { label: 'Mentoria', value: 'Mentoria' },
+    { label: 'Visita', value: 'Visita' }
+  ];
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -68,11 +75,15 @@ const SellerAdded = () => {
     setIsModalVisible(!isModalVisible);
   };
 
+  const handleSelectChange = (value: string) => setSelectedValue(value);
+
+ 
   const handleCreate = async () => {
     try {
+      setLoading(true);
       const supervisorId = selectedSupervisor?.id;
       const companyId = user.companyId;
-      console.log(name, email, image, supervisorId);
+      console.log(name, email,companyId, supervisorId,selectedValue);
 
       const seller: ISeller = await SellerService.createSeller({
         name,
@@ -80,6 +91,7 @@ const SellerAdded = () => {
         email,
         supervisorId,
         companyId,
+        stage: selectedValue
       });
 
       setData({
@@ -92,6 +104,7 @@ const SellerAdded = () => {
       setSelectedSupervisor(null);
       setIsButtonEnabled(false);
       setIsModalVisible(false);
+      setLoading(false);
 
       toast.show('Vendedor cadastrado com sucesso', {
         type: 'success',
@@ -134,6 +147,11 @@ const SellerAdded = () => {
               onSelectSupervisor={handleSelectSupervisor}
             />
           </S.DivFileds>
+          <S.DivFileds>
+            <S.NameField>Estágio</S.NameField>
+            <StateSelect options={options} onChange={handleSelectChange} />
+          </S.DivFileds>
+
         </S.Main>
         <S.BtnCreateSeller
           onPress={toggleModal}
@@ -153,7 +171,11 @@ const SellerAdded = () => {
               </S.TextModal>
             </S.WrapperConteudo>
             <S.BtnYes onPress={handleCreate}>
-              <S.TitleBtnYes>ADICIONAR</S.TitleBtnYes>
+              {loading ? (
+                <ActivityIndicator color={theme.colors.primary.main} />
+              ) : (
+                <S.TitleBtnYes>ADICIONAR</S.TitleBtnYes>
+              )}
             </S.BtnYes>
             <S.BtnBackModal onPress={toggleModal}>
               <S.TitleBtnBack>Voltar</S.TitleBtnBack>

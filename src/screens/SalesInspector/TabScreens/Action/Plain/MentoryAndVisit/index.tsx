@@ -2,11 +2,8 @@ import React, { useState } from 'react';
 import * as S from './styles';
 import Select from '@components/Select';
 
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from '@react-native-community/datetimepicker';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { theme } from '@styles/default.theme';
-import { Switch } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
 
 import ISeller from '@interfaces/Seller';
@@ -36,7 +33,6 @@ const PlainMentory: React.FC<PlainActionProps> = ({
   const [titleAction, setTitleAction] = useState('');
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [isModuleAction, setIsModuleAction] = useState(false);
   const toast = useToast();
 
   const handleModuleChange = (value: string) => setSelectedValue(value);
@@ -60,7 +56,7 @@ const PlainMentory: React.FC<PlainActionProps> = ({
         prize: date.toLocaleDateString(),
         sellerId: seller.id,
         supervisorId: seller.supervisorId,
-        moduleId: isModuleAction ? selectedValue : null,
+        moduleId: seller.stage === 'Mentoria' ? selectedValue : null,
       });
       addNewPlain(newPlain);
       setState();
@@ -85,25 +81,8 @@ const PlainMentory: React.FC<PlainActionProps> = ({
   return (
     <S.Wrapper>
       <S.WrapperView>
-        <S.TextForms>Tipo de Ação</S.TextForms>
-        <S.ActionTypeSwitch>
-          <Switch
-            value={isModuleAction}
-            onValueChange={setIsModuleAction}
-            trackColor={{
-              false: theme.colors.secundary.main,
-              true: theme.colors.secundary.main,
-            }}
-            thumbColor={isModuleAction ? '#f4f3f4' : '#f4f3f4'}
-            style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}
-          />
-          <S.ActionTypeLabel selected={isModuleAction}>
-            {isModuleAction ? 'Módulo' : 'Visita'}
-          </S.ActionTypeLabel>
-        </S.ActionTypeSwitch>
-
         <ActionSpecificFields
-          isModuleAction={isModuleAction}
+          stage={seller.stage}
           titleAction={titleAction}
           setTitleAction={setTitleAction}
           handleModuleChange={handleModuleChange}
@@ -141,7 +120,7 @@ const PlainMentory: React.FC<PlainActionProps> = ({
 };
 
 interface ActionSpecificFieldsProps {
-  isModuleAction: boolean;
+  stage: string;
   titleAction: string;
   setTitleAction: React.Dispatch<React.SetStateAction<string>>;
   handleModuleChange: (value: string) => void;
@@ -150,7 +129,7 @@ interface ActionSpecificFieldsProps {
 }
 
 const ActionSpecificFields: React.FC<ActionSpecificFieldsProps> = ({
-  isModuleAction,
+  stage,
   titleAction,
   setTitleAction,
   handleModuleChange,
@@ -159,8 +138,9 @@ const ActionSpecificFields: React.FC<ActionSpecificFieldsProps> = ({
 }) => {
   return (
     <>
-      {!isModuleAction && (
+      {stage === 'Visita' && (
         <>
+          <S.TextForms>Vísita de Avaliação</S.TextForms>
           <Select
             placeholder="Selecione"
             options={visits?.map(({ id, storeVisited }) => ({
@@ -178,7 +158,7 @@ const ActionSpecificFields: React.FC<ActionSpecificFieldsProps> = ({
         </>
       )}
 
-      {isModuleAction && (
+      {stage === 'Mentoria' && (
         <>
           <S.TextForms>Módulo de Avaliação</S.TextForms>
           <Select

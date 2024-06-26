@@ -10,7 +10,7 @@ import {
 import * as S from './styles';
 
 import CardsMentory from '@components/CardsMentory';
-import PlainMentory from './Plain/Mentory';
+import PlainMentory from './Plain/MentoryAndVisit';
 
 import PlainService from '@services/PlainService';
 import SellerServices from '@services/SellerServices';
@@ -40,11 +40,12 @@ const Action = ({ route }) => {
             companyId,
             idEmployee
           );
-          const visits = await VisitService.getAll();
+          const visits = await VisitService.getVisitByIdSeller(responseSeller.id);
           const modulesData = await ModuleServices.getAllModules();
           const plainsData = await PlainService.getByIdSellerPlain(
             responseSeller.id
           );
+          console.log(visits, responseSeller.id)
           setPlains(plainsData.filter((plain) => !plain.done));
           setVisits(visits);
           setCompletedPlains(plainsData.filter((plain) => plain.done));

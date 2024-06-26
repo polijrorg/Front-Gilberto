@@ -9,17 +9,14 @@ interface CardMentoryProps {
   isVisible?: boolean;
   onToggleVisibility: () => void;
   onMarkDone: () => void;
-  typePlain?: string;
   complete?: boolean;
 }
 
 const CardsMentory: React.FC<CardMentoryProps> = ({
   title,
   prize,
-  isVisible = false,
   onToggleVisibility,
   onMarkDone,
-  typePlain = 'Tipo de Plano',
   complete,
 }) => {
   const handleToggleVisibility = () => {
@@ -58,9 +55,6 @@ const CardsMentory: React.FC<CardMentoryProps> = ({
           <DivNota>
             <Nota>{prize}</Nota>
           </DivNota>
-          <DivText>
-            <Title>{typePlain}</Title>
-          </DivText>
         </View>
       </TouchableOpacity>
     </StyledWrapper>

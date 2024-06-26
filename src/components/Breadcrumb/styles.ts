@@ -9,15 +9,16 @@ export const Container = styled(View)`
   justify-content: center;
   border-radius: 8px;
   margin: 16px 0;
+  position: absolute;
 `;
 
 export const Button = styled(TouchableOpacity)<{
   Selected: 'check' | 'selected' | 'false';
 }>`
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   padding: 0px;
-  border-radius: 8px;
+  border-radius: 16px;
   background-color: ${({ Selected }) => {
     switch (Selected) {
       case 'check':
@@ -41,8 +42,8 @@ export const ItemContainer = styled(View)`
 `;
 
 export const Crumb = styled(Text)`
-  font-size: 10px;
-  color: #333;
+  font-size: 12px;
+  color: #fff;
 `;
 
 export const Separator = styled(Text)`

@@ -1,32 +1,37 @@
-/* eslint-disable react-native/no-inline-styles */
-import React from 'react';
-import { View, Text } from 'react-native';
-import Carousel from 'react-native-reanimated-carousel';
+import React, { useRef } from 'react';
+import { View, ScrollView, Dimensions } from 'react-native';
 import BarChartComponent from '@components/BarChart';
 import * as S from './styles';
 
+
 const MatrizSlider: React.FC = () => {
+  const scrollRef = useRef<ScrollView>(null);
+  const { width: windowWidth } = Dimensions.get('window');
+
+  const data = [0, 1]; // Array de dados do carrossel
+
+  const handleScroll = (event) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.round(offsetX / windowWidth);
+    console.log('current index:', index);
+  };
+
   return (
     <S.Wrapper>
-      <Carousel
-        loop
-        width={400}
-        height={300}
-        data={[...new Array(2).keys()]}
-        scrollAnimationDuration={1000}
-        onSnapToItem={(index) => console.log('current index:', index)}
-        renderItem={({ index }) => (
-          <View
-            style={{
-              flex: 1,
-              borderWidth: 1,
-              justifyContent: 'center',
-            }}
-          >
-            <Text style={{ textAlign: 'center', fontSize: 30 }}>{index}</Text>
+      <ScrollView
+        ref={scrollRef}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      >
+        {data.map((_, index) => (
+          <View key={index} style={{ width: windowWidth, borderBottomWidth: 1, borderTopWidth: 1, borderColor: '#d1d1d1' }}>
+            <BarChartComponent type="modulo" />
           </View>
-        )}
-      />
+        ))}
+      </ScrollView>
     </S.Wrapper>
   );
 };

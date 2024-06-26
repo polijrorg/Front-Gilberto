@@ -42,17 +42,21 @@ const Select: React.FC<SelectProps> = ({
               color="#687076"
             />
           </S.DropDownButton>
-          {isOpen && (
-            <S.DropdownList maxHeight={options?.length > 1 ? 300 : null}>
-              {options?.map((option, index) => (
-                <S.DropdownItem
-                  key={index}
-                  onPress={() => handleSelectOption(option.label, option.value)}
-                >
-                  <S.Selected>{option.label}</S.Selected>
-                </S.DropdownItem>
-              ))}
-            </S.DropdownList>
+          {options && options.length > 0 ? (
+            isOpen && (
+              <S.DropdownList maxHeight={options.length > 1 ? 300 : null}>
+                {options.map((option, index) => (
+                  <S.DropdownItem
+                    key={index}
+                    onPress={() => handleSelectOption(option.label, option.value)}
+                  >
+                    <S.Selected>{option.label}</S.Selected>
+                  </S.DropdownItem>
+                ))}
+              </S.DropdownList>
+            )
+          ) : (
+            <S.NoOptionsMessage>Nenhuma opção disponível</S.NoOptionsMessage>
           )}
         </S.CustomDropdown>
       </S.DivFields>

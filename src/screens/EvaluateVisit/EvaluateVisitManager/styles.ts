@@ -100,15 +100,13 @@ export const Input = styled(TextInput)`
 export const ButtonFirst = styled(TouchableOpacity)`
   padding: 8px 24px;
   background-color: #3e63dd;
-  width: 100%;
-  height: auto;
+  margin: 0 auto;
 
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 8px;
 
-  margin-top: 80%;
 `;
 
 export const ButtonIniciar = styled(TouchableOpacity)`

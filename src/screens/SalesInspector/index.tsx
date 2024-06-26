@@ -13,7 +13,7 @@ import { useDataContext } from '../../context/DataContext';
 
 const SalesInspector = ({ route }) => {
   const navigation = useNavigation();
-  const { idEmployee, cargo, companyId } = route.params;
+  const { idEmployee, cargo, companyId, stage } = route.params;
   const { user } = useAuth();
   const { data, setData } = useDataContext();
   const [seller, setSeller] = useState<ISeller | null>(null);
@@ -55,9 +55,9 @@ const SalesInspector = ({ route }) => {
   const handleDelete = async () => {
     try {
       setLoading(true);
-      if (cargo === 'Supervisor' && supervisors) {
+      if (cargo === 'Supervisor') {
         await SupervisorServices.delete(supervisors.id);
-      } else if (cargo === 'Vendedor' && seller) {
+      } else if (cargo === 'Vendedor') {
         await SellerServices.delete(seller.id);
       }
       setData({
@@ -88,7 +88,7 @@ const SalesInspector = ({ route }) => {
               <S.Title>
                 {seller?.name || supervisors?.name || 'Usuário'}
               </S.Title>
-              <S.Loja>{seller?.job || supervisors?.job || 'Cargo'}</S.Loja>
+              <S.Loja>{seller?.stage || supervisors?.job || 'Estágio'}</S.Loja>
               <S.Funcao>
                 {seller?.email || supervisors?.email || 'user123@gmail.com'}
               </S.Funcao>
