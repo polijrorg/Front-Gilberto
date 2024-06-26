@@ -3,9 +3,11 @@ import * as S from './styles';
 import { BarChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
 
-interface BarChartProps {}
+interface BarChartProps {
+  type: string;
+}
 
-const BarChartComponent: React.FC<BarChartProps> = ({}) => {
+const BarChartComponent: React.FC<BarChartProps> = ({ type }) => {
   const data = {
     labels: ['6', '7', '8', '9', '10'],
     datasets: [
@@ -35,25 +37,23 @@ const BarChartComponent: React.FC<BarChartProps> = ({}) => {
 
   return (
     <S.Container>
-      <S.TitleSlider>Matriz IC Implementação | Conhecimento</S.TitleSlider>
-      <S.WrapperChart>
-        <BarChart
-          data={data}
-          // eslint-disable-next-line react-native/no-inline-styles
-          style={{ borderRadius: 4, padding: 12 }}
-          width={Dimensions.get('window').width - 90}
-          height={220}
-          yAxisLabel=""
-          yAxisSuffix=""
-          chartConfig={chartConfig}
-          verticalLabelRotation={0}
-          showValuesOnTopOfBars
-          showBarTops={false}
-          flatColor
-          withInnerLines={false}
-          withCustomBarColorFromData
-        />
-      </S.WrapperChart>
+      {type === 'modulo' && <S.TitleSlider>Médias por módulo</S.TitleSlider>}
+      {type === 'competencia' && <S.TitleSlider>Médias por competência</S.TitleSlider>}
+      {type === 'matrixxz' && <S.TitleSlider>Médias por MatrixXZ</S.TitleSlider>}
+      <BarChart
+        data={data}
+        style={{ borderRadius: 4, padding: 8 }}
+        width={Dimensions.get('window').width - 50}
+        height={200}
+        yAxisLabel=""
+        yAxisSuffix=""
+        chartConfig={chartConfig}
+        showValuesOnTopOfBars
+        showBarTops={false}
+        flatColor
+        withInnerLines={false}
+        withCustomBarColorFromData
+      />
     </S.Container>
   );
 };
