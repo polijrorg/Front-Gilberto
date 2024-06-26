@@ -12,13 +12,15 @@ const BarChartComponent: React.FC<BarChartProps> = ({ type }) => {
     labels: ['6', '7', '8', '9', '10'],
     datasets: [
       {
-        data: [0, 32, 45, 42, 80, 180],
+        data: [13, 32, 45, 42, 80, 32],
         colors: [
-          (_opacity = 1) => '#338acc',
-          (_opacity = 1) => '#065d9e',
-          (_opacity = 1) => '#113f61',
-          (_opacity = 1) => '#065d9e',
-          (_opacity = 1) => '#113f61',
+          (_opacity = 1) => '#3E63DD',
+          (_opacity = 1) => '#3E63DD',
+          (_opacity = 1) => '#3E63DD',
+          (_opacity = 1) => '#3E63DD',
+          (_opacity = 1) => '#3E63DD',
+          (_opacity = 1) => '#3E63DD',
+
         ],
       },
     ],
