@@ -20,47 +20,40 @@ const Home = () => {
   const [supervisors, setSupervisors] = useState([]);
   const [media, setMedia] = useState({});
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        if (user.job === 'Supervisor') {
-          const sellersData = await SellerServices.getAllSellerFromSupervisor(
-            user.id
-          );
-          const mediaData = await fetchMediaData(sellersData);
-          setSellers(sellersData);
-          setMedia(mediaData);
-        } else if (user.job === 'Gerente') {
-          const supervisorsData =
-            await SupervisorServices.getAllSupervisorsFromManager(user.id);
-          setSupervisors(supervisorsData);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [user.id, user.job, data]);
-
   const fetchMediaData = async (sellersData: Seller[]) => {
     const mediaData = {};
     for (const seller of sellersData) {
-      const moduleGrades = await ModulesServices.getModuleGradesByIdSeller(
-        seller.id
-      );
-      const totalGrade = moduleGrades.reduce(
-        (sum, grade) => sum + grade.media,
-        0
-      );
-      const averageGrade =
-        moduleGrades.length > 0 ? totalGrade / moduleGrades.length : 0;
+      const moduleGrades = await ModulesServices.getModuleGradesByIdSeller(seller.id);
+      const totalGrade = moduleGrades.reduce((sum, grade) => sum + grade.media, 0);
+      const averageGrade = moduleGrades.length > 0 ? totalGrade / moduleGrades.length : 0;
       mediaData[seller.id] = averageGrade;
     }
     return mediaData;
   };
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      if (user.job === 'Supervisor') {
+        const sellersData = await SellerServices.getAllSellerFromSupervisor(user.id);
+        const mediaData = await fetchMediaData(sellersData);
+        setSellers(sellersData);
+        setMedia(mediaData);
+      } else if (user.job === 'Gerente') {
+        const supervisorsData = await SupervisorServices.getAllSupervisorsFromManager(user.id);
+        setSupervisors(supervisorsData);
+      }
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [user.id, user.job, data]);
 
   return (
     <>

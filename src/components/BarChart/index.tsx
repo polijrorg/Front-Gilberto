@@ -3,25 +3,18 @@ import * as S from './styles';
 import { BarChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
 
-interface BarChartProps {
+export interface BarChartProps {
   type: string;
+  moduleAverages: { module: string, nameModule: string, average: number }[];
 }
 
-const BarChartComponent: React.FC<BarChartProps> = ({ type }) => {
+const BarChartComponent: React.FC<BarChartProps> = ({ type, moduleAverages }) => {  
   const data = {
-    labels: ['6', '7', '8', '9', '10'],
+    labels: moduleAverages.map((item, index) => `${index + 1}`),
     datasets: [
       {
-        data: [13, 32, 45, 42, 80, 32],
-        colors: [
-          (_opacity = 1) => '#3E63DD',
-          (_opacity = 1) => '#3E63DD',
-          (_opacity = 1) => '#3E63DD',
-          (_opacity = 1) => '#3E63DD',
-          (_opacity = 1) => '#3E63DD',
-          (_opacity = 1) => '#3E63DD',
-
-        ],
+        data: moduleAverages.map(item => Math.min(Math.max(item.average, 0), 5)),
+        colors: moduleAverages.map(() => (_opacity = 1) => '#3E63DD'),
       },
     ],
   };
@@ -33,8 +26,10 @@ const BarChartComponent: React.FC<BarChartProps> = ({ type }) => {
     backgroundGradientToOpacity: 1,
     color: (opacity = 1) => `rgba(104, 112, 118, ${opacity})`,
     strokeWidth: 0,
-    barPercentage: 0.7,
+    barPercentage: 0.6,
     useShadowColorFromDataset: false,
+    decimalPlaces: 1,
+    minValue: 0,
   };
 
   return (
@@ -50,9 +45,10 @@ const BarChartComponent: React.FC<BarChartProps> = ({ type }) => {
         yAxisLabel=""
         yAxisSuffix=""
         chartConfig={chartConfig}
-        showValuesOnTopOfBars
+        showValuesOnTopOfBars={false} 
         showBarTops={false}
         flatColor
+        fromZero
         withInnerLines={false}
         withCustomBarColorFromData
       />
