@@ -21,7 +21,7 @@ const MatrizSlider: React.FC = () => {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const data = ['modulo', 'matrixxz'];
+  const data = ['modulo', 'matriz'];
 
   const handleScroll = (event) => {
     const offsetX = event.nativeEvent.contentOffset.x;

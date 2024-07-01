@@ -124,9 +124,9 @@ const BarChartComponent: React.FC<BarChartProps> = ({
           />
         </>
       )}
-      {type === 'matrixxz' && (
+      {type === 'matriz' && (
         <>
-          <S.TitleSlider>Médias por MatrixXZ</S.TitleSlider>
+          <S.TitleSlider>Matriz IC Implementação | Conhecimento</S.TitleSlider>
           <Svg width={chartWidth} height={chartHeight}>
             {xAxis}
             {xAxisLabels}
