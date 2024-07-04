@@ -17,9 +17,8 @@ import IModules from '@interfaces/Module';
 import IVisits from '@interfaces/Visit/Visit';
 
 import { useDataContext } from '../../context/DataContext';
-import PlainMentory from '@screens/SalesInspector/TabScreens/Action/Plain/MentoryAndVisit';
 
-const PlainAction = () => {
+const PlainActionTemplate = () => {
   const { user } = useAuth();
   const { data } = useDataContext();
 
@@ -38,7 +37,7 @@ const PlainAction = () => {
           const responseSeller = await SellerServices.getSupervisorByIdCompany(user.companyId, user.id);
           const visitsData = await VisitService.getVisitByIdSeller(responseSeller.id);
           const modulesData = await ModuleServices.getAllModules();
-          const plainsData = await PlainService.getByIdSellerPlain(responseSeller.id);
+          const plainsData = await PlainService.getAll();
 
           setPlains(plainsData.filter((plain) => !plain.done));
           setCompletedPlains(plainsData.filter((plain) => plain.done));
@@ -67,10 +66,6 @@ const PlainAction = () => {
     );
   };
 
-  const addNewPlain = (newPlain: IPlains) => {
-    setPlains((prevPlains) => [...prevPlains, newPlain]);
-  };
-
   const handleMarkDone = async (idPlain: string) => {
     try {
       const plain = await PlainService.markDone(idPlain);
@@ -81,10 +76,6 @@ const PlainAction = () => {
     } catch (error) {
       console.error('Erro ao marcar o plano como concluído:', error);
     }
-  };
-
-  const handleNavigator = () => {
-    setIsVisible(!isVisible);
   };
 
   return (
@@ -130,18 +121,10 @@ const PlainAction = () => {
                   </View>
                 )}
               </View>
-              <S.BtnCriarAction onPress={handleNavigator}>
-                <S.TextBtn>criar plano de ação</S.TextBtn>
-              </S.BtnCriarAction>
             </ScrollView>
           ) : (
-            <PlainMentory
-              setState={handleNavigator}
-              seller={seller}
-              modules={modules}
-              addNewPlain={addNewPlain} // Esta função precisa ser definida
-              visits={visits}
-            />
+            <>
+            </>
           )}
         </S.ViewWrapper>
       </S.Wrapper>
@@ -229,4 +212,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PlainAction;
+export default PlainActionTemplate;
