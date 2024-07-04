@@ -36,6 +36,7 @@ const Home = () => {
     try {
       if (user.job === 'Supervisor') {
         const sellersData = await SellerServices.getAllSellerFromSupervisor(user.id);
+
         const mediaData = await fetchMediaData(sellersData);
         setSellers(sellersData);
         setMedia(mediaData);
