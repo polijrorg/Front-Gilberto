@@ -1,7 +1,8 @@
 import FormsLogin from '@components/FormsLogin';
 import * as S from './styles';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useEffect } from 'react';
+import PdfService from '@services/PdfService';
 
 const Login = () => {
   return (

@@ -13,10 +13,12 @@ import SellerService from '@services/SellerServices';
 import VisitService from '@services/VisitService';
 import VisitGradesService from '@services/VisitGradesService';
 
+
 import ISeller from '@interfaces/Seller';
 import ICategories from '@interfaces/Visit/Categories';
 import QuestionsGrade from '@interfaces/Visit/QuestionGrade';
 import ITemplateVisit from '@interfaces/Visit/TemplateVisit';
+import PdfService from '@services/PdfService';
 
 interface VisitGrade {
   questionId: string;
@@ -36,6 +38,10 @@ const EvaluateVisit = () => {
   const [loading, setLoading] = useState(false);
   const [fetchedVisitGrade, setFetchedVisitGrade] = useState<VisitGrade[]>([]);
   const toast = useToast();
+
+  const dateVisited = new Date().toISOString();
+
+
 
   useEffect(() => {
     const fetchSellers = async () => {
@@ -87,12 +93,12 @@ const EvaluateVisit = () => {
     if (indexScreen === 1) {
       try {
         if (template.length > 0) {
-          const dateVisited = new Date().toISOString();
+          const formattedDate = formatDateForPdf(dateVisited);
           await VisitService.createVisit({
             sellerId: selectedSeller.id,
-            visitTemplateId: template[0].id, // Verifica se há pelo menos um template
+            visitTemplateId: template[0].id,
             storeVisited: storeName,
-            dateVisited: dateVisited
+            dateVisited: formattedDate
           });
         } else {
           showToast('Nenhum template disponível para criar a visita', 'warning');
@@ -123,18 +129,19 @@ const EvaluateVisit = () => {
       }
 
       setLoading(true);
-      for (const answer of fetchedVisitGrade) {
+     for (const answer of fetchedVisitGrade) {
         const questions = await VisitGradesService.getAllQuestionsBySeller(selectedSeller.id);
         const existingQuestion = questions.find(
           (question) => question.questionsId === answer.questionId
         );
-
         if (existingQuestion) {
           await updateGrades(existingQuestion, answer);
+
         } else {
           await createGrades(answer);
         }
       }
+     await pdfAndEmail(selectedSeller.id)
     } catch (error) {
       console.error('Ocorreu um erro:', error);
       showToast('Problema em avaliar Visita', 'warning');
@@ -143,6 +150,31 @@ const EvaluateVisit = () => {
       showToast('Visita avaliada com sucesso', 'success');
       setFetchedVisitGrade([]);
     }
+  };
+
+  const pdfAndEmail = async (sellerId: string) => {
+    try {
+      const formattedDate = formatDateForPdf(dateVisited);
+      const encodedDate = formatToEncodedDate(formattedDate);
+      await PdfService.getPdf(sellerId, encodedDate);
+      showToast('PDF Enviado para o E-mail', 'success');
+    } catch (error) {
+      console.error('Erro ao criar o PDF:', error);
+    }
+  };
+
+  const formatDateForPdf = (isoDate: string): string => {
+    const date = new Date(isoDate);
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear().toString();
+  
+    return `${day}/${month}/${year}`;
+  };
+  
+  const formatToEncodedDate = (formattedDate: string): string => {
+    const [day, month, year] = formattedDate.split('/');
+    return `${day}%2F${month}%2F${year}`;
   };
 
   const createGrades = async (answer: { grade: number; sellerId: string; questionId: string }) => {
@@ -246,6 +278,9 @@ const EvaluateVisit = () => {
           )}
           {indexScreen > categories.length && user.job === 'Supervisor' && (
             <FinishedSection
+              setStoreName={setStoreName}
+              selectedSeller={setSelectedSeller}
+              setIndexScreen={setIndexScreen}
               finishedVisit={finishedVisit}
               array={fetchedVisitGrade}
               loading={loading}
@@ -257,7 +292,12 @@ const EvaluateVisit = () => {
   );
 };
 
-const FinishedSection = ({ finishedVisit, array, loading }) => {
+const FinishedSection = ({ setStoreName,setIndexScreen,finishedVisit, array, loading, selectedSeller }) => {
+  const handlePress = () => {
+    setIndexScreen(1);
+    selectedSeller(null);
+    setStoreName('')
+  };
   return (
     <S.ContainerFields>
       <S.BtnFinished
@@ -271,7 +311,8 @@ const FinishedSection = ({ finishedVisit, array, loading }) => {
           <S.TextBtn>Finalizar dia com esse vendedor</S.TextBtn>
         )}
       </S.BtnFinished>
-      <S.Outline>
+      <S.Outline         onPress={handlePress}
+      >
         <S.TextBtnNova>Iniciar nova visita</S.TextBtnNova>
       </S.Outline>
     </S.ContainerFields>
