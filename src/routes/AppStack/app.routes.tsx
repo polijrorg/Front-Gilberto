@@ -68,6 +68,12 @@ const AppRoutes: React.FC = () => {
         options={{ header: () => <></> }}
       />
 
+      <AppStack.Screen
+        name="PlainAction"
+        component={PlainAction}
+        options={{ header: () => <></> }}
+      />
+
       {user && user.job === 'Supervisor' && (
         <AppStack.Screen
           name="EvaluateMentoring"
