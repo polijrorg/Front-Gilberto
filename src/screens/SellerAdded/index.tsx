@@ -83,7 +83,6 @@ const SellerAdded = () => {
       setLoading(true);
       const supervisorId = selectedSupervisor?.id;
       const companyId = user.companyId;
-      console.log(name, email,companyId, supervisorId,selectedValue);
 
       const seller: ISeller = await SellerService.createSeller({
         name,
@@ -102,9 +101,6 @@ const SellerAdded = () => {
       setName('');
       setEmail('');
       setSelectedSupervisor(null);
-      setIsButtonEnabled(false);
-      setIsModalVisible(false);
-      setLoading(false);
 
       toast.show('Vendedor cadastrado com sucesso', {
         type: 'success',
@@ -113,7 +109,17 @@ const SellerAdded = () => {
         animationType: 'zoom-in',
       });
     } catch (error) {
-      console.error('Erro ao criar vendedor:', error.message);
+      toast.show('Alguns dados podem estar incorretos', {
+        type: 'warning',
+        placement: 'bottom',
+        duration: 3000,
+        animationType: 'zoom-in',
+      });
+    }finally{
+      setLoading(false);
+      setIsModalVisible(false);
+      setIsButtonEnabled(false);
+
     }
   };
 
