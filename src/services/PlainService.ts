@@ -11,6 +11,14 @@ export default class PlainService {
     return plainResponse.data;
   }
 
+  static async getPlainActionByIdSupervisor(supervisorId: string): Promise<IPlain[]> {
+      const plainResponse: AxiosResponse<IPlain[]> = await api.get(`/actionPlans/getAll`);
+      const plainDataSupervisor: IPlain[] = plainResponse.data.filter((plain: IPlain) => plain.supervisorId === supervisorId);
+
+      return plainDataSupervisor;
+  }
+  
+
   static async getByIdSellerPlain(idSeller: string): Promise<IPlain[]> {
     const plainsArray: AxiosResponse<IPlain[]> = await api.get(
       `/actionPlans/getAll/${idSeller}`

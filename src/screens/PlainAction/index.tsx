@@ -26,27 +26,17 @@ const PlainActionTemplate = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [plains, setPlains] = useState<IPlains[]>([]);
   const [completedPlains, setCompletedPlains] = useState<IPlains[]>([]);
-  const [seller, setSeller] = useState<ISeller | null>(null);
-  const [modules, setModules] = useState<IModules[] | null>(null);
-  const [visits, setVisits] = useState<IVisits[] | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (user.job === 'Vendedor') {
-          const responseSeller = await SellerServices.getSupervisorByIdCompany(user.companyId, user.id);
-          const visitsData = await VisitService.getVisitByIdSeller(responseSeller.id);
-          const modulesData = await ModuleServices.getAllModules();
-          const plainsData = await PlainService.getAll();
+        if (user.job === 'Supervisor') {
+          const plainsData = await PlainService.getPlainActionByIdSupervisor(user.id);
 
           setPlains(plainsData.filter((plain) => !plain.done));
           setCompletedPlains(plainsData.filter((plain) => plain.done));
-          setModules(modulesData);
-          setSeller(responseSeller);
-          setVisits(visitsData);
         }
       } catch (error) {
-        console.error('Erro ao buscar dados:', error);
       } finally {
         setLoading(false);
       }
