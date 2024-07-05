@@ -44,7 +44,6 @@ const CardsMentory: React.FC<CardMentoryProps> = ({
             paddingHorizontal: 16,
             flexDirection: 'row',
             justifyContent: 'space-around',
-            flexWrap: 'wrap'
           }}
         >
           {complete ? (
