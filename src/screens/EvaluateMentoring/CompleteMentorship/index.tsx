@@ -2,7 +2,7 @@ import React, { useEffect, useState }  from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { theme } from '@styles/default.theme';
 import * as S from './styles';
-import { useRoute, RouteProp, useNavigation,  } from '@react-navigation/native';
+import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import ModuleGradeServices from '@services/ModuleGradeService';
 import DivGradient from '@components/DivGradient';
 import HeaderPages from '@components/HeaderPages';
@@ -33,7 +33,6 @@ const CompleteMentorship: React.FC = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
 
-  // Função para completar a avaliação dos módulos
   const handleComplete = async () => {
     try {
       setLoading(true);
@@ -64,7 +63,6 @@ const CompleteMentorship: React.FC = () => {
     }
   };
 
-  // Função para verificar se todos os módulos foram avaliados
   const checkAllModulesEvaluated = async () => {
     try {
       const modules = await ModulesServices.getAllModules();
@@ -82,7 +80,6 @@ const CompleteMentorship: React.FC = () => {
     }
   };
 
-  // Função para atualizar a avaliação do módulo
   const updateModuleGrade = async (element: any) => {
     try {
       if (element) {
@@ -115,12 +112,10 @@ const CompleteMentorship: React.FC = () => {
     }
   };
 
-  // Função para navegar de volta para a tela inicial
   const handleBackHome = () => {
     navigation.navigate('Home' as never);
   };
 
-  // Função para exibir um toast de mensagem
   const showToast = (message: string, type: string) => {
     toast.show(message, {
       type: type,
@@ -136,9 +131,16 @@ const CompleteMentorship: React.FC = () => {
       <S.Wrapper>
         <HeaderPages title="Avaliar Mentorado" />
         <SellerInfo seller={Seller} handleBackHome={handleBackHome} />
-        {ModulesEvaluate.map((module, index) => (
-          <ModuleEvaluation key={index} moduleData={module} />
-        ))}
+
+        {ModulesEvaluate?.length > 0 ? (
+          ModulesEvaluate.map((module, index) => (
+            <ModuleEvaluation key={index} moduleData={module} />
+          ))
+        ) : (
+          <S.ViewWrapperCrome>
+            <S.Message>Nenhum módulo editado</S.Message>
+          </S.ViewWrapperCrome>
+        )}
         <ButtonsSection
           loading={loading}
           handleComplete={handleComplete}
@@ -149,7 +151,6 @@ const CompleteMentorship: React.FC = () => {
   );
 };
 
-// Componente para exibir as informações do vendedor
 const SellerInfo: React.FC<{ seller: ISeller; handleBackHome: () => void }> = ({
   seller,
   handleBackHome,
@@ -168,13 +169,12 @@ const SellerInfo: React.FC<{ seller: ISeller; handleBackHome: () => void }> = ({
   </S.DivFields>
 );
 
-// Componente para exibir a avaliação de um módulo específico
 interface ModuleEvaluationProps {
   moduleData: {
-    idModule: string;
-    conhecimento: number;
-    implementacao: number;
-    comment: string;
+    idModule?: string;
+    conhecimento?: number;
+    implementacao?: number;
+    comment?: string;
   };
 }
 const ModuleEvaluation: React.FC<ModuleEvaluationProps> = ({ moduleData }) => {
@@ -183,7 +183,7 @@ const ModuleEvaluation: React.FC<ModuleEvaluationProps> = ({ moduleData }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const fetchedModule = await ModulesServices.getModuleById(moduleData.idModule);
+        const fetchedModule = await ModulesServices.getModuleById(moduleData?.idModule);
         setModule(fetchedModule);
       } catch (error) {
         console.error('Erro ao buscar módulo:', error);
@@ -191,7 +191,7 @@ const ModuleEvaluation: React.FC<ModuleEvaluationProps> = ({ moduleData }) => {
     };
 
     fetchData();
-  }, [moduleData.idModule]);
+  }, [moduleData?.idModule]);
 
   if (!module) {
     return null;
@@ -199,15 +199,17 @@ const ModuleEvaluation: React.FC<ModuleEvaluationProps> = ({ moduleData }) => {
 
   return (
     <View style={styles.moduleContainer}>
-      <Text style={styles.moduleName}>Módulo Nome: {module.name}</Text>
-      {moduleData.conhecimento && (
-        <Text style={styles.moduleLabel}>Conhecimento: {moduleData.conhecimento.toFixed(2).replace('.', ',')}</Text>
+      {module.name && (
+        <Text style={styles.moduleName}>Módulo Nome: {module?.name || ''}</Text>
       )}
-      {moduleData.implementacao && (
-        <Text style={styles.moduleLabel}>Implementação: {moduleData.implementacao.toFixed(2).replace('.', ',')}</Text>
+      {moduleData.conhecimento !== undefined && (
+        <Text style={styles.moduleLabel}>Conhecimento: {moduleData?.conhecimento?.toFixed(2).replace('.', ',') || ''}</Text>
+      )}
+      {moduleData.implementacao !== undefined && (
+        <Text style={styles.moduleLabel}>Implementação: {moduleData?.implementacao?.toFixed(2).replace('.', ',') || ''}</Text>
       )}
       {moduleData.comment && (
-        <Text style={styles.moduleLabel}>{ 'Comentário: '+ moduleData.comment}</Text>
+        <Text style={styles.moduleLabel}>{'Comentário: ' + moduleData?.comment || ''}</Text>
       )}
     </View>
   );
@@ -247,7 +249,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// Componente para exibir o botão de finalizar
 const ButtonsSection: React.FC<{
   handleComplete: () => void;
   loading: boolean;

@@ -134,6 +134,22 @@ export const BtnConcluirPlano = styled(TouchableOpacity)`
   background-color: ${theme.colors.secundary.main};
 `;
 
+export const Message = styled(Text)`
+  font-size: 16px;
+  color: #888;
+  text-align: center;
+  font-family: Poppins;
+  margin-top: 20px;
+`;
+
+export const ViewWrapperCrome = styled(View)`
+  width: 100%;
+  height: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 export const BtnConcluirSemPlano = styled(TouchableOpacity)`
   width: 100%;
   padding: 10px 8px;
