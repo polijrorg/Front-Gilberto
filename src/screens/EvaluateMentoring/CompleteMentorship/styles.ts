@@ -123,7 +123,7 @@ export const TextBtnData = styled(Text)`
 `;
 
 export const BtnConcluirPlano = styled(TouchableOpacity)`
-  width: 80%;
+  width: 95%;
   padding: 10px 8px;
   font-size: 16px;
   margin: 0 auto;
@@ -135,7 +135,7 @@ export const BtnConcluirPlano = styled(TouchableOpacity)`
 `;
 
 export const BtnConcluirSemPlano = styled(TouchableOpacity)`
-  width: 80%;
+  width: 100%;
   padding: 10px 8px;
   font-size: 16px;
   margin: 16px auto;

@@ -1,22 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState }  from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { theme } from '@styles/default.theme';
 import * as S from './styles';
-import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
+import { useRoute, RouteProp, useNavigation,  } from '@react-navigation/native';
 import ModuleGradeServices from '@services/ModuleGradeService';
 import DivGradient from '@components/DivGradient';
 import HeaderPages from '@components/HeaderPages';
 import ISeller from '@interfaces/Seller';
 import { useToast } from 'react-native-toast-notifications';
-import { ActivityIndicator } from 'react-native';
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from '@react-native-community/datetimepicker';
+import { ActivityIndicator, View, Text, StyleSheet, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDataContext } from '../../../context/DataContext';
 import SellerServices from '@services/SellerServices';
-import PlainService from '@services/PlainService';
 import ModulesServices from '@services/ModuleServices';
+import IModule from '@interfaces/Module';
 
 interface RouteParams {
   ModulesEvaluate: Array<{
@@ -31,38 +28,17 @@ interface RouteParams {
 const CompleteMentorship: React.FC = () => {
   const route = useRoute<RouteProp<{ ModuloAsk: RouteParams }, 'ModuloAsk'>>();
   const { ModulesEvaluate, Seller } = route.params;
-  const [selectedAction, setSelectedAction] = useState('');
-  const [selectedValue, setSelectedValue] = useState<string>('');
-  const [date, setDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [comment, setComment] = useState('');
   const toast = useToast();
   const { data, setData } = useDataContext();
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
 
-  const handleModuleChange = (value: string) => {
-    setSelectedValue(value);
-  };
-
-  const handleDateChange = (
-    event: DateTimePickerEvent,
-    selectedDate?: Date
-  ) => {
-    const currentDate = selectedDate || date;
-    setShowDatePicker(false);
-    setDate(currentDate);
-  };
-
-  const showDatePickerModal = () => {
-    setShowDatePicker(true);
-  };
-
+  // Função para completar a avaliação dos módulos
   const handleComplete = async () => {
     try {
       setLoading(true);
       await Promise.all(ModulesEvaluate.map(updateModuleGrade));
-  
+
       setData({
         ...data,
         seller: Seller,
@@ -70,7 +46,7 @@ const CompleteMentorship: React.FC = () => {
       setLoading(false);
       console.log('Módulos avaliados com sucesso');
       showToast('Módulos avaliados com sucesso', 'success');
-  
+
       const allModulesEvaluated = await checkAllModulesEvaluated();
       console.log(allModulesEvaluated);
       if (allModulesEvaluated) {
@@ -88,16 +64,17 @@ const CompleteMentorship: React.FC = () => {
     }
   };
 
+  // Função para verificar se todos os módulos foram avaliados
   const checkAllModulesEvaluated = async () => {
     try {
       const modules = await ModulesServices.getAllModules();
-  
+
       const moduleGrades = await ModuleGradeServices.getModuleGradesByIdSeller(Seller.id);
-  
+
       const allModulesEvaluated = modules.every(module =>
         moduleGrades.some(grade => grade.moduleId === module.id)
       );
-  
+
       return allModulesEvaluated;
     } catch (error) {
       console.error('Erro ao verificar se todos os módulos foram avaliados:', error);
@@ -105,6 +82,7 @@ const CompleteMentorship: React.FC = () => {
     }
   };
 
+  // Função para atualizar a avaliação do módulo
   const updateModuleGrade = async (element: any) => {
     try {
       if (element) {
@@ -137,37 +115,12 @@ const CompleteMentorship: React.FC = () => {
     }
   };
 
-  const handleCompleteWithoutActionPlan = async () => {
-    try {
-      await Promise.all(ModulesEvaluate.map(createActionPlan));
-    } catch (error) {
-      console.error('Erro ao criar plano de ação:', error);
-    }
-    console.log('Completo sem plano');
-  };
-
-  const createActionPlan = async (element: any) => {
-    try {
-      const newPlan = {
-        title: selectedAction,
-        prize: date.toISOString(),
-        comments: element.comment,
-        sellerId: Seller.id,
-        supervisorId: Seller.supervisorId,
-        visitId: '',
-        moduleId: element.moduleId,
-        done: false,
-      };
-      await PlainService.createPlain(newPlan);
-    } catch (error) {
-      console.error('Erro ao criar plano de ação:', error);
-    }
-  };
-
+  // Função para navegar de volta para a tela inicial
   const handleBackHome = () => {
     navigation.navigate('Home' as never);
   };
 
+  // Função para exibir um toast de mensagem
   const showToast = (message: string, type: string) => {
     toast.show(message, {
       type: type,
@@ -183,20 +136,12 @@ const CompleteMentorship: React.FC = () => {
       <S.Wrapper>
         <HeaderPages title="Avaliar Mentorado" />
         <SellerInfo seller={Seller} handleBackHome={handleBackHome} />
-        <InputsSection
-          selectedAction={selectedAction}
-          setSelectedAction={setSelectedAction}
-          date={date}
-          showDatePickerModal={showDatePickerModal}
-          showDatePicker={showDatePicker}
-          handleDateChange={handleDateChange}
-          comment={comment}
-          setComment={setComment}
-        />
+        {ModulesEvaluate.map((module, index) => (
+          <ModuleEvaluation key={index} moduleData={module} />
+        ))}
         <ButtonsSection
           loading={loading}
           handleComplete={handleComplete}
-          handleCompleteWithoutActionPlan={handleCompleteWithoutActionPlan}
         />
       </S.Wrapper>
       <DivGradient />
@@ -204,6 +149,7 @@ const CompleteMentorship: React.FC = () => {
   );
 };
 
+// Componente para exibir as informações do vendedor
 const SellerInfo: React.FC<{ seller: ISeller; handleBackHome: () => void }> = ({
   seller,
   handleBackHome,
@@ -222,84 +168,101 @@ const SellerInfo: React.FC<{ seller: ISeller; handleBackHome: () => void }> = ({
   </S.DivFields>
 );
 
-const InputsSection: React.FC<{
-  selectedAction: string;
-  setSelectedAction: React.Dispatch<React.SetStateAction<string>>;
-  date: Date;
-  showDatePickerModal: () => void;
-  showDatePicker: boolean;
-  handleDateChange: (event: DateTimePickerEvent, selectedDate?: Date) => void;
-  comment: string;
-  setComment: React.Dispatch<React.SetStateAction<string>>;
-}> = ({
-  selectedAction,
-  setSelectedAction,
-  date,
-  showDatePickerModal,
-  showDatePicker,
-  handleDateChange,
-  comment,
-  setComment,
-}) => (
-  <S.Container>
-    <S.DivInputs>
-      <S.Label>Ação Programada</S.Label>
-      <S.InputAction
-        placeholder="Ex: Aumentar a comunicação pós venda "
-        value={selectedAction}
-        onChangeText={(text) => setSelectedAction(text)}
-      />
-    </S.DivInputs>
-    <S.DivInputs>
-      <S.Label>Data Limite</S.Label>
-      <S.BtnData onPress={showDatePickerModal}>
-        <S.TextBtnData>
-          {date ? date.toLocaleDateString() : 'Selecione a Data'}
-        </S.TextBtnData>
-      </S.BtnData>
-      {showDatePicker && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode="date"
-          display="default"
-          onChange={handleDateChange}
-        />
-      )}
-    </S.DivInputs>
-    <S.DivInputs>
-      <S.Label>Comentário</S.Label>
-      <S.TextArea
-        placeholder="Digite aqui..."
-        multiline={true}
-        numberOfLines={5}
-        value={comment}
-        onChangeText={(text) => setComment(text)}
-      />
-    </S.DivInputs>
-  </S.Container>
-);
+// Componente para exibir a avaliação de um módulo específico
+interface ModuleEvaluationProps {
+  moduleData: {
+    idModule: string;
+    conhecimento: number;
+    implementacao: number;
+    comment: string;
+  };
+}
+const ModuleEvaluation: React.FC<ModuleEvaluationProps> = ({ moduleData }) => {
+  const [module, setModule] = useState<IModule | null>(null);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fetchedModule = await ModulesServices.getModuleById(moduleData.idModule);
+        setModule(fetchedModule);
+      } catch (error) {
+        console.error('Erro ao buscar módulo:', error);
+      }
+    };
+
+    fetchData();
+  }, [moduleData.idModule]);
+
+  if (!module) {
+    return null;
+  }
+
+  return (
+    <View style={styles.moduleContainer}>
+      <Text style={styles.moduleName}>Módulo Nome: {module.name}</Text>
+      {moduleData.conhecimento && (
+        <Text style={styles.moduleLabel}>Conhecimento: {moduleData.conhecimento.toFixed(2).replace('.', ',')}</Text>
+      )}
+      {moduleData.implementacao && (
+        <Text style={styles.moduleLabel}>Implementação: {moduleData.implementacao.toFixed(2).replace('.', ',')}</Text>
+      )}
+      {moduleData.comment && (
+        <Text style={styles.moduleLabel}>{ 'Comentário: '+ moduleData.comment}</Text>
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  moduleContainer: {
+    maxWidth: '95%',
+    minWidth: '95%',
+    padding: 16,
+    marginHorizontal: 'auto',
+    marginVertical: 8,
+    backgroundColor: '#fff',
+    borderRadius: 4,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
+  moduleName: {
+    fontWeight: 'bold',
+    fontFamily: 'Poppins',
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  moduleLabel: {
+    fontSize: 12,
+    fontFamily: 'Poppins',
+    marginBottom: 4,
+  },
+});
+
+// Componente para exibir o botão de finalizar
 const ButtonsSection: React.FC<{
   handleComplete: () => void;
-  handleCompleteWithoutActionPlan: () => void;
   loading: boolean;
-}> = ({ handleComplete, handleCompleteWithoutActionPlan, loading }) => (
+}> = ({ handleComplete, loading }) => (
   <>
-    <S.BtnConcluirPlano onPress={handleCompleteWithoutActionPlan}>
-      <S.TextBtnPlano>CONCLUIR PLANO DE AÇÃO</S.TextBtnPlano>
-    </S.BtnConcluirPlano>
-
-    <S.BtnConcluirSemPlano
+    <S.BtnConcluirPlano
       onPress={!loading ? handleComplete : undefined}
       disabled={loading}
     >
       {loading ? (
-        <ActivityIndicator color={theme.colors.secundary.main} />
+        <ActivityIndicator color={theme.colors.primary.main} />
       ) : (
-        <S.TextBtnSemPlano>FINALIZAR SEM PLANO</S.TextBtnSemPlano>
+        <S.TextBtnPlano>FINALIZAR</S.TextBtnPlano>
       )}
-    </S.BtnConcluirSemPlano>
+    </S.BtnConcluirPlano>
   </>
 );
 
