@@ -17,18 +17,15 @@ export const StyledWrapper = styled(View)`
 `;
 
 export const DivText = styled(View)`
-  padding: 4px 8px;
+  padding: 0px 7px;
   display: flex;
   flex-direction: column;
-  flex:1;
 `;
 
 export const Title = styled(Text)`
   font-size: 12px;
   font-family: Poppins;
   word-wrap: break-word; /* Adiciona essa propriedade */
-  flex-wrap: wrap;
-  flex-shrink: 1;
 `;
 
 export const Nota = styled(Text)`

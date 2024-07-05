@@ -139,6 +139,7 @@ const CompleteMentorship: React.FC = () => {
 
   const handleCompleteWithoutActionPlan = async () => {
     try {
+      console.log('Aqui passou')
       await Promise.all(ModulesEvaluate.map(createActionPlan));
     } catch (error) {
       console.error('Erro ao criar plano de ação:', error);
@@ -158,6 +159,7 @@ const CompleteMentorship: React.FC = () => {
         moduleId: element.moduleId,
         done: false,
       };
+      console.log(selectedAction, )
       await PlainService.createPlain(newPlan);
     } catch (error) {
       console.error('Erro ao criar plano de ação:', error);
