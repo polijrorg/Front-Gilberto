@@ -2,6 +2,7 @@ import { AxiosResponse } from 'axios';
 import IPlain from '@interfaces/Plain';
 
 import api from './api';
+import Seller from '@interfaces/Seller';
 
 export default class PlainService {
   static async getAll(): Promise<IPlain[]> {
@@ -12,10 +13,18 @@ export default class PlainService {
   }
 
   static async getPlainActionByIdSupervisor(supervisorId: string): Promise<IPlain[]> {
-      const plainResponse: AxiosResponse<IPlain[]> = await api.get(`/actionPlans/getAll`);
-      const plainDataSupervisor: IPlain[] = plainResponse.data.filter((plain: IPlain) => plain.supervisorId === supervisorId);
+    const plainResponse: AxiosResponse<IPlain[]> = await api.get('/actionPlans/getAll');
+    const plainDataSupervisor: IPlain[] = plainResponse.data.filter((plain: IPlain) => plain.supervisorId === supervisorId);
 
-      return plainDataSupervisor;
+    const sellerPromises = plainDataSupervisor.map(async (plain) => {
+      const sellerResponse: AxiosResponse<Seller> = await api.get(`/seller/${plain.sellerId}`);
+      plain.seller = sellerResponse.data;
+      return plain;
+    });
+
+    const plainsWithSellers = await Promise.all(sellerPromises);
+
+    return plainsWithSellers;
   }
   
 

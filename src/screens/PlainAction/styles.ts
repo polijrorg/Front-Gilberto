@@ -14,7 +14,7 @@ export const Wrapper = styled(ScrollView)`
 export const ViewWrapper = styled(View)`
   display: flex;
   width: 100%;
-  height: 75%;
+  height: 90%;
   margin: 0 auto;
 `;
 

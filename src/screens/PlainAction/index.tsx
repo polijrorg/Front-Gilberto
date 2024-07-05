@@ -7,14 +7,8 @@ import useAuth from '@hooks/useAuth';
 import CardsMentory from '@components/CardsMentory';
 
 import PlainService from '@services/PlainService';
-import SellerServices from '@services/SellerServices';
-import ModuleServices from '@services/ModuleServices';
-import VisitService from '@services/VisitService';
 
 import IPlains from '@interfaces/Plain';
-import ISeller from '@interfaces/Seller';
-import IModules from '@interfaces/Module';
-import IVisits from '@interfaces/Visit/Visit';
 
 import { useDataContext } from '../../context/DataContext';
 
@@ -32,6 +26,11 @@ const PlainActionTemplate = () => {
       try {
         if (user.job === 'Supervisor') {
           const plainsData = await PlainService.getPlainActionByIdSupervisor(user.id);
+
+          setPlains(plainsData.filter((plain) => !plain.done));
+          setCompletedPlains(plainsData.filter((plain) => plain.done));
+        } else if (user.job === 'Manager'){
+          const plainsData = await PlainService.getAll();
 
           setPlains(plainsData.filter((plain) => !plain.done));
           setCompletedPlains(plainsData.filter((plain) => plain.done));
@@ -136,6 +135,7 @@ const PlanList = ({
           <CardsMentory
             key={plain.id}
             title={plain.title}
+            seller={plain.seller}
             prize={plain.prize}
             isVisible={plain.done}
             complete={false}
@@ -163,6 +163,7 @@ const CompletedPlanList = ({
           key={plain.id}
           title={plain.title}
           prize={plain.prize}
+          seller={plain.seller}
           isVisible={!plain.done}
           complete={complete}
           onToggleVisibility={() => handleToggleVisibility(plain.id)}
