@@ -51,10 +51,18 @@ export const StyledText = styled(Text)`
 
 interface DivAvaliaProps {
   nota: number;
+  stage: string;
 }
 
+const getStageStyle = (stage: string, nota: number) => {
+  if (stage === 'Mentoria') {
+    return `background-color: ${getColorByNoteDiv(nota)};`;
+  }
+  return 'background-color: transparent';
+};
+
 export const DivAvalia = styled(View)<DivAvaliaProps>`
-  background-color: ${({ nota }) => getColorByNoteDiv(nota)};
+  background-color: ${({ stage, nota }) => stage === 'Mentoria' ? getColorByNoteDiv(nota) : '#FFF'};
   border-radius: 2px;
   width: 34px;
   height: 32px;
@@ -62,13 +70,7 @@ export const DivAvalia = styled(View)<DivAvaliaProps>`
   border-radius: 16px;
   justify-content: center;
   align-items: center;
-`;
-
-export const Nota = styled(Text)<DivAvaliaProps>`
-  color: ${({ nota }) => getColorByNoteText(nota)};
-  font-size: 16px;
-  font-weight: 700;
-  font-family: Poppins;
+  ${({ stage, nota }) => getStageStyle(stage, nota)}
 `;
 
 const getColorByNoteDiv = (note?: number): string => {
@@ -82,6 +84,16 @@ const getColorByNoteDiv = (note?: number): string => {
     }
   }
 };
+
+export const Nota = styled(Text)<DivAvaliaProps>`
+  color: ${({ nota }) => getColorByNoteText(nota)};
+  display: ${({ stage }) => stage === 'Visita' ? 'none' : 'flex'};
+  font-size: 16px;
+  font-weight: 700;
+  font-family: Poppins;
+`;
+
+
 
 const getColorByNoteText = (note?: number): string => {
   if (note !== undefined) {
