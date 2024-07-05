@@ -45,7 +45,6 @@ const Action = ({ route }) => {
           const plainsData = await PlainService.getByIdSellerPlain(
             responseSeller.id
           );
-          console.log(visits, responseSeller.id)
           setPlains(plainsData.filter((plain) => !plain.done));
           setVisits(visits);
           setCompletedPlains(plainsData.filter((plain) => plain.done));
@@ -85,7 +84,6 @@ const Action = ({ route }) => {
       );
       setCompletedPlains((prevPlains) => [...prevPlains, plain]);
     } catch (error) {
-      console.log('Erro ao marcar o plano como concluído:', error);
     }
   };
 

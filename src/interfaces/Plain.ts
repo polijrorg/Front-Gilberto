@@ -1,3 +1,5 @@
+import Seller from "./Seller";
+
 export default interface Plains {
   id: string;
   prize: string;
@@ -8,4 +10,5 @@ export default interface Plains {
   supervisorId: string;
   visitId: string;
   moduleId: string;
+  seller: Seller
 }

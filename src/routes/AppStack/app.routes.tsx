@@ -12,7 +12,7 @@ import EvaluateVisit from '@screens/EvaluateVisit';
 import EvaluateVisitManager from '@screens/EvaluateVisit/EvaluateVisitManager';
 import useAuth from '@hooks/useAuth';
 import ModuloAsk from '@screens/EvaluateMentoring/ModuloAsk';
-import PlainAction from '@screens/SalesInspector/TabScreens/Action/Plain/MentoryAndVisit';
+import PlainActionTemplate from '@screens/PlainAction';
 
 const AppStack = createNativeStackNavigator();
 
@@ -65,6 +65,12 @@ const AppRoutes: React.FC = () => {
       <AppStack.Screen
         name="CompleteMentoring"
         component={CompleteMentorship}
+        options={{ header: () => <></> }}
+      />
+
+      <AppStack.Screen
+        name="PlainAction"
+        component={PlainActionTemplate}
         options={{ header: () => <></> }}
       />
 

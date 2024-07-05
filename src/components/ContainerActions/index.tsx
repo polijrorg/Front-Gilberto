@@ -54,7 +54,7 @@ const ContainerActions: React.FC = () => {
             text={getButtonText('mentorado')}
             duty={handleEnviarEvaluateMentoring}
           />
-        <ButtonWhite text={'Ver Planos de Ação'} />
+        <ButtonWhite text={'Ver Planos de Ação'} duty={() => navigation.navigate('PlainAction' as never)} />
         <ButtonWhite text="Visualizar Equipe" duty={handleEnviarMyTeam} />
       </S.DivActions>
     </S.ContainerActions>

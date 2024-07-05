@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, View, StyleSheet } from 'react-native';
 import { StyledWrapper, DivText, Title, Nota, DivNota } from './styles';
 import { MaterialIcons } from '@expo/vector-icons';
+import Seller from '@interfaces/Seller';
 
 interface CardMentoryProps {
   title: string;
@@ -10,11 +11,13 @@ interface CardMentoryProps {
   onToggleVisibility: () => void;
   onMarkDone: () => void;
   complete?: boolean;
+  seller?: Seller
 }
 
 const CardsMentory: React.FC<CardMentoryProps> = ({
   title,
   prize,
+  seller,
   onToggleVisibility,
   onMarkDone,
   complete,
@@ -35,9 +38,12 @@ const CardsMentory: React.FC<CardMentoryProps> = ({
       >
         <View
           style={{
+            width: '100%',
             display: 'flex',
-            flexDirection: 'row',
             alignItems: 'center',
+            paddingHorizontal: 16,
+            flexDirection: 'row',
+            justifyContent: 'space-around',
           }}
         >
           {complete ? (
@@ -52,6 +58,12 @@ const CardsMentory: React.FC<CardMentoryProps> = ({
           <DivText>
             <Title>{title}</Title>
           </DivText>
+          {seller && (
+            <DivText>
+              <Title>{seller?.name}</Title>
+              <Title>{seller?.stage}</Title>
+            </DivText>
+          )}
           <DivNota>
             <Nota>{prize}</Nota>
           </DivNota>
@@ -61,17 +73,5 @@ const CardsMentory: React.FC<CardMentoryProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  checkBox: {
-    width: 16,
-    height: 16,
-    borderWidth: 1,
-    borderRadius: 4,
-    borderColor: '#687076',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 8,
-  },
-});
 
 export default CardsMentory;
