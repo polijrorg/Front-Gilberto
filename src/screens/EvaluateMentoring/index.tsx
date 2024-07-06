@@ -30,7 +30,9 @@ const EvaluateMentoring = () => {
             SellerService.getAllSellerFromSupervisor(user.id),
             ModulesServices.getAllModules(),
           ]);
-          const mentoringSellers = sellerData.filter(seller => seller.stage === 'Mentoria');
+          const mentoringSellers = sellerData.filter(
+            (seller) => seller.stage === 'Mentoria'
+          );
           setSellers(mentoringSellers);
           setModules(modulesData);
           setLoading(false);

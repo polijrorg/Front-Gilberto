@@ -12,7 +12,7 @@ type IVendedor = {
   id: string;
   supervisorId?: string;
   companyId: string;
-  stage:string
+  stage: string;
 };
 
 const Cards: React.FC<IVendedor> = ({
@@ -22,7 +22,7 @@ const Cards: React.FC<IVendedor> = ({
   id,
   supervisorId,
   companyId,
-  stage
+  stage,
 }) => {
   const { user } = useAuth();
   const navigation = useNavigation();
@@ -33,7 +33,7 @@ const Cards: React.FC<IVendedor> = ({
       idEmployee: id,
       cargo: cargo,
       companyId: companyId,
-      stage: stage
+      stage: stage,
     });
   };
   const formattedNota =
@@ -64,23 +64,17 @@ const Cards: React.FC<IVendedor> = ({
       </S.DivImage>
       <S.DivText>
         <S.Name>{nome}</S.Name>
-        {cargo === 'Vendedor' && (
-          <S.Stage>
-            Estágio: {stage}
-          </S.Stage>
-        )}
-        {cargo === 'Supervisor' && (
-          <S.Stage>
-            Cargo: {cargo}
-          </S.Stage>
-        )}
+        {cargo === 'Vendedor' && <S.Stage>Estágio: {stage}</S.Stage>}
+        {cargo === 'Supervisor' && <S.Stage>Cargo: {cargo}</S.Stage>}
         {supervisor && (
           <S.StyledText>{'Responsável: ' + supervisor?.name}</S.StyledText>
         )}
       </S.DivText>
       {cargo !== 'Supervisor' && cargo !== 'Diretor' && (
         <S.DivAvalia nota={nota} stage={stage}>
-          <S.Nota nota={nota} stage={stage}>{formattedNota}</S.Nota>
+          <S.Nota nota={nota} stage={stage}>
+            {formattedNota}
+          </S.Nota>
         </S.DivAvalia>
       )}
     </S.DivWrapper>

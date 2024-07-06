@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import ISeller from '@interfaces/Seller';
 import { AxiosResponse } from 'axios';
 import api from './api';
@@ -61,17 +60,28 @@ export default class SellerService {
   }
 
   static async updateSeller(newSeller: Partial<ISeller>): Promise<ISeller> {
-    const sellerResponse = await api.patch(`/seller/update/${newSeller.id}`, newSeller);
+    const sellerResponse = await api.patch(
+      `/seller/update/${newSeller.id}`,
+      newSeller
+    );
     return sellerResponse.data;
   }
 
   static async getAllSellerFrom(newSeller: Partial<ISeller>): Promise<ISeller> {
-    const sellerResponse = await api.patch(`/seller/update/${newSeller.id}`, newSeller);
+    const sellerResponse = await api.patch(
+      `/seller/update/${newSeller.id}`,
+      newSeller
+    );
     return sellerResponse.data;
   }
 
-  static async getManagerAndDirectorFromSeller(idSeller: string): Promise<{ managerId: string | null, directorId: string | null} | null>{
-    const response: AxiosResponse<{ managerId: string | null, directorId: string | null} | null> = await api.get(
+  static async getManagerAndDirectorFromSeller(
+    idSeller: string
+  ): Promise<{ managerId: string | null; directorId: string | null } | null> {
+    const response: AxiosResponse<{
+      managerId: string | null;
+      directorId: string | null;
+    } | null> = await api.get(
       `/seller/getManagerAndDirectorFromSeller/${idSeller}`
     );
     return response.data;

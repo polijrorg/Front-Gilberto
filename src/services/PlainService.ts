@@ -12,12 +12,20 @@ export default class PlainService {
     return plainResponse.data;
   }
 
-  static async getPlainActionByIdSupervisor(supervisorId: string): Promise<IPlain[]> {
-    const plainResponse: AxiosResponse<IPlain[]> = await api.get('/actionPlans/getAll');
-    const plainDataSupervisor: IPlain[] = plainResponse.data.filter((plain: IPlain) => plain.supervisorId === supervisorId);
+  static async getPlainActionByIdSupervisor(
+    supervisorId: string
+  ): Promise<IPlain[]> {
+    const plainResponse: AxiosResponse<IPlain[]> = await api.get(
+      '/actionPlans/getAll'
+    );
+    const plainDataSupervisor: IPlain[] = plainResponse.data.filter(
+      (plain: IPlain) => plain.supervisorId === supervisorId
+    );
 
     const sellerPromises = plainDataSupervisor.map(async (plain) => {
-      const sellerResponse: AxiosResponse<Seller> = await api.get(`/seller/${plain.sellerId}`);
+      const sellerResponse: AxiosResponse<Seller> = await api.get(
+        `/seller/${plain.sellerId}`
+      );
       plain.seller = sellerResponse.data;
       return plain;
     });
@@ -26,7 +34,6 @@ export default class PlainService {
 
     return plainsWithSellers;
   }
-  
 
   static async getByIdSellerPlain(idSeller: string): Promise<IPlain[]> {
     const plainsArray: AxiosResponse<IPlain[]> = await api.get(

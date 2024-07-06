@@ -1,4 +1,9 @@
-import { View, ScrollView, TouchableOpacity, Text,StatusBar as RNStatusBar,
+import {
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Text,
+  StatusBar as RNStatusBar,
 } from 'react-native';
 import styled from 'styled-components/native';
 import { theme } from '@styles/default.theme';
@@ -8,7 +13,6 @@ export const Wrapper = styled(ScrollView)`
   max-height: 100% !important;
   background-color: ${theme.colors.primary.main};
   margin-top: ${RNStatusBar.currentHeight || 0}px;
-
 `;
 
 export const ViewWrapper = styled(View)`

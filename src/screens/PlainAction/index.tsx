@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { StatusBar, ActivityIndicator, View, Text, StyleSheet, ScrollView } from 'react-native';
+import {
+  StatusBar,
+  ActivityIndicator,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 import * as S from './styles';
 
 import Header from '@components/HeaderPages';
@@ -25,11 +32,13 @@ const PlainActionTemplate = () => {
     const fetchData = async () => {
       try {
         if (user.job === 'Supervisor') {
-          const plainsData = await PlainService.getPlainActionByIdSupervisor(user.id);
+          const plainsData = await PlainService.getPlainActionByIdSupervisor(
+            user.id
+          );
 
           setPlains(plainsData.filter((plain) => !plain.done));
           setCompletedPlains(plainsData.filter((plain) => plain.done));
-        } else if (user.job === 'Manager'){
+        } else if (user.job === 'Manager') {
           const plainsData = await PlainService.getAll();
 
           setPlains(plainsData.filter((plain) => !plain.done));
@@ -71,7 +80,7 @@ const PlainActionTemplate = () => {
     <>
       <StatusBar backgroundColor="#3E63DD" />
       <S.Wrapper>
-        <Header title='Planos de Ação'/>
+        <Header title="Planos de Ação" />
         <S.ViewWrapper>
           {loading ? (
             <View style={styles.loadingContainer}>
@@ -112,8 +121,7 @@ const PlainActionTemplate = () => {
               </View>
             </ScrollView>
           ) : (
-            <>
-            </>
+            <></>
           )}
         </S.ViewWrapper>
       </S.Wrapper>

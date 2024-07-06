@@ -13,7 +13,7 @@ import { useDataContext } from '../../context/DataContext';
 
 const SalesInspector = ({ route }) => {
   const navigation = useNavigation();
-  const { idEmployee, cargo, companyId, stage } = route.params;
+  const { idEmployee, cargo, companyId } = route.params;
   const { user } = useAuth();
   const { data, setData } = useDataContext();
   const [seller, setSeller] = useState<ISeller | null>(null);

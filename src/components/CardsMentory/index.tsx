@@ -11,7 +11,7 @@ interface CardMentoryProps {
   onToggleVisibility: () => void;
   onMarkDone: () => void;
   complete?: boolean;
-  seller?: Seller
+  seller?: Seller;
 }
 
 const CardsMentory: React.FC<CardMentoryProps> = ({
@@ -72,6 +72,5 @@ const CardsMentory: React.FC<CardMentoryProps> = ({
     </StyledWrapper>
   );
 };
-
 
 export default CardsMentory;

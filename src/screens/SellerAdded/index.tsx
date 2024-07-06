@@ -30,7 +30,7 @@ const SellerAdded = () => {
   const { user } = useAuth();
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const [image, setImage] = React.useState('');
   const [selectedSupervisor, setSelectedSupervisor] =
     useState<ISupervisor | null>(null);
@@ -42,7 +42,7 @@ const SellerAdded = () => {
   const isCreateDisabled = !name && !selectedValue;
   const options = [
     { label: 'Mentoria', value: 'Mentoria' },
-    { label: 'Visita', value: 'Visita' }
+    { label: 'Visita', value: 'Visita' },
   ];
   useEffect(() => {
     const fetchData = async () => {
@@ -77,7 +77,6 @@ const SellerAdded = () => {
 
   const handleSelectChange = (value: string) => setSelectedValue(value);
 
- 
   const handleCreate = async () => {
     try {
       setLoading(true);
@@ -90,7 +89,7 @@ const SellerAdded = () => {
         email,
         supervisorId,
         companyId,
-        stage: selectedValue
+        stage: selectedValue,
       });
 
       setData({
@@ -115,11 +114,10 @@ const SellerAdded = () => {
         duration: 3000,
         animationType: 'zoom-in',
       });
-    }finally{
+    } finally {
       setLoading(false);
       setIsModalVisible(false);
       setIsButtonEnabled(false);
-
     }
   };
 
@@ -157,7 +155,6 @@ const SellerAdded = () => {
             <S.NameField>Estágio</S.NameField>
             <StateSelect options={options} onChange={handleSelectChange} />
           </S.DivFileds>
-
         </S.Main>
         <S.BtnCreateSeller
           onPress={toggleModal}

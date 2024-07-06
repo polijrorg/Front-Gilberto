@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import { AxiosResponse } from 'axios';
 import IModule from '@interfaces/Module';
 import IModuleGrade from '@interfaces/ModuleGrade';

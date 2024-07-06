@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import { AxiosResponse } from 'axios';
 import ICompany from '@interfaces/Company';
 

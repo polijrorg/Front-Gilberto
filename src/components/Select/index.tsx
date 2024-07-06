@@ -48,7 +48,9 @@ const Select: React.FC<SelectProps> = ({
                 {options.map((option, index) => (
                   <S.DropdownItem
                     key={index}
-                    onPress={() => handleSelectOption(option.label, option.value)}
+                    onPress={() =>
+                      handleSelectOption(option.label, option.value)
+                    }
                   >
                     <S.Selected>{option.label}</S.Selected>
                   </S.DropdownItem>
