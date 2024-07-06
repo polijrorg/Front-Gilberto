@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import api from './api';
 import ISupervisor from '@interfaces/Supervisor';
 

@@ -10,7 +10,6 @@ const ContainerActions: React.FC = () => {
   const navigation = useNavigation();
   const toast = useToast();
 
-
   const buttonConfig = {
     Gerente: {
       mentorado: 'Avaliar um Mentoreado',
@@ -44,9 +43,9 @@ const ContainerActions: React.FC = () => {
   };
 
   const handleEnviarEvaluateVisit = () => {
-    if (user.job === 'Supervisor') {    
+    if (user.job === 'Supervisor') {
       navigation.navigate('EvaluateVisit' as never);
-    }else if (user.job === 'Gerente'){
+    } else if (user.job === 'Gerente') {
       navigation.navigate('EvaluateVisitManager' as never);
     }
   };
@@ -61,14 +60,17 @@ const ContainerActions: React.FC = () => {
       <S.TitleActions>O que você vai fazer hoje?</S.TitleActions>
       <S.DivActions>
         <ButtonWhite
-            text={getButtonText('visita')}
-            duty={handleEnviarEvaluateVisit}
-          />
-          <ButtonWhite
-            text={getButtonText('mentorado')}
-            duty={handleEnviarEvaluateMentoring}
-          />
-        <ButtonWhite text={'Ver Planos de Ação'} duty={() => navigation.navigate('PlainAction' as never)} />
+          text={getButtonText('visita')}
+          duty={handleEnviarEvaluateVisit}
+        />
+        <ButtonWhite
+          text={getButtonText('mentorado')}
+          duty={handleEnviarEvaluateMentoring}
+        />
+        <ButtonWhite
+          text={'Ver Planos de Ação'}
+          duty={() => navigation.navigate('PlainAction' as never)}
+        />
         <ButtonWhite text="Visualizar Equipe" duty={handleEnviarMyTeam} />
       </S.DivActions>
     </S.ContainerActions>

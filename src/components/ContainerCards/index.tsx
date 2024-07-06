@@ -44,7 +44,10 @@ const Container: React.FC<{
               <S.DivVisita>
                 <S.TitleSection>Visita</S.TitleSection>
                 {filteredData
-                  .filter((item): item is ISeller => 'stage' in item && item.stage === 'Visita')
+                  .filter(
+                    (item): item is ISeller =>
+                      'stage' in item && item.stage === 'Visita'
+                  )
                   .map((item, index) => (
                     <CardItem key={index} item={item} media={media} />
                   ))}
@@ -52,7 +55,10 @@ const Container: React.FC<{
               <S.DivMentoria>
                 <S.TitleSection>Mentoria</S.TitleSection>
                 {filteredData
-                  .filter((item): item is ISeller => 'stage' in item && item.stage === 'Mentoria')
+                  .filter(
+                    (item): item is ISeller =>
+                      'stage' in item && item.stage === 'Mentoria'
+                  )
                   .map((item, index) => (
                     <CardItem key={index} item={item} media={media} />
                   ))}
@@ -64,7 +70,9 @@ const Container: React.FC<{
             ))
           )
         ) : (
-          <NoDataMessage title={userType === 'Supervisor' ? 'Visita' : 'Dados'} />
+          <NoDataMessage
+            title={userType === 'Supervisor' ? 'Visita' : 'Dados'}
+          />
         )}
       </S.Cards>
     </S.DivWrapper>

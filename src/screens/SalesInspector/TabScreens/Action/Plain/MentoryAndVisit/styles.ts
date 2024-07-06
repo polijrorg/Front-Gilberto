@@ -5,11 +5,8 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
-  Button,
-  Platform,
 } from 'react-native';
 import styled from 'styled-components/native';
-import Select from '@components/Select';
 
 export const Wrapper = styled(ScrollView)`
   width: 100%;
@@ -120,10 +117,6 @@ export const ActionTypeSwitch = styled(View)`
   align-items: center;
   justify-content: flex-start;
 `;
-
-interface ActionTypeLabelProps {
-  selected: boolean;
-}
 
 export const ActionTypeLabel = styled(Text)`
   font-size: 16px;

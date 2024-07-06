@@ -55,7 +55,7 @@ const AppRoutes: React.FC = () => {
         name="EvaluateVisitManager"
         component={EvaluateVisitManager}
         options={{ header: () => <></> }}
-      />  
+      />
       <AppStack.Screen
         name="AskEvaluateMentoring"
         component={ModuloAsk}

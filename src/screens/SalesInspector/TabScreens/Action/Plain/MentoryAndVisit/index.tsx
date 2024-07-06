@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import * as S from './styles';
 import Select from '@components/Select';
 
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { theme } from '@styles/default.theme';
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from '@react-native-community/datetimepicker';
 import { useToast } from 'react-native-toast-notifications';
 
 import ISeller from '@interfaces/Seller';

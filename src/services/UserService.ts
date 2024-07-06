@@ -1,5 +1,5 @@
 /* eslint-disable no-catch-shadow */
-/* eslint-disable @typescript-eslint/no-shadow */
+
 import { AxiosResponse } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import User from '@interfaces/User';

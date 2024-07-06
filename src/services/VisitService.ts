@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 import { AxiosResponse } from 'axios';
 import ITemplateVisit from '@interfaces/Visit/TemplateVisit';
 import ICategories from '@interfaces/Visit/Categories';
@@ -8,11 +7,11 @@ import IVisit from '@interfaces/Visit/Visit';
 
 import api from './api';
 
-interface VisitCreate{
+interface VisitCreate {
   sellerId: string;
   visitTemplateId: string;
   storeVisited: string;
-  dateVisited: string
+  dateVisited: string;
 }
 
 export default class VisitService {
@@ -22,10 +21,18 @@ export default class VisitService {
     await api.post(`/questionsGrades/create`, questionGrade);
   }
 
-  static async createVisit(
-    {visitTemplateId, sellerId, dateVisited,storeVisited}: VisitCreate
-  ): Promise<void> {
-    await api.post(`/visit/create`, {visitTemplateId, sellerId, dateVisited,storeVisited});
+  static async createVisit({
+    visitTemplateId,
+    sellerId,
+    dateVisited,
+    storeVisited,
+  }: VisitCreate): Promise<void> {
+    await api.post(`/visit/create`, {
+      visitTemplateId,
+      sellerId,
+      dateVisited,
+      storeVisited,
+    });
   }
 
   static async getAll(): Promise<IVisit[]> {
@@ -34,7 +41,9 @@ export default class VisitService {
   }
 
   static async getVisitByIdSeller(sellerId: string): Promise<IVisit[]> {
-    const visits: AxiosResponse<IVisit[]> = await api.get(`/visit/getAll/${sellerId}`);
+    const visits: AxiosResponse<IVisit[]> = await api.get(
+      `/visit/getAll/${sellerId}`
+    );
     return visits.data;
   }
 

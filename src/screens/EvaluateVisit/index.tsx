@@ -13,7 +13,6 @@ import SellerService from '@services/SellerServices';
 import VisitService from '@services/VisitService';
 import VisitGradesService from '@services/VisitGradesService';
 
-
 import ISeller from '@interfaces/Seller';
 import ICategories from '@interfaces/Visit/Categories';
 import QuestionsGrade from '@interfaces/Visit/QuestionGrade';
@@ -41,8 +40,6 @@ const EvaluateVisit = () => {
 
   const dateVisited = new Date().toISOString();
 
-
-
   useEffect(() => {
     const fetchSellers = async () => {
       try {
@@ -50,7 +47,9 @@ const EvaluateVisit = () => {
           user.job === 'Supervisor'
             ? await SellerService.getAllSellerFromSupervisor(user.id)
             : await SellerService.getAllSellerFromManager(user.id);
-        const visitsSellers = sellersData.filter(seller => seller.stage === 'Visita');
+        const visitsSellers = sellersData.filter(
+          (seller) => seller.stage === 'Visita'
+        );
         setSellers(visitsSellers);
       } catch (error) {
         console.error('Erro ao buscar dados de vendedores:', error);
@@ -64,32 +63,36 @@ const EvaluateVisit = () => {
     try {
       setSelectedSeller(seller);
 
-    const { directorId, managerId } = await SellerService.getManagerAndDirectorFromSeller(seller.id);
-    const fetchedCategories: ICategories[] = [];
-    let templates: any[] | ((prevState: ITemplateVisit[]) => ITemplateVisit[]);
+      const { directorId, managerId } =
+        await SellerService.getManagerAndDirectorFromSeller(seller.id);
+      const fetchedCategories: ICategories[] = [];
+      let templates:
+        | any[]
+        | ((prevState: ITemplateVisit[]) => ITemplateVisit[]);
 
-    if (managerId !== undefined || managerId !== null) {
-      templates = await VisitService.getTemplateByManagerId(managerId);
-    } else if (directorId !== undefined || directorId !== null){
-      templates = await VisitService.getTemplateByDirectorId(directorId);
-    } else {
-    templates = await VisitService.getTemplateByCompanyId(seller.companyId);
-    }
+      if (managerId !== undefined || managerId !== null) {
+        templates = await VisitService.getTemplateByManagerId(managerId);
+      } else if (directorId !== undefined || directorId !== null) {
+        templates = await VisitService.getTemplateByDirectorId(directorId);
+      } else {
+        templates = await VisitService.getTemplateByCompanyId(seller.companyId);
+      }
 
-    await Promise.all(
-      templates.map(async (template) => {
-        const categories = await VisitService.getCategoriesByIdTemplate(template.id);
-        categories.forEach((category) => {
-          fetchedCategories.push(category);
-        });
-      })
-    );
-    setTemplate(templates);
-    setCategories(fetchedCategories);
+      await Promise.all(
+        templates.map(async (template) => {
+          const categories = await VisitService.getCategoriesByIdTemplate(
+            template.id
+          );
+          categories.forEach((category) => {
+            fetchedCategories.push(category);
+          });
+        })
+      );
+      setTemplate(templates);
+      setCategories(fetchedCategories);
     } catch (error) {
       console.error('Erro ao buscar dados de vendedores:', error);
     }
-    
   };
 
   const showToast = (message: string, type: string) => {
@@ -113,10 +116,13 @@ const EvaluateVisit = () => {
             sellerId: selectedSeller.id,
             visitTemplateId: template[0].id,
             storeVisited: storeName,
-            dateVisited: formattedDate
+            dateVisited: formattedDate,
           });
         } else {
-          showToast('Nenhum template disponível para criar a visita', 'warning');
+          showToast(
+            'Nenhum template disponível para criar a visita',
+            'warning'
+          );
           return;
         }
       } catch (error) {
@@ -144,19 +150,20 @@ const EvaluateVisit = () => {
       }
 
       setLoading(true);
-     for (const answer of fetchedVisitGrade) {
-        const questions = await VisitGradesService.getAllQuestionsBySeller(selectedSeller.id);
+      for (const answer of fetchedVisitGrade) {
+        const questions = await VisitGradesService.getAllQuestionsBySeller(
+          selectedSeller.id
+        );
         const existingQuestion = questions.find(
           (question) => question.questionsId === answer.questionId
         );
         if (existingQuestion) {
           await updateGrades(existingQuestion, answer);
-
         } else {
           await createGrades(answer);
         }
       }
-     await pdfAndEmail(selectedSeller.id)
+      await pdfAndEmail(selectedSeller.id);
     } catch (error) {
       console.error('Ocorreu um erro:', error);
       showToast('Problema em avaliar Visita', 'warning');
@@ -183,16 +190,20 @@ const EvaluateVisit = () => {
     const day = date.getUTCDate().toString().padStart(2, '0');
     const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
     const year = date.getUTCFullYear().toString();
-  
+
     return `${day}/${month}/${year}`;
   };
-  
+
   const formatToEncodedDate = (formattedDate: string): string => {
     const [day, month, year] = formattedDate.split('/');
     return `${day}%2F${month}%2F${year}`;
   };
 
-  const createGrades = async (answer: { grade: number; sellerId: string; questionId: string }) => {
+  const createGrades = async (answer: {
+    grade: number;
+    sellerId: string;
+    questionId: string;
+  }) => {
     try {
       await VisitGradesService.create({
         grade: answer.grade,
@@ -307,11 +318,18 @@ const EvaluateVisit = () => {
   );
 };
 
-const FinishedSection = ({ setStoreName,setIndexScreen,finishedVisit, array, loading, selectedSeller }) => {
+const FinishedSection = ({
+  setStoreName,
+  setIndexScreen,
+  finishedVisit,
+  array,
+  loading,
+  selectedSeller,
+}) => {
   const handlePress = () => {
     setIndexScreen(1);
     selectedSeller(null);
-    setStoreName('')
+    setStoreName('');
   };
   return (
     <S.ContainerFields>
@@ -326,8 +344,7 @@ const FinishedSection = ({ setStoreName,setIndexScreen,finishedVisit, array, loa
           <S.TextBtn>Finalizar dia com esse vendedor</S.TextBtn>
         )}
       </S.BtnFinished>
-      <S.Outline         onPress={handlePress}
-      >
+      <S.Outline onPress={handlePress}>
         <S.TextBtnNova>Iniciar nova visita</S.TextBtnNova>
       </S.Outline>
     </S.ContainerFields>

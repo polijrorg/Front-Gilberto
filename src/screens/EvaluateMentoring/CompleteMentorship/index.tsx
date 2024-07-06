@@ -1,4 +1,4 @@
-import React, { useEffect, useState }  from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { theme } from '@styles/default.theme';
 import * as S from './styles';
@@ -8,7 +8,13 @@ import DivGradient from '@components/DivGradient';
 import HeaderPages from '@components/HeaderPages';
 import ISeller from '@interfaces/Seller';
 import { useToast } from 'react-native-toast-notifications';
-import { ActivityIndicator, View, Text, StyleSheet, Platform } from 'react-native';
+import {
+  ActivityIndicator,
+  View,
+  Text,
+  StyleSheet,
+  Platform,
+} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDataContext } from '../../../context/DataContext';
 import SellerServices from '@services/SellerServices';
@@ -49,14 +55,16 @@ const CompleteMentorship: React.FC = () => {
       const allModulesEvaluated = await checkAllModulesEvaluated();
       console.log(allModulesEvaluated);
       if (allModulesEvaluated) {
-        console.log('Todos os módulos foram avaliados. Atualizando estágio para "Visita"...');
+        console.log(
+          'Todos os módulos foram avaliados. Atualizando estágio para "Visita"...'
+        );
         showToast('Todos os módulos avaliados', 'success');
         showToast('Alterando Estado para Visita', 'success');
         await SellerServices.updateSeller({ ...Seller, stage: 'Visita' });
         setData({
           ...data,
           seller: { ...Seller, stage: 'Visita' },
-        });        
+        });
       }
     } catch (error) {
       console.error('Erro ao completar o mentorado:', error);
@@ -67,15 +75,20 @@ const CompleteMentorship: React.FC = () => {
     try {
       const modules = await ModulesServices.getAllModules();
 
-      const moduleGrades = await ModuleGradeServices.getModuleGradesByIdSeller(Seller.id);
+      const moduleGrades = await ModuleGradeServices.getModuleGradesByIdSeller(
+        Seller.id
+      );
 
-      const allModulesEvaluated = modules.every(module =>
-        moduleGrades.some(grade => grade.moduleId === module.id)
+      const allModulesEvaluated = modules.every((module) =>
+        moduleGrades.some((grade) => grade.moduleId === module.id)
       );
 
       return allModulesEvaluated;
     } catch (error) {
-      console.error('Erro ao verificar se todos os módulos foram avaliados:', error);
+      console.error(
+        'Erro ao verificar se todos os módulos foram avaliados:',
+        error
+      );
       return false;
     }
   };
@@ -141,10 +154,7 @@ const CompleteMentorship: React.FC = () => {
             <S.Message>Nenhum módulo editado</S.Message>
           </S.ViewWrapperCrome>
         )}
-        <ButtonsSection
-          loading={loading}
-          handleComplete={handleComplete}
-        />
+        <ButtonsSection loading={loading} handleComplete={handleComplete} />
       </S.Wrapper>
       <DivGradient />
     </>
@@ -183,7 +193,9 @@ const ModuleEvaluation: React.FC<ModuleEvaluationProps> = ({ moduleData }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const fetchedModule = await ModulesServices.getModuleById(moduleData?.idModule);
+        const fetchedModule = await ModulesServices.getModuleById(
+          moduleData?.idModule
+        );
         setModule(fetchedModule);
       } catch (error) {
         console.error('Erro ao buscar módulo:', error);
@@ -203,13 +215,21 @@ const ModuleEvaluation: React.FC<ModuleEvaluationProps> = ({ moduleData }) => {
         <Text style={styles.moduleName}>Módulo Nome: {module?.name || ''}</Text>
       )}
       {moduleData.conhecimento !== undefined && (
-        <Text style={styles.moduleLabel}>Conhecimento: {moduleData?.conhecimento?.toFixed(2).replace('.', ',') || ''}</Text>
+        <Text style={styles.moduleLabel}>
+          Conhecimento:{' '}
+          {moduleData?.conhecimento?.toFixed(2).replace('.', ',') || ''}
+        </Text>
       )}
       {moduleData.implementacao !== undefined && (
-        <Text style={styles.moduleLabel}>Implementação: {moduleData?.implementacao?.toFixed(2).replace('.', ',') || ''}</Text>
+        <Text style={styles.moduleLabel}>
+          Implementação:{' '}
+          {moduleData?.implementacao?.toFixed(2).replace('.', ',') || ''}
+        </Text>
       )}
       {moduleData.comment && (
-        <Text style={styles.moduleLabel}>{'Comentário: ' + moduleData?.comment || ''}</Text>
+        <Text style={styles.moduleLabel}>
+          {'Comentário: ' + moduleData?.comment || ''}
+        </Text>
       )}
     </View>
   );

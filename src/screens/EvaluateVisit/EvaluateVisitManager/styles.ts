@@ -106,7 +106,6 @@ export const ButtonFirst = styled(TouchableOpacity)`
   justify-content: center;
   align-items: center;
   border-radius: 8px;
-
 `;
 
 export const ButtonIniciar = styled(TouchableOpacity)`

@@ -7,5 +7,5 @@ export default interface Seller {
   companyId: string;
   created_at: Date;
   job: string;
-  stage:string
+  stage: string;
 }

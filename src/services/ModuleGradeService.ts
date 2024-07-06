@@ -37,8 +37,12 @@ export default class ModuleGradeServices {
     });
   }
 
-  static async getGradeModuleAll(): Promise<{moduleId: string, average: number}[]> {
-    const moduleGradeSellerResponse: AxiosResponse<{moduleId: string, average: number}[]> = await api.get(`/moduleGrades/getModuleAverages`);
+  static async getGradeModuleAll(): Promise<
+    { moduleId: string; average: number }[]
+  > {
+    const moduleGradeSellerResponse: AxiosResponse<
+      { moduleId: string; average: number }[]
+    > = await api.get(`/moduleGrades/getModuleAverages`);
     return moduleGradeSellerResponse.data;
   }
 

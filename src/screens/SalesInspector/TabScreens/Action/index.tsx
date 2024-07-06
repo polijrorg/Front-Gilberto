@@ -40,7 +40,9 @@ const Action = ({ route }) => {
             companyId,
             idEmployee
           );
-          const visits = await VisitService.getVisitByIdSeller(responseSeller.id);
+          const visits = await VisitService.getVisitByIdSeller(
+            responseSeller.id
+          );
           const modulesData = await ModuleServices.getAllModules();
           const plainsData = await PlainService.getByIdSellerPlain(
             responseSeller.id
@@ -59,7 +61,7 @@ const Action = ({ route }) => {
     };
 
     fetchData();
-  }, []);
+  }, [cargo, companyId, idEmployee]);
 
   const addNewPlain = (newPlain: IPlains) => {
     setPlains((prevPlains) => [...prevPlains, newPlain]);
@@ -83,8 +85,7 @@ const Action = ({ route }) => {
         prevPlains.filter((plain) => plain.id !== idPlain)
       );
       setCompletedPlains((prevPlains) => [...prevPlains, plain]);
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const handleNavigator = () => {

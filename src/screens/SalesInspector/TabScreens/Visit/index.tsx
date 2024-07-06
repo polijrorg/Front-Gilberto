@@ -14,7 +14,6 @@ import IQuestionGrade from '@interfaces/Visit/QuestionGrade';
 import SellerService from '@services/SellerServices';
 
 const Visit = ({ route }) => {
-  const { user } = useAuth();
   const { idEmployee, cargo, companyId } = route.params;
   const [loading, setLoading] = useState(false);
   const [seller, setSeller] = useState<ISeller | null>(null);
@@ -70,7 +69,7 @@ const Visit = ({ route }) => {
     };
 
     fetchData();
-  }, [cargo, idEmployee]);
+  }, [cargo, idEmployee, companyId]);
 
   if (loading) {
     return (
