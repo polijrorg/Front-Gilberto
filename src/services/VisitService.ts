@@ -48,6 +48,26 @@ export default class VisitService {
     return templateResponse.data;
   }
 
+  static async getTemplateByManagerId(
+    idManager: string
+  ): Promise<ITemplateVisit[]> {
+    const templateResponse: AxiosResponse<ITemplateVisit[]> = await api.get(
+      `/visitTemplate/getByManager/${idManager}`
+    );
+
+    return templateResponse.data;
+  }
+
+  static async getTemplateByDirectorId(
+    idDirector: string
+  ): Promise<ITemplateVisit[]> {
+    const templateResponse: AxiosResponse<ITemplateVisit[]> = await api.get(
+      `/visitTemplate/getByDirector/${idDirector}`
+    );
+
+    return templateResponse.data;
+  }
+
   static async getCategoriesByIdTemplate(
     idTemplate: string
   ): Promise<ICategories[]> {
