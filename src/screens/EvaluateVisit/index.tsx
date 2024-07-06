@@ -61,19 +61,20 @@ const EvaluateVisit = () => {
   }, [user.id, user.job]);
 
   const handleSelectSeller = async (seller: ISeller) => {
-    setSelectedSeller(seller);
+    try {
+      setSelectedSeller(seller);
+
+    const { directorId, managerId } = await SellerService.getManagerAndDirectorFromSeller(seller.id);
     const fetchedCategories: ICategories[] = [];
     let templates: any[] | ((prevState: ITemplateVisit[]) => ITemplateVisit[]);
-    const {directorId, managerId} = await SellerService.getManagerAndDirectorFromSeller(seller.id);
 
-    if (managerId) {
+    if (managerId !== undefined || managerId !== null) {
       templates = await VisitService.getTemplateByManagerId(managerId);
-    }else if (directorId){
+    } else if (directorId !== undefined || directorId !== null){
       templates = await VisitService.getTemplateByDirectorId(directorId);
-    }else{
+    } else {
     templates = await VisitService.getTemplateByCompanyId(seller.companyId);
     }
-    console.log(templates)
 
     await Promise.all(
       templates.map(async (template) => {
@@ -85,6 +86,10 @@ const EvaluateVisit = () => {
     );
     setTemplate(templates);
     setCategories(fetchedCategories);
+    } catch (error) {
+      console.error('Erro ao buscar dados de vendedores:', error);
+    }
+    
   };
 
   const showToast = (message: string, type: string) => {
