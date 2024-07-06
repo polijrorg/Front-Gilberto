@@ -64,4 +64,16 @@ export default class SellerService {
     const sellerResponse = await api.patch(`/seller/update/${newSeller.id}`, newSeller);
     return sellerResponse.data;
   }
+
+  static async getAllSellerFrom(newSeller: Partial<ISeller>): Promise<ISeller> {
+    const sellerResponse = await api.patch(`/seller/update/${newSeller.id}`, newSeller);
+    return sellerResponse.data;
+  }
+
+  static async getManagerAndDirectorFromSeller(idSeller: string): Promise<{ managerId: string | null, directorId: string | null} | null>{
+    const response: AxiosResponse<{ managerId: string | null, directorId: string | null} | null> = await api.get(
+      `/seller/getManagerAndDirectorFromSeller/${idSeller}`
+    );
+    return response.data;
+  }
 }

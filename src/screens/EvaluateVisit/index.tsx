@@ -62,8 +62,18 @@ const EvaluateVisit = () => {
 
   const handleSelectSeller = async (seller: ISeller) => {
     setSelectedSeller(seller);
-    const templates = await VisitService.getTemplateByCompanyId(seller.companyId);
     const fetchedCategories: ICategories[] = [];
+    let templates: any[] | ((prevState: ITemplateVisit[]) => ITemplateVisit[]);
+    const {directorId, managerId} = await SellerService.getManagerAndDirectorFromSeller(seller.id);
+
+    if (managerId) {
+      templates = await VisitService.getTemplateByManagerId(managerId);
+    }else if (directorId){
+      templates = await VisitService.getTemplateByDirectorId(directorId);
+    }else{
+    templates = await VisitService.getTemplateByCompanyId(seller.companyId);
+    }
+    console.log(templates)
 
     await Promise.all(
       templates.map(async (template) => {
