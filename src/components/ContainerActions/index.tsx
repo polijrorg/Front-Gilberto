@@ -3,14 +3,17 @@ import React from 'react';
 import ButtonWhite from '@components/ButtonWhite';
 import { useNavigation } from '@react-navigation/native';
 import useAuth from '@hooks/useAuth';
+import { useToast } from 'react-native-toast-notifications';
 
 const ContainerActions: React.FC = () => {
   const { user } = useAuth();
   const navigation = useNavigation();
+  const toast = useToast();
+
 
   const buttonConfig = {
     Gerente: {
-      mentorado: 'Editar Mentoria',
+      mentorado: 'Avaliar um Mentoreado',
       visita: 'Editar Visita',
     },
     default: {
@@ -26,7 +29,18 @@ const ContainerActions: React.FC = () => {
   const handleEnviarEvaluateMentoring = () => {
     if (user.job === 'Supervisor') {
       navigation.navigate('EvaluateMentoring' as never);
+    } else {
+      showToast('Funcionalidade apenas para Supervsiores', '');
     }
+  };
+
+  const showToast = (message: string, type: string) => {
+    toast.show(message, {
+      type: type,
+      placement: 'center',
+      duration: 3500,
+      animationType: 'slide-in',
+    });
   };
 
   const handleEnviarEvaluateVisit = () => {
