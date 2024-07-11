@@ -8,11 +8,12 @@ import ISupervisor from '@interfaces/Supervisor';
 type IVendedor = {
   nome: string;
   cargo: string;
-  nota: number;
+  nota?: number;
   id: string;
   supervisorId?: string;
   companyId: string;
   stage: string;
+  blocked?:boolean;
 };
 
 const Cards: React.FC<IVendedor> = ({
@@ -23,19 +24,22 @@ const Cards: React.FC<IVendedor> = ({
   supervisorId,
   companyId,
   stage,
+  blocked = false,
 }) => {
   const { user } = useAuth();
   const navigation = useNavigation();
   const [supervisor, setSupervisor] = useState<ISupervisor>();
 
   const handlePress = () => {
-    navigation.navigate('SalesInspector', {
-      idEmployee: id,
-      cargo: cargo,
-      companyId: companyId,
-      stage: stage,
-    });
-  };
+    if (!blocked) {
+      navigation.navigate('SalesInspector', {
+        idEmployee: id,
+        cargo: cargo,
+        companyId: companyId,
+        stage: stage,
+      });    }
+    
+  }
   const formattedNota =
     nota !== undefined ? nota.toFixed(1).replace('.', ',') : '';
 
@@ -56,7 +60,7 @@ const Cards: React.FC<IVendedor> = ({
     fetchSupervisor();
   }, [companyId, supervisorId, user.job]);
   return (
-    <S.DivWrapper onPress={handlePress}>
+    <S.DivWrapper onPress={handlePress}disabled={blocked}>
       <S.DivImage>
         <S.ImageVendedor
           source={require('@assets/img/cardVendedor/foto.png')}

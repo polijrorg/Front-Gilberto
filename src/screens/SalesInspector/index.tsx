@@ -106,7 +106,7 @@ const SalesInspector = ({ route }) => {
                     source={require('@assets/img/warnnign.png')}
                   />
                   <S.TextModal>
-                    Tem certeza que deseja excluir esse vendedor?
+                    Tem certeza que deseja excluir esse {cargo}?
                   </S.TextModal>
                 </S.WrapperConteudo>
                 <S.BtnYes
