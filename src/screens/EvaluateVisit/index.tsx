@@ -70,7 +70,7 @@ const EvaluateVisit = () => {
         | any[]
         | ((prevState: ITemplateVisit[]) => ITemplateVisit[]);
 
-      if (managerId !== undefined || managerId !== null ) {
+      if (managerId !== undefined || managerId !== null) {
         templates = await VisitService.getTemplateByManagerId(managerId);
       } else if (directorId !== undefined || directorId !== null) {
         templates = await VisitService.getTemplateByDirectorId(directorId);
@@ -131,7 +131,10 @@ const EvaluateVisit = () => {
         return;
       }
     }
+
     setIndexScreen(indexScreen < categories.length + 1 ? indexScreen + 1 : 1);
+    console.log('index:', indexScreen);
+
   };
 
   const handleNavigation = (index: number) => {
@@ -286,7 +289,6 @@ const EvaluateVisit = () => {
           {indexScreen !== 1 &&
             categories.map((category, idx) => (
               <QuestionSection
-                loading={loading}
                 key={category.id}
                 sellerId={selectedSeller?.id || ''}
                 category={category}
@@ -295,6 +297,7 @@ const EvaluateVisit = () => {
                 onUpdateAnswers={handleUpdateAnswers}
               />
             ))}
+          {/* console.log('indexScreen:', indexScreen) */}
           {indexScreen <= categories.length && (
             <S.ButtonIniciar
               onPress={handleAdvance}

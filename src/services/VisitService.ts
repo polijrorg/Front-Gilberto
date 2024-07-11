@@ -31,6 +31,12 @@ export default class VisitService {
     await api.post(`/questionsGrades/create`, questionGrade);
   }
 
+  static async createQuestions(
+    {categoriesId, question}: IQuestions
+  ): Promise<IQuestions> {
+    return await api.post(`/questions/create`, {categoriesId, question});
+  }
+
   static async createVisit({
     visitTemplateId,
     sellerId,
