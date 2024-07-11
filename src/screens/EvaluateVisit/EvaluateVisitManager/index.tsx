@@ -91,6 +91,13 @@ const EvaluateVisitManager = () => {
     setFetchedVisitGrade(updatedGrades);
   };
 
+  const handleCategoryUpdate = (updatedCategory: ICategories) => {
+    const updatedCategories = categories.map((category) =>
+      category.id === updatedCategory.id ? updatedCategory : category
+    );
+    setCategories(updatedCategories);
+  };
+
   return (
     <S.WrapperView>
       <HeaderPages title="Visita" />
@@ -99,10 +106,12 @@ const EvaluateVisitManager = () => {
           <View key={category.id}>
             <QuestionSection
               key={category.id}
+              loading={loading}
               sellerId=""
               category={category}
               index={idx + 1}
               selectedIndex={indexScreen}
+              onCategoryUpdate={handleCategoryUpdate}
               onUpdateAnswers={handleUpdateAnswers}
             />
           </View>
@@ -110,15 +119,24 @@ const EvaluateVisitManager = () => {
         <View
           style={{
             display: 'flex',
-            justifyContent: 'space-between',
+            justifyContent: 'space-around',
             flexDirection: 'row',
+            position: 'absolute',
+            bottom: 50,
+            width: '100%',
           }}
         >
-          <S.ButtonFirst onPress={handlePreviousCategory}>
-            <S.TextBtn>Voltar</S.TextBtn>
+          <S.ButtonFirst
+            onPress={handlePreviousCategory}
+            disabled={indexScreen === 1}
+          >
+            <S.TextBtn>{'<'}</S.TextBtn>
           </S.ButtonFirst>
-          <S.ButtonFirst onPress={handleAdvanceCategory}>
-            <S.TextBtn>Avançar</S.TextBtn>
+          <S.ButtonFirst
+            onPress={handleAdvanceCategory}
+            disabled={indexScreen === categories.length}
+          >
+            <S.TextBtn>{'>'}</S.TextBtn>
           </S.ButtonFirst>
         </View>
 

@@ -1,5 +1,5 @@
 export default interface Questions {
-  value: any;
+  value: number;
   id: string;
   question: string;
   number: number;

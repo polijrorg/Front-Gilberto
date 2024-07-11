@@ -1,5 +1,6 @@
 export default interface TemplateVisit {
   id: string;
+  name?: string;
   companyId: string;
   managerId: string;
   directorId: number;

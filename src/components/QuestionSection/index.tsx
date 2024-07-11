@@ -3,9 +3,10 @@ import * as S from './styles';
 import {
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   View,
   StyleSheet,
+  TextInput,
+  Button,
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { theme } from '@styles/default.theme';
@@ -24,6 +25,8 @@ interface Props {
   selectedIndex: number;
   sellerId: string;
   onUpdateAnswers: (answers: any[]) => void;
+  onCategoryUpdate?: (updatedCategory: ICategories) => void;
+  loading: boolean;
 }
 
 const QuestionSection: React.FC<Props> = ({
@@ -32,37 +35,31 @@ const QuestionSection: React.FC<Props> = ({
   selectedIndex,
   sellerId,
   onUpdateAnswers,
+  onCategoryUpdate,
+  loading,
 }) => {
   const [categoryQuestions, setCategoryQuestions] = useState<IQuestions[]>([]);
   const [answers, setAnswers] = useState<any[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedCategory, setEditedCategory] = useState<ICategories>(category);
+  const [editedQuestions, setEditedQuestions] = useState<IQuestions[]>([]);
   const { user } = useAuth();
-  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const fetchQuestions = async () => {
     try {
-      setLoading(true);
-
-      const fetchQuestions = async () => {
-        const questions = await VisitService.getQuestionsByIdCategory(
-          category.id
-        );
-        setCategoryQuestions(questions);
-      };
-      fetchQuestions();
+      const questions = await VisitService.getQuestionsByIdCategory(
+        category.id
+      );
+      setCategoryQuestions(questions);
+      setEditedQuestions(questions);
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoading(false);
     }
-  }, [category.id]);
+  };
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#3E63DD" />
-      </View>
-    );
-  }
+  useEffect(() => {
+    fetchQuestions();
+  }, [category.id]);
 
   const handleInputChange = (
     questionId: string,
@@ -98,50 +95,139 @@ const QuestionSection: React.FC<Props> = ({
   };
 
   const handleEditQuestion = () => {
-    console.log('Editar pergunta');
+    setIsEditing(!isEditing);
   };
+
+  const handleSaveChanges = async () => {
+    try {
+      await VisitService.updateCategory({
+        id: editedCategory.id,
+        name: editedCategory.name,
+      });
+
+      for (const question of editedQuestions) {
+        await VisitService.updateQuestion({
+          id: question.id,
+          question: question.question,
+        });
+      }
+
+      setIsEditing(false);
+      onCategoryUpdate(editedCategory); // Update the parent component with the new category data
+      await fetchQuestions();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCategoryChange = (name: string) => {
+    setEditedCategory({ ...editedCategory, name });
+  };
+
+  const handleQuestionChange = (id: string, question: string) => {
+    const updatedQuestions = editedQuestions.map((q) =>
+      q.id === id ? { ...q, question } : q
+    );
+    setEditedQuestions(updatedQuestions);
+  };
+
+  if (loading) {
+    return null;
+  }
 
   return (
     selectedIndex === index && (
-      <ScrollView style={{ height: 400, paddingHorizontal: 8 }}>
+      <ScrollView style={{ minWidth: '95%',height: 700, marginVertical: 16, marginHorizontal: 16 }}>
         {user.job === 'Gerente' && (
-          <TouchableOpacity
-            onPress={handleEditQuestion}
-            style={{
-              position: 'absolute',
-              top: 5,
-              right: 5,
-              zIndex: 999,
-            }}
-          >
+          <TouchableOpacity onPress={handleEditQuestion} style={styles.editButton}>
             <FontAwesome
               name="pencil"
-              size={18}
+              size={24}
               color={theme.colors.secundary.main}
             />
           </TouchableOpacity>
         )}
-        <S.TemaQuestion>{category?.name || 'Tema Question'}</S.TemaQuestion>
-        {categoryQuestions.map((question, index) => (
-          <S.Wrapper key={question.id}>
-            <InputRange
-              onChangeValue={(id: string, value: number) =>
-                handleInputChange(question.id, value, question.question)
-              }
-              textAsk={question.question}
+        {isEditing ? (
+          <View style={styles.editContainer}>
+            <TextInput
+              style={styles.categoryInput}
+              value={editedCategory.name}
+              onChangeText={handleCategoryChange}
+              placeholder="Edit Category"
+              placeholderTextColor="#666"
             />
-          </S.Wrapper>
-        ))}
+            {editedQuestions.map((question) => (
+              <TextInput
+                key={question.id}
+                style={styles.questionInput}
+                value={question.question}
+                onChangeText={(text) =>
+                  handleQuestionChange(question.id, text)
+                }
+                placeholder="Edit Question"
+                placeholderTextColor="#666"
+              />
+            ))}
+            <S.ButtonFirst onPress={handleSaveChanges}>
+              <S.TextBtn>Salvar Alterações</S.TextBtn>
+            </S.ButtonFirst>
+          </View>
+        ) : (
+          <>
+            <S.TemaQuestion>{category?.name || 'Tema Question'}</S.TemaQuestion>
+            {categoryQuestions.map((question, index) => (
+              <S.Wrapper key={question.id}>
+                <InputRange
+                  onChangeValue={(id: string, value: number) =>
+                    handleInputChange(question.id, value, question.question)
+                  }
+                  textAsk={question.question}
+                />
+              </S.Wrapper>
+            ))}
+          </>
+        )}
       </ScrollView>
     )
   );
 };
 
 const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  editButton: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    zIndex: 999,
+  },
+  editContainer: {
+    padding: 10,
+    marginVertical: 36,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+  },
+  categoryInput: {
+    height: 50,
+    borderColor: '#3E63DD',
+    borderWidth: 1,
+    marginBottom: 15,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    fontSize: 16,
+    fontWeight: 'bold',
+    backgroundColor: '#fff',
+  },
+  questionInput: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    backgroundColor: '#fff',
   },
 });
 

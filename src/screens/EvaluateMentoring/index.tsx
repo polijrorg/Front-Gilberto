@@ -19,7 +19,7 @@ const EvaluateMentoring = () => {
   const [modules, setModules] = useState<IModule[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedSeller, setSelectedSeller] = useState<ISeller | null>(null);
-  const [buttonOpacity, setButtonOpacity] = useState(0.5);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,13 +46,13 @@ const EvaluateMentoring = () => {
     fetchData();
   }, [user.companyId, user.id, user.job]);
 
+  useEffect(() => {
+    // Atualiza a disponibilidade do botão com base no vendedor selecionado
+    setButtonDisabled(selectedSeller === null);
+  }, [selectedSeller]);
+
   const handleSelectSeller = (seller: ISeller) => {
     setSelectedSeller(seller);
-    updateButtonOpacity(seller);
-  };
-
-  const updateButtonOpacity = (seller: ISeller | null) => {
-    setButtonOpacity(seller ? 1 : 0.5);
   };
 
   const handleSetAsk = () => {
@@ -74,7 +74,7 @@ const EvaluateMentoring = () => {
           <ModuleList loading={loading} modules={modules} />
         </S.Container>
       </S.Wrapper>
-      <EvaluationButton onPress={handleSetAsk} opacity={buttonOpacity} />
+      <EvaluationButton onPress={handleSetAsk} disabled={buttonDisabled} />
       <DivGradient />
     </>
   );
@@ -106,8 +106,8 @@ const ModuleList = ({ loading, modules }) => (
   </S.DivContainerSeller>
 );
 
-const EvaluationButton = ({ onPress, opacity }) => (
-  <S.BtnAvaliar onPress={onPress} style={{ opacity }}>
+const EvaluationButton = ({ onPress, disabled }) => (
+  <S.BtnAvaliar onPress={onPress} disabled={disabled}>
     <S.TextBtnAvaliar>Avaliar</S.TextBtnAvaliar>
   </S.BtnAvaliar>
 );

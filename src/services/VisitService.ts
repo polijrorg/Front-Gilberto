@@ -14,6 +14,16 @@ interface VisitCreate {
   dateVisited: string;
 }
 
+interface UpdateCategories {
+  id: string;
+  name: string;
+}
+
+interface UpdateQuestions {
+  id: string;
+  question: string;
+}
+
 export default class VisitService {
   static async createQuestionsGrade(
     questionGrade: IQuestionGrade
@@ -33,6 +43,14 @@ export default class VisitService {
       dateVisited,
       storeVisited,
     });
+  }
+
+  static async updateCategory({id, name}: UpdateCategories): Promise<void> {
+    await api.put(`categories/${id}`, {name});
+  }
+
+  static async updateQuestion({id, question}: UpdateQuestions): Promise<void> {
+    await api.put(`questions/${id}`, {question});
   }
 
   static async getAll(): Promise<IVisit[]> {

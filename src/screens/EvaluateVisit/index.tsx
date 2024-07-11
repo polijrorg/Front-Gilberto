@@ -70,7 +70,7 @@ const EvaluateVisit = () => {
         | any[]
         | ((prevState: ITemplateVisit[]) => ITemplateVisit[]);
 
-      if (managerId !== undefined || managerId !== null) {
+      if (managerId !== undefined || managerId !== null ) {
         templates = await VisitService.getTemplateByManagerId(managerId);
       } else if (directorId !== undefined || directorId !== null) {
         templates = await VisitService.getTemplateByDirectorId(directorId);
@@ -286,6 +286,7 @@ const EvaluateVisit = () => {
           {indexScreen !== 1 &&
             categories.map((category, idx) => (
               <QuestionSection
+                loading={loading}
                 key={category.id}
                 sellerId={selectedSeller?.id || ''}
                 category={category}

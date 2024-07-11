@@ -17,8 +17,8 @@ export const WrapperView = styled(View)`
 
 export const ContainerFields = styled(View)`
   max-width: 100%;
-
-  gap: 8px;
+  height: 90%;
+  position: relative;
 `;
 
 export const DivSellerInfo = styled(View)`
@@ -99,7 +99,6 @@ export const Input = styled(TextInput)`
 
 export const ButtonFirst = styled(TouchableOpacity)`
   padding: 8px 24px;
-  background-color: #3e63dd;
   margin: 0 auto;
 
   display: flex;
@@ -123,8 +122,8 @@ export const ButtonIniciar = styled(TouchableOpacity)`
 export const TextBtn = styled(Text)`
   font-family: Poppins;
   text-transform: uppercase;
-  color: #fff;
-  font-size: 16px;
+  color: #3e63dd;
+  font-size: 40px;
 `;
 
 export const Outline = styled(TouchableOpacity)`
