@@ -33,4 +33,3 @@ export const TextBtn = styled(Text)`
   color: #fff;
   font-size: 14px;
 `;
-
