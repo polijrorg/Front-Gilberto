@@ -9,6 +9,7 @@ import Visit from '@screens/SalesInspector/TabScreens/Visit';
 import Card from '@components/Cards';
 import SellerServices from '@services/SellerServices';
 import ISeller from '@interfaces/Seller';
+import Action from '@screens/SalesInspector/TabScreens/Action';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -22,7 +23,8 @@ const TabNav: React.FC = ({ route }) => {
       if (cargo === 'Supervisor') {
         setLoading(true);
         try {
-          const sellers = await SellerServices.getAllSellerFromSupervisor(idEmployee);
+          const sellers =
+            await SellerServices.getAllSellerFromSupervisor(idEmployee);
           setSellers(sellers);
         } catch (error) {
           console.error('Error fetching sellers:', error);
@@ -33,7 +35,7 @@ const TabNav: React.FC = ({ route }) => {
     };
 
     fetchData();
-  }, [route.params]);
+  }, [cargo, idEmployee, route.params]);
 
   const getScreenOptions = (screenName) => ({
     tabBarActiveTintColor: 'white',
@@ -70,28 +72,47 @@ const TabNav: React.FC = ({ route }) => {
               options={getScreenOptions('Visita')}
             />
           )}
-          <Tab.Screen
-            name="Vendedores"
-            options={getScreenOptions('Vendedores')}
-          >
-            {() => (
-              <>
-                {loading ? (
-                  <LoadingIndicator />
-                ) : sellers.length > 0 ? (
-                  <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: theme.colors.primary.main }}>
-                    {sellers.map((seller, index) => (
-                      <View key={index} style={{ width: '100%', marginBottom: 16 }}>
-                        <CardItem seller={seller} />
-                      </View>
-                    ))}
-                  </ScrollView>
-                ) : (
-                  <NoDataMessage />
-                )}
-              </>
-            )}
-          </Tab.Screen>
+          {cargo === 'Vendedor' && (
+            <Tab.Screen
+              name="Planos de Ação"
+              component={Action}
+              initialParams={{ idEmployee, cargo, companyId }}
+              options={getScreenOptions('Planos de Ação')}
+            />
+          )}
+
+          {cargo === 'Supervisor' && (
+            <Tab.Screen
+              name="Vendedores"
+              options={getScreenOptions('Vendedores')}
+            >
+              {() => (
+                <>
+                  {loading ? (
+                    <LoadingIndicator />
+                  ) : sellers.length > 0 ? (
+                    <ScrollView
+                      contentContainerStyle={{
+                        flexGrow: 1,
+                        backgroundColor: theme.colors.primary.main,
+                      }}
+                    >
+                      {sellers.map((seller, index) => (
+                        <View
+                          key={index}
+                          style={{ width: '100%', marginBottom: 16 }}
+                        >
+                          <CardItem seller={seller} />
+                        </View>
+                      ))}
+                    </ScrollView>
+                  ) : (
+                    <NoDataMessage />
+                  )}
+                </>
+              )}
+            </Tab.Screen>
+          )}
         </Tab.Navigator>
       </S.Container>
     </View>

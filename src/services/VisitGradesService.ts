@@ -8,6 +8,7 @@ interface QuestionsGradeCreate {
   grade: number;
   sellerId: string;
   questionsId: string;
+  visitId: string;
 }
 
 export default class VisitGradeService {
@@ -25,11 +26,13 @@ export default class VisitGradeService {
     grade,
     sellerId,
     questionsId,
+    visitId,
   }: QuestionsGradeCreate): Promise<IQuestionGrade> {
     const gradeResponse = await api.post(`/questionsGrades/create`, {
       grade,
       sellerId,
       questionsId,
+      visitId,
     });
     return gradeResponse.data;
   }

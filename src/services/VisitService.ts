@@ -6,6 +6,7 @@ import IQuestionGrade from '@interfaces/Visit/QuestionGrade';
 import IVisit from '@interfaces/Visit/Visit';
 
 import api from './api';
+import Visit from '@interfaces/Visit/Visit';
 
 interface VisitCreate {
   sellerId: string;
@@ -31,10 +32,19 @@ export default class VisitService {
     await api.post(`/questionsGrades/create`, questionGrade);
   }
 
-  static async createQuestions(
-    {categoriesId, question}: IQuestions
-  ): Promise<IQuestions> {
-    return await api.post(`/questions/create`, {categoriesId, question});
+  static async createQuestions({
+    categoriesId,
+    question,
+    number,
+  }: IQuestions): Promise<IQuestions> {
+    console.log(categoriesId, question);
+    const newQuestion = await api.post(`/questions/create`, {
+      categoriesId,
+      question,
+      number,
+    });
+    console.log(newQuestion);
+    return newQuestion.data;
   }
 
   static async createVisit({
@@ -42,21 +52,35 @@ export default class VisitService {
     sellerId,
     dateVisited,
     storeVisited,
-  }: VisitCreate): Promise<void> {
-    await api.post(`/visit/create`, {
+  }: VisitCreate): Promise<Visit> {
+    const visit = await api.post(`/visit/create`, {
       visitTemplateId,
       sellerId,
       dateVisited,
       storeVisited,
     });
+    return visit.data;
   }
 
-  static async updateCategory({id, name}: UpdateCategories): Promise<void> {
-    await api.put(`categories/${id}`, {name});
+  static async deleteQuestion(id: string): Promise<IQuestions> {
+    const question = await api.delete(`/questions/delete/${id}`);
+    return question.data;
   }
 
-  static async updateQuestion({id, question}: UpdateQuestions): Promise<void> {
-    await api.put(`questions/${id}`, {question});
+  static async deleteCategories(id: string): Promise<ICategories> {
+    const question = await api.delete(`/categories/delete/${id}`);
+    return question.data;
+  }
+
+  static async updateCategory({ id, name }: UpdateCategories): Promise<void> {
+    await api.put(`categories/${id}`, { name });
+  }
+
+  static async updateQuestion({
+    id,
+    question,
+  }: UpdateQuestions): Promise<void> {
+    await api.put(`questions/${id}`, { question });
   }
 
   static async getAll(): Promise<IVisit[]> {

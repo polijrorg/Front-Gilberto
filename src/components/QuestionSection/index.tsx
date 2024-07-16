@@ -18,6 +18,7 @@ import InputRange from '@components/InputRage';
 
 import VisitService from '@services/VisitService';
 import useAuth from '@hooks/useAuth';
+import { useToast } from 'react-native-toast-notifications';
 
 interface Props {
   category: ICategories;
@@ -26,6 +27,7 @@ interface Props {
   sellerId: string;
   onUpdateAnswers: (answers: any[]) => void;
   onCategoryUpdate?: (updatedCategory: ICategories) => void;
+  onDeleteCategory?: (categoryId: string) => void; // Novo prop para deletar categoria
   loading?: boolean;
 }
 
@@ -36,6 +38,7 @@ const QuestionSection: React.FC<Props> = ({
   sellerId,
   onUpdateAnswers,
   onCategoryUpdate,
+  onDeleteCategory,
   loading,
 }) => {
   const [categoryQuestions, setCategoryQuestions] = useState<IQuestions[]>([]);
@@ -43,21 +46,25 @@ const QuestionSection: React.FC<Props> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editedCategory, setEditedCategory] = useState<ICategories>(category);
   const [editedQuestions, setEditedQuestions] = useState<IQuestions[]>([]);
+  const [newQuestionText, setNewQuestionText] = useState('');
+  const [showAddQuestionInput, setShowAddQuestionInput] = useState(false);
   const { user } = useAuth();
+  const toast = useToast();
 
   useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const questions = await VisitService.getQuestionsByIdCategory(
+          category.id
+        );
+        setCategoryQuestions(questions);
+        setEditedQuestions(questions);
+      } catch (error) {
+        console.log(error);
+      }
+    };
     fetchQuestions();
   }, [category.id]);
-
-  const fetchQuestions = async () => {
-    try {
-      const questions = await VisitService.getQuestionsByIdCategory(category.id);
-      setCategoryQuestions(questions);
-      setEditedQuestions(questions);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const handleInputChange = (
     questionId: string,
@@ -65,7 +72,8 @@ const QuestionSection: React.FC<Props> = ({
     question: string
   ) => {
     const existingAnswerIndex = answers.findIndex(
-      (answer) => answer.questionId === questionId && answer.sellerId === sellerId
+      (answer) =>
+        answer.questionId === questionId && answer.sellerId === sellerId
     );
 
     if (existingAnswerIndex !== -1) {
@@ -110,8 +118,12 @@ const QuestionSection: React.FC<Props> = ({
       }
 
       setIsEditing(false);
-      onCategoryUpdate?.(editedCategory); // Update the parent component with the new category data
-      await fetchQuestions();
+      onCategoryUpdate?.(editedCategory);
+      const updatedQuestions = await VisitService.getQuestionsByIdCategory(
+        editedCategory.id
+      );
+      setCategoryQuestions(updatedQuestions);
+      setEditedQuestions(updatedQuestions);
     } catch (error) {
       console.log(error);
     }
@@ -128,26 +140,68 @@ const QuestionSection: React.FC<Props> = ({
     setEditedQuestions(updatedQuestions);
   };
 
-  const handleDeleteQuestion = (questionId: string) => {
-    const updatedQuestions = editedQuestions.filter((q) => q.id !== questionId);
-    setEditedQuestions(updatedQuestions);
+  const showToast = (message: string, type: string) => {
+    toast.show(message, {
+      type: type,
+      placement: 'bottom',
+      duration: 3500,
+      animationType: 'zoom-in',
+    });
   };
 
-  const handleAddQuestion = async () => {
+  const handleDeleteQuestion = async (questionId: string) => {
     try {
-      const newQuestion = await VisitService.createQuestions({
-        categoriesId: editedCategory.id,
-        question: 'Nova Pergunta',
-      });
-      setEditedQuestions([...editedQuestions, newQuestion]);
-      setCategoryQuestions([...categoryQuestions, newQuestion]);
+      await VisitService.deleteQuestion(questionId);
+      const updatedQuestions = editedQuestions.filter(
+        (q) => q.id !== questionId
+      );
+      setEditedQuestions(updatedQuestions);
+      showToast('Pergunta deletada com sucesso', 'success');
     } catch (error) {
+      showToast('Não foi possível deletar a pergunta', 'danger');
       console.log(error);
     }
   };
 
+  const handleDeleteCategory = async () => {
+    try {
+      await VisitService.deleteCategories(category.id);
+      onDeleteCategory?.(category.id);
+      showToast('Categoria deletada com sucesso', 'success');
+    } catch (error) {
+      showToast('Não foi possível deletar a categoria', 'danger');
+      console.log(error);
+    }
+  };
+
+  const handleAddQuestion = async () => {
+    setNewQuestionText('');
+    setShowAddQuestionInput(true);
+  };
+
+  const handleConfirmAddQuestion = async () => {
+    try {
+      const newQuestion = await VisitService.createQuestions({
+        categoriesId: editedCategory.id,
+        question: newQuestionText,
+        number: 0,
+      });
+      showToast('Pergunta adicionada', 'success');
+      setEditedQuestions([...editedQuestions, newQuestion]);
+      setCategoryQuestions([...categoryQuestions, newQuestion]);
+      setShowAddQuestionInput(false);
+    } catch (error) {
+      showToast('Não foi possível adicionar a pergunta', 'danger');
+      console.log(error);
+    }
+  };
+
+  const handleCancelAddQuestion = () => {
+    setNewQuestionText('');
+    setShowAddQuestionInput(false);
+  };
+
   const handleAddCategory = async () => {
-    // Implement your logic to add a new category here
     console.log('Adicionar Nova Categoria');
   };
 
@@ -156,9 +210,19 @@ const QuestionSection: React.FC<Props> = ({
   }
 
   return selectedIndex === index ? (
-    <ScrollView style={{ minWidth: '95%', height: user.job === 'Gerente' ? 700 : 400, marginVertical: 16, marginHorizontal: 16 }}>
+    <ScrollView
+      style={{
+        minWidth: '95%',
+        height: user.job === 'Gerente' ? 600 : 400,
+        marginVertical: 16,
+        marginHorizontal: 16,
+      }}
+    >
       {user.job === 'Gerente' && (
-        <TouchableOpacity onPress={handleEditQuestion} style={styles.editButton}>
+        <TouchableOpacity
+          onPress={handleEditQuestion}
+          style={styles.editButton}
+        >
           <FontAwesome
             name="pencil"
             size={24}
@@ -184,7 +248,9 @@ const QuestionSection: React.FC<Props> = ({
                 placeholder="Edit Question"
                 placeholderTextColor="#666"
               />
-              <TouchableOpacity onPress={() => handleDeleteQuestion(question.id)}>
+              <TouchableOpacity
+                onPress={() => handleDeleteQuestion(question.id)}
+              >
                 <FontAwesome
                   name="trash"
                   size={24}
@@ -194,12 +260,49 @@ const QuestionSection: React.FC<Props> = ({
               </TouchableOpacity>
             </View>
           ))}
-          <TouchableOpacity onPress={handleAddQuestion} style={styles.addButton}>
-            <Text style={styles.addButtonText}>Adicionar Pergunta</Text>
-          </TouchableOpacity>
+          {showAddQuestionInput ? (
+            <View style={styles.questionContainer}>
+              <TextInput
+                style={styles.questionInput}
+                value={newQuestionText} // Mostra o texto digitado
+                onChangeText={(text) => setNewQuestionText(text)} // Atualiza o texto da nova pergunta
+                placeholder="Nova Pergunta"
+                placeholderTextColor="#666"
+              />
+              <TouchableOpacity onPress={handleConfirmAddQuestion}>
+                <FontAwesome
+                  name="check"
+                  size={24}
+                  color="#3E63DD"
+                  style={styles.trashIcon}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleCancelAddQuestion}>
+                <FontAwesome
+                  name="times"
+                  size={24}
+                  color="#FF6347"
+                  style={styles.trashIcon}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity
+              onPress={handleAddQuestion}
+              style={styles.addButton}
+            >
+              <Text style={styles.addButtonText}>Adicionar Pergunta</Text>
+            </TouchableOpacity>
+          )}
           <S.ButtonFirst onPress={handleSaveChanges}>
             <S.TextBtn>Salvar Alterações</S.TextBtn>
           </S.ButtonFirst>
+          <TouchableOpacity
+            onPress={handleDeleteCategory} // Adicionando a função para deletar a categoria
+            style={styles.deleteButton}
+          >
+            <Text style={styles.deleteButtonText}>Deletar Categoria</Text>
+          </TouchableOpacity>
         </View>
       ) : (
         <>
@@ -263,7 +366,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   trashIcon: {
-    marginLeft: 10,
+    marginHorizontal: 10,
   },
   addButton: {
     backgroundColor: '#3E63DD',
@@ -274,6 +377,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  deleteButton: {
+    backgroundColor: '#FF6347',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  deleteButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',

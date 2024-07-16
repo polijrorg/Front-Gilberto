@@ -18,16 +18,19 @@ import ICategories from '@interfaces/Visit/Categories';
 import QuestionsGrade from '@interfaces/Visit/QuestionGrade';
 import ITemplateVisit from '@interfaces/Visit/TemplateVisit';
 import PdfService from '@services/PdfService';
+import Visit from '@interfaces/Visit/Visit';
 
 interface VisitGrade {
   questionId: string;
   sellerId: string;
   grade: number;
+  visitId: string;
 }
 
 const EvaluateVisit = () => {
   const { user } = useAuth();
   const [sellers, setSellers] = useState<ISeller[]>([]);
+  const [visitToDay, setVisitToDay] = useState<Visit>();
   const [indexScreen, setIndexScreen] = useState(1);
   const [evaluationStarted, setEvaluationStarted] = useState(false);
   const [selectedSeller, setSelectedSeller] = useState<ISeller | null>(null);
@@ -112,12 +115,13 @@ const EvaluateVisit = () => {
       try {
         if (template.length > 0) {
           const formattedDate = formatDateForPdf(dateVisited);
-          await VisitService.createVisit({
+          const visit = await VisitService.createVisit({
             sellerId: selectedSeller.id,
             visitTemplateId: template[0].id,
             storeVisited: storeName,
             dateVisited: formattedDate,
           });
+          setVisitToDay(visit);
         } else {
           showToast(
             'Nenhum template disponível para criar a visita',
@@ -134,7 +138,6 @@ const EvaluateVisit = () => {
 
     setIndexScreen(indexScreen < categories.length + 1 ? indexScreen + 1 : 1);
     console.log('index:', indexScreen);
-
   };
 
   const handleNavigation = (index: number) => {
@@ -206,12 +209,15 @@ const EvaluateVisit = () => {
     grade: number;
     sellerId: string;
     questionId: string;
+    visitId: string;
   }) => {
     try {
+      console.log(visitToDay);
       await VisitGradesService.create({
         grade: answer.grade,
         sellerId: answer.sellerId,
         questionsId: answer.questionId,
+        visitId: visitToDay?.id,
       });
     } catch (error) {
       console.error('Erro ao criar as notas:', error);
@@ -246,6 +252,7 @@ const EvaluateVisit = () => {
           questionId: answer.questionId,
           sellerId: selectedSeller?.id || '',
           grade: answer.value,
+          visitId: visitToDay?.id,
         });
       }
     });
