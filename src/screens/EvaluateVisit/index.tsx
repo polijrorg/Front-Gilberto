@@ -157,17 +157,8 @@ const EvaluateVisit = () => {
 
       setLoading(true);
       for (const answer of fetchedVisitGrade) {
-        const questions = await VisitGradesService.getAllQuestionsBySeller(
-          selectedSeller.id
-        );
-        const existingQuestion = questions.find(
-          (question) => question.questionsId === answer.questionId
-        );
-        if (existingQuestion) {
-          await updateGrades(existingQuestion, answer);
-        } else {
-          await createGrades(answer);
-        }
+        console.log('answer:', answer);
+        await createGrades(answer);
       }
       await pdfAndEmail(selectedSeller.id);
     } catch (error) {
