@@ -3,15 +3,25 @@ import * as S from './styles';
 import { Dimensions } from 'react-native';
 import Svg, { Circle, Line, Text } from 'react-native-svg';
 import { BarChart } from 'react-native-chart-kit';
+import ScatterPlotComponent from '@components/Scratter';
 
 export interface BarChartProps {
   type: string;
   moduleAverages: { module: string; nameModule: string; average: number }[];
+  infoAll:
+    | {
+        module: string;
+        nameModule: string;
+        knowledge: number;
+        implementation: number;
+      }[]
+    | null;
 }
 
 const BarChartComponent: React.FC<BarChartProps> = ({
   type,
   moduleAverages,
+  infoAll,
 }) => {
   const padding = 20; // Espaçamento interno do gráfico
   const chartWidth = Dimensions.get('window').width - 50; // Largura do gráfico
@@ -124,34 +134,7 @@ const BarChartComponent: React.FC<BarChartProps> = ({
           />
         </>
       )}
-      {type === 'matriz' && (
-        <>
-          <S.TitleSlider>Matriz IC Implementação | Conhecimento</S.TitleSlider>
-          <Svg width={chartWidth} height={chartHeight}>
-            {xAxis}
-            {xAxisLabels}
-            {yAxis}
-            {yAxisLabels}
-            {moduleAverages.map((item, index) => (
-              <Circle
-                key={index}
-                cx={
-                  padding +
-                  ((chartWidth - 2 * padding) * index) /
-                    (moduleAverages.length - 1)
-                }
-                cy={
-                  chartHeight -
-                  padding -
-                  ((chartHeight - 2 * padding) * item.average) / 5
-                }
-                r={circleRadius}
-                fill="#3E63DD"
-              />
-            ))}
-          </Svg>
-        </>
-      )}
+      {type === 'matriz' && <ScatterPlotComponent moduleAverages={infoAll} />}
     </S.Container>
   );
 };
