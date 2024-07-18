@@ -12,14 +12,22 @@ import useAuth from '@hooks/useAuth';
 import IQuestions from '@interfaces/Visit/Questions';
 import IQuestionGrade from '@interfaces/Visit/QuestionGrade';
 import SellerService from '@services/SellerServices';
+import Visit from '@interfaces/Visit/Visit';
 
-const Visit = ({ route }) => {
+const VisitComponent = ({ route }) => {
   const { idEmployee, cargo, companyId } = route.params;
   const [loading, setLoading] = useState(false);
   const [seller, setSeller] = useState<ISeller | null>(null);
-  const [categories, setCategories] = useState<ICategories[]>([]);
-  const [questions, setQuestions] = useState<IQuestions[]>([]);
-  const [questionGrades, setQuestionGrades] = useState<IQuestionGrade[]>([]);
+  const [visits, setVisits] = useState<Visit[]>([]);
+  const [categories, setCategories] = useState<{
+    [key: string]: ICategories[];
+  }>({});
+  const [questions, setQuestions] = useState<{ [key: string]: IQuestions[] }>(
+    {}
+  );
+  const [questionGrades, setQuestionGrades] = useState<{
+    [key: string]: IQuestionGrade[];
+  }>({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,30 +43,50 @@ const Visit = ({ route }) => {
           if (foundSeller) {
             setSeller(foundSeller);
 
+            const visitsData = await VisitService.getVisitByIdSeller(
+              foundSeller.id
+            );
+            setVisits(visitsData);
+
             const templates = await VisitService.getTemplateByCompanyId(
               foundSeller.companyId
             );
-            const fetchedCategories: ICategories[] = [];
+            const fetchedCategories: { [key: string]: ICategories[] } = {};
+            const fetchedQuestions: { [key: string]: IQuestions[] } = {};
+            const fetchedQuestionGrades: { [key: string]: IQuestionGrade[] } =
+              {};
 
-            for (const template of templates) {
-              const categories = await VisitService.getCategoriesByIdTemplate(
-                template.id
-              );
-              for (const category of categories) {
-                fetchedCategories.push(category);
-                const questions = await VisitService.getQuestionsByIdCategory(
-                  category.id
+            for (const visit of visitsData) {
+              fetchedCategories[visit.id] = [];
+              fetchedQuestions[visit.id] = [];
+              fetchedQuestionGrades[visit.id] = [];
+
+              for (const template of templates) {
+                const categories = await VisitService.getCategoriesByIdTemplate(
+                  template.id
                 );
-                const questionGrades =
-                  await VisitGradesService.getAllQuestionsBySeller(
-                    foundSeller.id
-                  );
-                setQuestions((prev) => [...prev, ...questions]);
-                setQuestionGrades((prev) => [...prev, ...questionGrades]);
+                for (const category of categories) {
+                  if (category.visitTemplateId === visit.visitTemplateId) {
+                    fetchedCategories[visit.id].push(category);
+                    const questions =
+                      await VisitService.getQuestionsByIdCategory(category.id);
+                    const questionGrades =
+                      await VisitGradesService.getAllQuestionsBySeller(
+                        foundSeller.id
+                      );
+
+                    fetchedQuestions[visit.id].push(...questions);
+                    fetchedQuestionGrades[visit.id].push(
+                      ...questionGrades.filter((qg) => qg.visitId === visit.id)
+                    );
+                  }
+                }
               }
             }
 
             setCategories(fetchedCategories);
+            setQuestions(fetchedQuestions);
+            setQuestionGrades(fetchedQuestionGrades);
           }
         }
       } catch (error) {
@@ -79,16 +107,18 @@ const Visit = ({ route }) => {
     );
   }
 
-  const calculateMedia = (categoryId: string) => {
-    const relevantQuestions = questions.filter(
-      (question) => question.categoriesId === categoryId
-    );
+  const calculateMedia = (visitId: string, categoryId: string) => {
+    const relevantQuestions =
+      questions[visitId]?.filter(
+        (question) => question.categoriesId === categoryId
+      ) || [];
 
-    const relevantGrades = questionGrades.filter((grade) =>
-      relevantQuestions.some(
-        (question) => question.id === grade.questionsId && grade.grade !== 0
-      )
-    );
+    const relevantGrades =
+      questionGrades[visitId]?.filter((grade) =>
+        relevantQuestions.some(
+          (question) => question.id === grade.questionsId && grade.grade !== 0
+        )
+      ) || [];
 
     const totalGrades = relevantGrades.reduce(
       (total, grade) => total + grade.grade,
@@ -96,17 +126,17 @@ const Visit = ({ route }) => {
     );
     return relevantGrades.length > 0 ? totalGrades / relevantGrades.length : 0;
   };
-  const generateQuestionsWithGrades = (
-    categoryId: string
-  ): { question: string; grade: string }[] => {
-    const relevantQuestions = questions.filter(
-      (question) => question.categoriesId === categoryId
-    );
+
+  const generateQuestionsWithGrades = (visitId: string, categoryId: string) => {
+    const relevantQuestions =
+      questions[visitId]?.filter(
+        (question) => question.categoriesId === categoryId
+      ) || [];
 
     const questionsWithGrades: { question: string; grade: string }[] = [];
 
     relevantQuestions.forEach((question) => {
-      const grade = questionGrades.find(
+      const grade = questionGrades[visitId]?.find(
         (grade) => grade.questionsId === question.id && grade.grade !== 0
       );
       if (grade) {
@@ -127,13 +157,20 @@ const Visit = ({ route }) => {
       <StatusBar style="light" />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <S.WrapperView>
-          {categories.map((category) => (
-            <AccordionVisit
-              key={category.id}
-              title={category.name}
-              media={calculateMedia(category.id)}
-              questions={generateQuestionsWithGrades(category.id)}
-            />
+          {visits.map((visit) => (
+            <S.ViewWrapper key={visit.id}>
+              <S.VisitTitle>
+                {visit.storeVisited} - {visit.dateVisited}
+              </S.VisitTitle>
+              {categories[visit.id]?.map((category) => (
+                <AccordionVisit
+                  key={category.id}
+                  title={category.name}
+                  media={calculateMedia(visit.id, category.id)}
+                  questions={generateQuestionsWithGrades(visit.id, category.id)}
+                />
+              ))}
+            </S.ViewWrapper>
           ))}
         </S.WrapperView>
       </ScrollView>
@@ -149,4 +186,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Visit;
+export default VisitComponent;

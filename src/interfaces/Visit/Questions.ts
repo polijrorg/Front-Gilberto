@@ -4,4 +4,5 @@ export default interface Questions {
   question: string;
   number: number;
   categoriesId: string;
+  visitId?: string;
 }

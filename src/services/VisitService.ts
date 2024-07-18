@@ -88,6 +88,12 @@ export default class VisitService {
     return visits.data;
   }
 
+  static async getAllFindBy(idVisit: string): Promise<IVisit | null> {
+    const visits: AxiosResponse<IVisit[]> = await api.get('visit/getAll');
+    const filteredVisit = visits.data.find((visit) => visit.id === idVisit);
+    return filteredVisit || null;
+  }
+
   static async getVisitByIdSeller(sellerId: string): Promise<IVisit[]> {
     const visits: AxiosResponse<IVisit[]> = await api.get(
       `/visit/getAll/${sellerId}`
