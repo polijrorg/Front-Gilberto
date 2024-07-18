@@ -7,6 +7,7 @@ import IVisit from '@interfaces/Visit/Visit';
 
 import api from './api';
 import Visit from '@interfaces/Visit/Visit';
+import Categories from '@interfaces/Visit/Categories';
 
 interface VisitCreate {
   sellerId: string;
@@ -30,6 +31,20 @@ export default class VisitService {
     questionGrade: IQuestionGrade
   ): Promise<void> {
     await api.post(`/questionsGrades/create`, questionGrade);
+  }
+
+  static async createCategoria(
+    visitTemplateId: string,
+    name: string,
+    number = 0,
+    comments = ''
+  ): Promise<Categories> {
+    console.log(name, visitTemplateId);
+    const newCategory: AxiosResponse<Categories> = await api.post(
+      `/categories/create`,
+      { visitTemplateId, name, number, comments }
+    );
+    return newCategory.data;
   }
 
   static async createQuestions({

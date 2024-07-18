@@ -1,6 +1,12 @@
 import * as S from './styles';
 import { StatusBar } from 'expo-status-bar';
-import { ActivityIndicator, ScrollView, View, StyleSheet } from 'react-native';
+import {
+  ActivityIndicator,
+  ScrollView,
+  View,
+  StyleSheet,
+  Text,
+} from 'react-native';
 import AccordionVisit from '@components/AccordionVisit';
 import React, { useEffect, useState } from 'react';
 
@@ -157,21 +163,38 @@ const VisitComponent = ({ route }) => {
       <StatusBar style="light" />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <S.WrapperView>
-          {visits.map((visit) => (
-            <S.ViewWrapper key={visit.id}>
-              <S.VisitTitle>
-                {visit.storeVisited} - {visit.dateVisited}
-              </S.VisitTitle>
-              {categories[visit.id]?.map((category) => (
-                <AccordionVisit
-                  key={category.id}
-                  title={category.name}
-                  media={calculateMedia(visit.id, category.id)}
-                  questions={generateQuestionsWithGrades(visit.id, category.id)}
-                />
-              ))}
-            </S.ViewWrapper>
-          ))}
+          {visits.length > 0 ? (
+            visits.map((visit) => (
+              <S.ViewWrapper key={visit.id}>
+                <S.VisitTitle>
+                  {visit.storeVisited} - {visit.dateVisited}
+                </S.VisitTitle>
+                {categories[visit.id]?.map((category) => (
+                  <AccordionVisit
+                    key={category.id}
+                    title={category.name}
+                    media={calculateMedia(visit.id, category.id)}
+                    questions={generateQuestionsWithGrades(
+                      visit.id,
+                      category.id
+                    )}
+                  />
+                ))}
+              </S.ViewWrapper>
+            ))
+          ) : (
+            <View
+              style={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text>{`${cargo} não tem visitas cadastradas.`}</Text>
+            </View>
+          )}
         </S.WrapperView>
       </ScrollView>
     </S.Wrapper>

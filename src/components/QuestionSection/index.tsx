@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TextInput,
   Text,
+  ActivityIndicator,
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { theme } from '@styles/default.theme';
@@ -48,6 +49,7 @@ const QuestionSection: React.FC<Props> = ({
   const [editedQuestions, setEditedQuestions] = useState<IQuestions[]>([]);
   const [newQuestionText, setNewQuestionText] = useState('');
   const [showAddQuestionInput, setShowAddQuestionInput] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false); // Novo estado de carregamento
   const { user } = useAuth();
   const toast = useToast();
 
@@ -165,12 +167,15 @@ const QuestionSection: React.FC<Props> = ({
 
   const handleDeleteCategory = async () => {
     try {
+      setIsDeleting(true);
       await VisitService.deleteCategories(category.id);
       onDeleteCategory?.(category.id);
       showToast('Categoria deletada com sucesso', 'success');
     } catch (error) {
       showToast('Não foi possível deletar a categoria', 'danger');
       console.log(error);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -205,8 +210,12 @@ const QuestionSection: React.FC<Props> = ({
     console.log('Adicionar Nova Categoria');
   };
 
-  if (loading) {
-    return null;
+  if (loading || isDeleting) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#3E63DD" />
+      </View>
+    );
   }
 
   return selectedIndex === index ? (
@@ -393,6 +402,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
