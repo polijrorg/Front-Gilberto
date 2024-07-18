@@ -19,6 +19,15 @@ const MatrizSlider: React.FC = () => {
   const [moduleAverages, setModuleAverages] = useState<
     BarChartProps['moduleAverages']
   >([]);
+  const [moduleAll, setModuleAll] = useState<
+    | {
+        module: string;
+        nameModule: string;
+        knowledge: number;
+        implementation: number;
+      }[]
+    | null
+  >();
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0); // Estado para controlar o índice atual do slider
 
@@ -26,6 +35,8 @@ const MatrizSlider: React.FC = () => {
 
   const fetchModuleGradesAverages = async () => {
     try {
+      const moduleInfoAll = await ModuleGradeServices.getAllModulesInfo();
+      setModuleAll(moduleInfoAll);
       const modulesGrades = await ModuleGradeServices.getGradeModuleAll();
       const modulesWithAverages = await Promise.all(
         modulesGrades.map(async (module) => {
@@ -120,6 +131,7 @@ const MatrizSlider: React.FC = () => {
               onReload={handleReload}
               currentIndex={currentIndex}
               sectionIndex={index}
+              modulesInfoAll={moduleAll}
             />
           ))}
         </ScrollView>
@@ -135,6 +147,14 @@ interface BarChartSectionProps {
   onReload: () => void;
   currentIndex: number;
   sectionIndex: number;
+  modulesInfoAll:
+    | {
+        module: string;
+        nameModule: string;
+        knowledge: number;
+        implementation: number;
+      }[]
+    | null;
 }
 
 const BarChartSection: React.FC<BarChartSectionProps> = ({
@@ -144,6 +164,7 @@ const BarChartSection: React.FC<BarChartSectionProps> = ({
   onReload,
   currentIndex,
   sectionIndex,
+  modulesInfoAll,
 }) => {
   // Verifica se esta seção é a seção atualmente visível
   const isVisible = currentIndex === sectionIndex;
@@ -158,7 +179,11 @@ const BarChartSection: React.FC<BarChartSectionProps> = ({
       }}
     >
       {isVisible && (
-        <BarChartComponent type={type} moduleAverages={moduleAverages} />
+        <BarChartComponent
+          type={type}
+          moduleAverages={moduleAverages}
+          infoAll={modulesInfoAll}
+        />
       )}
       <ReloadButton onPress={onReload} />
     </View>
