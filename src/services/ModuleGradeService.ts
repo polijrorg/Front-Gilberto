@@ -59,6 +59,27 @@ export default class ModuleGradeServices {
     });
   }
 
+  static async getAllModulesInfo(): Promise<
+    | {
+        module: string;
+        nameModule: string;
+        knowledge: number;
+        implementation: number;
+      }[]
+    | null
+  > {
+    const moduleGradeSellerResponse: AxiosResponse<
+      | {
+          module: string;
+          nameModule: string;
+          knowledge: number;
+          implementation: number;
+        }[]
+      | null
+    > = await api.get(`/module/getAllModuleInfo`);
+    return moduleGradeSellerResponse.data;
+  }
+
   static async getModuleGradesByIdSeller(
     idSeller: string
   ): Promise<IModuleGrade[]> {
