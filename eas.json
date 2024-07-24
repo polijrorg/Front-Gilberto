@@ -17,6 +17,12 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "financeiro@polijunior.com.br",
+        "ascAppId": "6572284907",
+        "appleTeamId": "82L63Y7JQJ" 
+      }
+    }
   }
 }
