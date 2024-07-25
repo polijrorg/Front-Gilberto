@@ -1,159 +1,153 @@
 import {
-  TouchableOpacity,
+  TouchableOpacity as RNTouchableOpacity,
   StatusBar as RNStatusBar,
-  ScrollView,
-  Image,
+  Text as RNText,
+  TextInput as RNTextInput,
+  View as RNView,
+  ActivityIndicator,
 } from 'react-native';
-import { Text } from 'react-native';
-import { TextInput, View } from 'react-native';
 import styled from 'styled-components/native';
 
-export const WrapperView = styled(View)`
+export const ContainerVisit = styled(RNView)`
+  min-width: 90%;
+  margin: 2rem;
+  padding: 1rem;
+`;
+
+export const Loading = styled(ActivityIndicator)`
+  margin: 25px auto;
+`;
+
+export const Title = styled(RNText)`
+  font-size: 16px;
+  font-weight: bold;
+  margin: 20px 0;
+  font-family: Poppins;
+
+  text-transform: capitalize;
+`;
+
+export const WrapperView = styled(RNView)`
   width: 100%;
   height: 100%;
   margin-top: ${RNStatusBar.currentHeight || 0}px;
   display: flex;
 `;
 
-export const ContainerFields = styled(View)`
-  max-width: 100%;
+export const ContainerFields = styled(RNView)`
+  max-width: 90%;
   height: 90%;
-  position: relative;
+  margin: 2rem auto;
+  padding: 1rem;
 `;
 
-export const DivSellerInfo = styled(View)`
-  width: 100%;
-  height: auto;
-  margin: 0 auto;
-  margin-top: 64px;
-  display: flex;
-  flex-direction: row;
-  padding: 4px 20%;
+export const NoCategoriesContainer = styled(RNView)`
   align-items: center;
-  justify-content: space-around;
+  margin-top: 20px;
+  min-width: 100%;
 `;
 
-export const Wrapper = styled(View)`
-  width: 100%;
-  height: auto;
-`;
-
-export const TemaQuestion = styled(Text)`
-  font-family: Poppins;
+export const NoCategoriesText = styled(RNText)`
   font-size: 16px;
+  font-family: Poppins;
+
+  text-align: ce;
 `;
 
-export const DivSellerImage = styled(View)`
-  width: 64px;
-  height: 64px;
-`;
-
-export const ImageSeller = styled(Image)`
-  width: 64px;
-  height: 64px;
-`;
-
-export const DivInfoSeller = styled(View)`
-  width: 100%;
-  justify-content: flex-start;
+export const AddCategoryEmpty = styled(RNTouchableOpacity)`
   display: flex;
+  justify-content: center;
   align-items: center;
-  padding: 4px;
+  margin-top: 20px;
+  width: 50%;
+  padding: 8px 12px;
+
+  background-color: #3e63dd;
+  border-radius: 8px;
 `;
 
-export const InfoSeller = styled(Text)`
-  font-size: 18px;
-  max-width: 75%;
-  font-weight: bold;
-  text-transform: uppercase;
+export const AddCategoryEmptyText = styled(RNText)`
+  font-size: 16px;
   font-family: Poppins;
-  margin-left: 24px;
+
+  color: white;
+
+  text-align: center;
 `;
 
-export const DivContainer = styled(ScrollView)`
+export const AddCategoryButton = styled(RNTouchableOpacity)`
+  margin-top: 20px;
+  align-items: center;
+  width: 40%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 8px 12px;
+
+  border-radius: 8px;
+
+  background-color: #3e63dd;
+`;
+
+export const AddCategoryText = styled(RNText)`
+  color: white;
+  font-size: 14px;
   width: 100%;
-  height: 100%;
-  margin: 10px auto;
-  padding: 16px 8px;
+
+  text-align: center;
 `;
 
-export const TitleInput = styled(Text)`
-  font-family: Poppins;
-  font-size: 12px;
-  font-weight: 400;
-  margin: 8px 0;
+export const CategoryContainer = styled(RNView)`
+  max-height: 70%;
 `;
 
-export const Input = styled(TextInput)`
-  font-family: Poppins;
-  max-width: 100%;
-  padding: 2px 8px;
-  border-radius: 4px;
-  background-color: #f1f3f5;
-  border-width: 1px;
-  border-color: #d7dbdf;
-  font-size: 12px;
-  font-weight: 400;
-  color: #687076;
+export const NavigationContainer = styled(RNView)`
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  flex-direction: row;
+  min-height: auto;
+  width: 100%;
 `;
-
-export const ButtonFirst = styled(TouchableOpacity)`
+export const ButtonFirst = styled(RNTouchableOpacity)<{ isDisabled: boolean }>`
   padding: 8px 24px;
   margin: 0 auto;
-
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 8px;
+  opacity: ${({ isDisabled }) => (isDisabled ? 0.5 : 1)};
 `;
 
-export const ButtonIniciar = styled(TouchableOpacity)`
-  padding: 8px 24px;
-  background-color: #3e63dd;
-  width: 90%;
-  height: auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px;
-  margin: 0px auto;
-`;
-
-export const TextBtn = styled(Text)`
+export const TextBtn = styled(RNText)`
   font-family: Poppins;
   text-transform: uppercase;
   color: #3e63dd;
   font-size: 40px;
 `;
 
-export const Outline = styled(TouchableOpacity)`
-  padding: 8px 24px;
-  width: 90%;
-  height: auto;
-  display: flex;
+export const ModalContainer = styled(RNView)`
+  flex: 1;
   justify-content: center;
   align-items: center;
-  border-radius: 8px;
-  margin: 0px auto;
-  border-width: 1px;
-  border-color: #3451b2;
+  background-color: rgba(0, 0, 0, 0.5);
 `;
 
-export const TextBtnNova = styled(Text)`
-  font-family: Poppins;
-  text-transform: uppercase;
-  color: #3451b2;
-  font-size: 16px;
+export const ModalContent = styled(RNView)`
+  width: 80%;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
 `;
 
-export const BtnFinished = styled(TouchableOpacity)`
-  padding: 8px 24px;
-  background-color: #3e63dd;
-  width: 90%;
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px;
-  margin: 0px auto;
+export const Input = styled(RNTextInput)`
+  border-bottom-width: 1px;
+  margin-bottom: 10px;
+`;
+
+export const ModalButtonsContainer = styled(RNView)`
+  flex-direction: row;
+  justify-content: space-between;
 `;

@@ -1,6 +1,8 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 
+export const ViewWrapper = styled(View)``;
+
 export const DivFields = styled(View)`
   width: 100%;
   height: auto;

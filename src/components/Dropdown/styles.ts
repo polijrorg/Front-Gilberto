@@ -43,6 +43,12 @@ export const DropdownList = styled(ScrollView)<DropdownListProps>`
   border-radius: 8px;
 `;
 
+export const NoOptionsMessage = styled(Text)`
+  color: #687076;
+  font-size: 12px;
+  padding: 10px;
+`;
+
 export const DropdownItem = styled(TouchableOpacity)`
   padding: 10px;
   background-color: #f1f3f5;

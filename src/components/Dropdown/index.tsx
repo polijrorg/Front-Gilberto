@@ -10,17 +10,17 @@ interface SupervisorState {
   list: ISupervisor[];
 }
 
-type IDropdownProps = {
+interface IDropdownProps {
   supervisors?: SupervisorState;
   onSelectSupervisor?: (supervisor: ISupervisor) => void;
   sellers?: ISeller[];
   onSelectSeller?: (seller: ISeller) => void;
-};
+}
 
 const Dropdown: React.FC<IDropdownProps> = ({
-  supervisors,
+  supervisors = { single: null, list: [] },
   onSelectSupervisor,
-  sellers,
+  sellers = [],
   onSelectSeller,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,14 +30,35 @@ const Dropdown: React.FC<IDropdownProps> = ({
 
   const handleSelectSupervisor = (supervisor: ISupervisor) => {
     setSelectedSupervisor(supervisor);
-    onSelectSupervisor && onSelectSupervisor(supervisor);
+    onSelectSupervisor?.(supervisor);
     setIsOpen(false);
   };
 
   const handleSelectSeller = (seller: ISeller) => {
     setSelectedSeller(seller);
-    onSelectSeller && onSelectSeller(seller);
+    onSelectSeller?.(seller);
     setIsOpen(false);
+  };
+
+  const renderDropdownItems = () => {
+    if (supervisors.list.length > 0) {
+      return supervisors.list.map((supervisor, index) => (
+        <S.DropdownItem
+          key={index}
+          onPress={() => handleSelectSupervisor(supervisor)}
+        >
+          <S.Selected>{supervisor.name}</S.Selected>
+        </S.DropdownItem>
+      ));
+    } else if (sellers.length > 0) {
+      return sellers.map((seller, index) => (
+        <S.DropdownItem key={index} onPress={() => handleSelectSeller(seller)}>
+          <S.Selected>{seller.name}</S.Selected>
+        </S.DropdownItem>
+      ));
+    } else {
+      return <S.NoOptionsMessage>Nenhuma opção disponível</S.NoOptionsMessage>;
+    }
   };
 
   return (
@@ -59,33 +80,10 @@ const Dropdown: React.FC<IDropdownProps> = ({
           {isOpen && (
             <S.DropdownList
               maxHeight={
-                supervisors?.list.length > 1 || sellers?.length > 1 ? 300 : null
+                supervisors.list.length > 1 || sellers.length > 1 ? 300 : null
               }
             >
-              {(supervisors?.list.length > 0 &&
-                supervisors?.list.map((supervisor, index) => (
-                  <S.DropdownItem
-                    key={index}
-                    onPress={() => handleSelectSupervisor(supervisor)}
-                  >
-                    <S.Selected>{supervisor.name}</S.Selected>
-                  </S.DropdownItem>
-                ))) ||
-                (sellers?.length > 0 &&
-                  sellers?.map((seller, index) => (
-                    <S.DropdownItem
-                      key={index}
-                      onPress={() => handleSelectSeller(seller)}
-                    >
-                      <S.Selected>{seller.name}</S.Selected>
-                    </S.DropdownItem>
-                  ))) || (
-                  <S.DropdownItem
-                    onPress={() => handleSelectSupervisor(supervisors?.single)}
-                  >
-                    <S.Selected>{supervisors?.single?.name}</S.Selected>
-                  </S.DropdownItem>
-                )}
+              {renderDropdownItems()}
             </S.DropdownList>
           )}
         </S.CustomDropdown>

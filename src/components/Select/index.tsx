@@ -15,7 +15,7 @@ interface SelectProps {
 }
 
 const Select: React.FC<SelectProps> = ({
-  options,
+  options = [],
   onChange,
   placeholder = 'Selecione uma opção',
 }) => {
@@ -26,12 +26,12 @@ const Select: React.FC<SelectProps> = ({
   const handleSelectOption = (label: string, value: string) => {
     setSelectedLabel(label);
     setSelectedValue(value);
-    onChange && onChange(value);
+    onChange(value);
     setIsOpen(false);
   };
 
   return (
-    <View>
+    <S.ViewWrapper>
       <S.DivFields>
         <S.CustomDropdown isOpen={isOpen} setIsOpen={setIsOpen}>
           <S.DropDownButton onPress={() => setIsOpen(!isOpen)}>
@@ -42,10 +42,10 @@ const Select: React.FC<SelectProps> = ({
               color="#687076"
             />
           </S.DropDownButton>
-          {options && options.length > 0 ? (
-            isOpen && (
-              <S.DropdownList maxHeight={options.length > 1 ? 300 : null}>
-                {options.map((option, index) => (
+          {isOpen && (
+            <S.DropdownList maxHeight={options.length > 1 ? 300 : null}>
+              {options.length > 0 ? (
+                options.map((option, index) => (
                   <S.DropdownItem
                     key={index}
                     onPress={() =>
@@ -54,15 +54,17 @@ const Select: React.FC<SelectProps> = ({
                   >
                     <S.Selected>{option.label}</S.Selected>
                   </S.DropdownItem>
-                ))}
-              </S.DropdownList>
-            )
-          ) : (
-            <S.NoOptionsMessage>Nenhuma opção disponível</S.NoOptionsMessage>
+                ))
+              ) : (
+                <S.NoOptionsMessage>
+                  Nenhuma opção disponível
+                </S.NoOptionsMessage>
+              )}
+            </S.DropdownList>
           )}
         </S.CustomDropdown>
       </S.DivFields>
-    </View>
+    </S.ViewWrapper>
   );
 };
 
