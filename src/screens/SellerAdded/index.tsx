@@ -20,7 +20,7 @@ interface SupervisorState {
   list: ISupervisor[];
 }
 
-const SellerAdded = () => {
+const SellerAdded: React.FC = () => {
   const [supervisorState, setSupervisorState] = useState<SupervisorState>({
     single: null,
     list: [],
@@ -28,10 +28,9 @@ const SellerAdded = () => {
   const { data, setData } = useDataContext();
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
-  const [name, setName] = React.useState('');
-  const [email, setEmail] = React.useState('');
-
-  const [image, setImage] = React.useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [image, setImage] = useState('');
   const [selectedSupervisor, setSelectedSupervisor] =
     useState<ISupervisor | null>(null);
   const [isButtonEnabled, setIsButtonEnabled] = useState<boolean>(false);
@@ -39,11 +38,11 @@ const SellerAdded = () => {
   const [selectedValue, setSelectedValue] = useState<string>('');
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const isCreateDisabled = !name && !selectedValue;
   const options = [
     { label: 'Mentoria', value: 'Mentoria' },
     { label: 'Visita', value: 'Visita' },
   ];
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -64,7 +63,7 @@ const SellerAdded = () => {
     };
 
     fetchData();
-  }, [user, user.id]);
+  }, [user]);
 
   const handleSelectSupervisor = (supervisor: ISupervisor) => {
     setSelectedSupervisor(supervisor);
@@ -75,12 +74,14 @@ const SellerAdded = () => {
     setIsModalVisible(!isModalVisible);
   };
 
-  const handleSelectChange = (value: string) => setSelectedValue(value);
+  const handleSelectChange = (value: string) => {
+    setSelectedValue(value);
+  };
 
   const handleCreate = async () => {
     try {
       setLoading(true);
-      const supervisorId = selectedSupervisor?.id;
+      const supervisorId = selectedSupervisor?.id || null;
       const companyId = user.companyId;
 
       const seller: ISeller = await SellerService.createSeller({
@@ -94,7 +95,7 @@ const SellerAdded = () => {
 
       setData({
         ...data,
-        seller: seller,
+        seller,
       });
 
       setName('');
@@ -121,6 +122,8 @@ const SellerAdded = () => {
     }
   };
 
+  const isCreateDisabled = !name || !selectedValue || !selectedSupervisor;
+
   return (
     <>
       <StatusBar backgroundColor="#3E63DD" style="light" />
@@ -140,7 +143,7 @@ const SellerAdded = () => {
             <S.InputField
               placeholder="Email do Vendedor"
               value={email}
-              keyboardType={'email-address'}
+              keyboardType="email-address"
               onChangeText={(text) => setEmail(text)}
             />
           </S.DivFileds>
@@ -158,8 +161,8 @@ const SellerAdded = () => {
         </S.Main>
         <S.BtnCreateSeller
           onPress={toggleModal}
-          disabled={!isButtonEnabled}
-          color={!isButtonEnabled && isCreateDisabled}
+          disabled={isCreateDisabled}
+          color={isCreateDisabled ? false : true}
         >
           <S.BtnCreateSellerText>Criar Vendedor</S.BtnCreateSellerText>
         </S.BtnCreateSeller>

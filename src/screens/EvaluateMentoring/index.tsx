@@ -65,7 +65,7 @@ const EvaluateMentoring = () => {
     <>
       <StatusBar />
       <S.Wrapper>
-        <HeaderPages title="Avaliar Mentorado" />
+        <HeaderPages title="Avaliar Mentoreado" />
         <S.Container>
           <SellerSelection
             sellers={sellers}

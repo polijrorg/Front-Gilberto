@@ -10,17 +10,17 @@ interface SupervisorState {
   list: ISupervisor[];
 }
 
-interface IDropdownProps {
+type IDropdownProps = {
   supervisors?: SupervisorState;
   onSelectSupervisor?: (supervisor: ISupervisor) => void;
   sellers?: ISeller[];
   onSelectSeller?: (seller: ISeller) => void;
-}
+};
 
 const Dropdown: React.FC<IDropdownProps> = ({
-  supervisors = { single: null, list: [] },
+  supervisors,
   onSelectSupervisor,
-  sellers = [],
+  sellers,
   onSelectSeller,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,36 +30,20 @@ const Dropdown: React.FC<IDropdownProps> = ({
 
   const handleSelectSupervisor = (supervisor: ISupervisor) => {
     setSelectedSupervisor(supervisor);
-    onSelectSupervisor?.(supervisor);
+    onSelectSupervisor && onSelectSupervisor(supervisor);
     setIsOpen(false);
   };
 
   const handleSelectSeller = (seller: ISeller) => {
     setSelectedSeller(seller);
-    onSelectSeller?.(seller);
+    onSelectSeller && onSelectSeller(seller);
     setIsOpen(false);
   };
 
-  const renderDropdownItems = () => {
-    if (supervisors.list.length > 0) {
-      return supervisors.list.map((supervisor, index) => (
-        <S.DropdownItem
-          key={index}
-          onPress={() => handleSelectSupervisor(supervisor)}
-        >
-          <S.Selected>{supervisor.name}</S.Selected>
-        </S.DropdownItem>
-      ));
-    } else if (sellers.length > 0) {
-      return sellers.map((seller, index) => (
-        <S.DropdownItem key={index} onPress={() => handleSelectSeller(seller)}>
-          <S.Selected>{seller.name}</S.Selected>
-        </S.DropdownItem>
-      ));
-    } else {
-      return <S.NoOptionsMessage>Nenhuma opção disponível</S.NoOptionsMessage>;
-    }
-  };
+  // Verifica se há supervisores ou vendedores disponíveis
+  const hasSupervisors = supervisors?.list.length > 0;
+  const hasSingleSupervisor = !!supervisors?.single;
+  const hasSellers = sellers?.length > 0;
 
   return (
     <View>
@@ -79,11 +63,37 @@ const Dropdown: React.FC<IDropdownProps> = ({
           </S.DropDownButton>
           {isOpen && (
             <S.DropdownList
-              maxHeight={
-                supervisors.list.length > 1 || sellers.length > 1 ? 300 : null
-              }
+              maxHeight={hasSupervisors || hasSellers ? 300 : null}
             >
-              {renderDropdownItems()}
+              {hasSupervisors ? (
+                supervisors.list.map((supervisor) => (
+                  <S.DropdownItem
+                    key={supervisor.id}
+                    onPress={() => handleSelectSupervisor(supervisor)}
+                  >
+                    <S.Selected>{supervisor.name}</S.Selected>
+                  </S.DropdownItem>
+                ))
+              ) : hasSingleSupervisor ? (
+                <S.DropdownItem
+                  onPress={() => handleSelectSupervisor(supervisors.single!)}
+                >
+                  <S.Selected>{supervisors.single!.name}</S.Selected>
+                </S.DropdownItem>
+              ) : hasSellers ? (
+                sellers.map((seller) => (
+                  <S.DropdownItem
+                    key={seller.id}
+                    onPress={() => handleSelectSeller(seller)}
+                  >
+                    <S.Selected>{seller.name}</S.Selected>
+                  </S.DropdownItem>
+                ))
+              ) : (
+                <S.DropdownItem disabled>
+                  <S.Selected>Nenhuma opção disponível</S.Selected>
+                </S.DropdownItem>
+              )}
             </S.DropdownList>
           )}
         </S.CustomDropdown>
