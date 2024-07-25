@@ -50,6 +50,14 @@ const ContainerActions: React.FC = () => {
     }
   };
 
+  const handleEnviarPlainAction = () => {
+    if (user.job === 'Supervisor') {
+      navigation.navigate('PlainAction' as never);
+    } else {
+      showToast('Funcionalidade apenas para Supervisores', '');
+    }
+  };
+
   const getButtonText = (buttonType: string) => {
     const userTypeConfig = buttonConfig[user.job] || buttonConfig.default;
     return userTypeConfig[buttonType];
@@ -69,7 +77,7 @@ const ContainerActions: React.FC = () => {
         />
         <ButtonWhite
           text={'Ver Planos de Ação'}
-          duty={() => navigation.navigate('PlainAction' as never)}
+          duty={handleEnviarPlainAction}
         />
         <ButtonWhite text="Visualizar Equipe" duty={handleEnviarMyTeam} />
       </S.DivActions>
