@@ -1,11 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import * as S from './styles';
-import {
-  ActivityIndicator,
-  Modal as RNModal,
-  Button as RNButton,
-  View as RNView,
-} from 'react-native';
 import HeaderPages from '@components/HeaderPages';
 import QuestionSection from '@components/QuestionSection';
 import { useToast } from 'react-native-toast-notifications';
@@ -26,12 +20,16 @@ const EvaluateVisitManager = () => {
   const [categories, setCategories] = useState<ICategories[]>([]);
   const [indexScreen, setIndexScreen] = useState(1);
   const [templates, setTemplates] = useState<ITemplateVisit[]>([]);
+  const [createdTemplate, setCreatedTemplate] = useState<boolean>(false);
+  const [isCreatingTemplate, setIsCreatingTemplate] = useState(true);
   const [selectedTemplate, setSelectedTemplate] =
     useState<ITemplateVisit | null>(null);
   const [loading, setLoading] = useState(false);
+  const [newTemplateName, setNewTemplateName] = useState('');
   const [newCategoryName, setNewCategoryName] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [fetchedVisitGrade, setFetchedVisitGrade] = useState<VisitGrade[]>([]);
+  const [managerTemplate, setManagerTemplate] = useState<ITemplateVisit[]>([]);
   const toast = useToast();
 
   const fetchCategories = useCallback(async () => {
@@ -42,8 +40,14 @@ const EvaluateVisitManager = () => {
         VisitService.getTemplateByManagerId(user.id),
       ]);
 
-      const allTemplates = [...companyTemplate, ...managerTemplate];
-      setTemplates(allTemplates);
+      const validCompanyTemplate = Array.isArray(companyTemplate)
+        ? companyTemplate
+        : [];
+      const validManagerTemplate = Array.isArray(managerTemplate)
+        ? managerTemplate
+        : [];
+      setManagerTemplate(validManagerTemplate);
+      setTemplates([...validCompanyTemplate, ...validManagerTemplate]);
 
       if (selectedTemplate) {
         const categories = await VisitService.getCategoriesByIdTemplate(
@@ -153,6 +157,33 @@ const EvaluateVisitManager = () => {
     [templates]
   );
 
+  const handleAddTemplate = useCallback(async () => {
+    if (!newTemplateName.trim()) {
+      toast.show('Nome do template não pode estar vazio', { type: 'danger' });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const newTemplate = await VisitService.createVisitTemplate(
+        newTemplateName,
+        user.id
+      );
+
+      setTemplates((prevTemplates) => [...prevTemplates, newTemplate]);
+
+      setNewTemplateName('');
+      setCreatedTemplate(false);
+
+      toast.show('Template adicionado com sucesso', { type: 'success' });
+    } catch (error) {
+      console.error('Erro ao adicionar template:', error);
+      toast.show('Erro ao adicionar template', { type: 'danger' });
+    } finally {
+      setLoading(false);
+    }
+  }, [newTemplateName, user.id, toast]);
+
   return (
     <S.WrapperView>
       <HeaderPages title="Visita" />
@@ -168,20 +199,46 @@ const EvaluateVisitManager = () => {
         {loading ? (
           <S.Loading size="large" color="#0000ff" />
         ) : templates.length === 0 ? (
-          <S.NoCategoriesContainer>
-            <S.NoCategoriesText>
-              Você não tem nenhum template
-            </S.NoCategoriesText>
-            <S.AddCategoryButton onPress={() => setIsModalVisible(true)}>
-              <S.AddCategoryText>Adicionar Template</S.AddCategoryText>
-            </S.AddCategoryButton>
-          </S.NoCategoriesContainer>
+          <>
+            <S.NoCategoriesContainer>
+              <S.NoCategoriesText>
+                Você não tem nenhum template
+              </S.NoCategoriesText>
+              <S.AddCategoryButton
+                onPress={() => setCreatedTemplate(!createdTemplate)}
+              >
+                <S.AddCategoryText>Adicionar Template</S.AddCategoryText>
+              </S.AddCategoryButton>
+            </S.NoCategoriesContainer>
+            {createdTemplate && (
+              <S.CreatedTemplateContainer>
+                <S.WrapperTemplate>
+                  <S.TitleCreatedTemplate>
+                    Adicione um novo template:
+                  </S.TitleCreatedTemplate>
+                  <S.InputNameTemplate
+                    placeholder="Nome do Template"
+                    value={newTemplateName}
+                    onChangeText={setNewTemplateName}
+                  />
+                  <S.FormButtonsContainer>
+                    <S.ButtonGeneric onPress={() => setCreatedTemplate(false)}>
+                      <S.ButtonGenericText>Cancelar</S.ButtonGenericText>
+                    </S.ButtonGeneric>
+                    <S.ButtonGeneric onPress={handleAddTemplate}>
+                      <S.ButtonGenericText>Adicionar</S.ButtonGenericText>
+                    </S.ButtonGeneric>
+                  </S.FormButtonsContainer>
+                </S.WrapperTemplate>
+              </S.CreatedTemplateContainer>
+            )}
+          </>
         ) : categories.length === 0 ? (
           <S.NoCategoriesContainer>
             {selectedTemplate ? (
               <>
                 <S.NoCategoriesText>
-                  Você não tem nenhuma categoria para este template:
+                  Você não tem nenhuma categoria para este template:{' '}
                   {selectedTemplate.name}
                 </S.NoCategoriesText>
                 <S.AddCategoryEmpty onPress={() => setIsModalVisible(true)}>
@@ -234,24 +291,71 @@ const EvaluateVisitManager = () => {
             </S.NavigationContainer>
           </>
         )}
-        <RNModal visible={isModalVisible} transparent animationType="slide">
-          <S.ModalContainer>
-            <S.ModalContent>
-              <S.Input
-                placeholder="Nome da Categoria"
-                value={newCategoryName}
-                onChangeText={setNewCategoryName}
-              />
-              <S.ModalButtonsContainer>
-                <RNButton
-                  title="Cancelar"
-                  onPress={() => setIsModalVisible(false)}
-                />
-                <RNButton title="Adicionar" onPress={handleAddCategory} />
-              </S.ModalButtonsContainer>
-            </S.ModalContent>
-          </S.ModalContainer>
-        </RNModal>
+        <S.ModalStyled
+          statusBarTranslucent={true}
+          visible={isModalVisible}
+          transparent={true}
+          animationType="slide"
+        >
+          <S.ModalContent>
+            {managerTemplate.length === 0 && (
+              <>
+                <S.SwitchContainer>
+                  <S.SwitchLabel>Adicionar Categoria</S.SwitchLabel>
+
+                  <S.Switch
+                    value={isCreatingTemplate}
+                    onValueChange={(value) => setIsCreatingTemplate(value)}
+                  />
+                  <S.SwitchLabel>Adicionar Template</S.SwitchLabel>
+                </S.SwitchContainer>
+              </>
+            )}
+            {isCreatingTemplate && managerTemplate.length === 0 ? (
+              <S.CreatedTemplateContainer>
+                <S.WrapperTemplate>
+                  <S.TitleCreatedTemplate>
+                    Adicione um novo template:
+                  </S.TitleCreatedTemplate>
+                  <S.InputNameTemplate
+                    placeholder="Nome do Template"
+                    value={newTemplateName}
+                    onChangeText={setNewTemplateName}
+                  />
+                  <S.FormButtonsContainer>
+                    <S.ButtonGeneric onPress={() => setIsModalVisible(false)}>
+                      <S.ButtonGenericText>Cancelar</S.ButtonGenericText>
+                    </S.ButtonGeneric>
+                    <S.ButtonGeneric onPress={handleAddTemplate}>
+                      <S.ButtonGenericText>Adicionar</S.ButtonGenericText>
+                    </S.ButtonGeneric>
+                  </S.FormButtonsContainer>
+                </S.WrapperTemplate>
+              </S.CreatedTemplateContainer>
+            ) : (
+              <S.CreatedTemplateContainer>
+                <S.WrapperTemplate>
+                  <S.TitleCreatedTemplate>
+                    Adicione Categoria:
+                  </S.TitleCreatedTemplate>
+                  <S.InputNameTemplate
+                    placeholder="Nome da Categoria"
+                    value={newCategoryName}
+                    onChangeText={setNewCategoryName}
+                  />
+                  <S.FormButtonsContainer>
+                    <S.ButtonGeneric onPress={() => setIsModalVisible(false)}>
+                      <S.ButtonGenericText>Cancelar</S.ButtonGenericText>
+                    </S.ButtonGeneric>
+                    <S.ButtonGeneric onPress={handleAddCategory}>
+                      <S.ButtonGenericText>Adicionar</S.ButtonGenericText>
+                    </S.ButtonGeneric>
+                  </S.FormButtonsContainer>
+                </S.WrapperTemplate>
+              </S.CreatedTemplateContainer>
+            )}
+          </S.ModalContent>
+        </S.ModalStyled>
       </S.ContainerFields>
     </S.WrapperView>
   );

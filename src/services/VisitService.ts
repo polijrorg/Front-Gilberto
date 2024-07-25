@@ -27,6 +27,17 @@ interface UpdateQuestions {
 }
 
 export default class VisitService {
+  static async createVisitTemplate(
+    name: string,
+    managerId: string
+  ): Promise<ITemplateVisit> {
+    const visitTemplate: AxiosResponse<ITemplateVisit> = await api.post(
+      '/visitTemplate/create',
+      { name, managerId }
+    );
+    return visitTemplate.data;
+  }
+
   static async createQuestionsGrade(
     questionGrade: IQuestionGrade
   ): Promise<void> {
@@ -39,7 +50,6 @@ export default class VisitService {
     number = 0,
     comments = ''
   ): Promise<Categories> {
-    console.log(name, visitTemplateId);
     const newCategory: AxiosResponse<Categories> = await api.post(
       `/categories/create`,
       { visitTemplateId, name, number, comments }
@@ -52,13 +62,11 @@ export default class VisitService {
     question,
     number,
   }: IQuestions): Promise<IQuestions> {
-    console.log(categoriesId, question);
     const newQuestion = await api.post(`/questions/create`, {
       categoriesId,
       question,
       number,
     });
-    console.log(newQuestion);
     return newQuestion.data;
   }
 

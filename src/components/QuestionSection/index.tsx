@@ -206,10 +206,6 @@ const QuestionSection: React.FC<Props> = ({
     setShowAddQuestionInput(false);
   };
 
-  const handleAddCategory = async () => {
-    console.log('Adicionar Nova Categoria');
-  };
-
   if (loading || isDeleting) {
     return (
       <View style={styles.loadingContainer}>

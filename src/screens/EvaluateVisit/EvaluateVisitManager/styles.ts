@@ -5,8 +5,11 @@ import {
   TextInput as RNTextInput,
   View as RNView,
   ActivityIndicator,
+  Switch as RNSwitch,
+  Modal,
 } from 'react-native';
 import styled from 'styled-components/native';
+import { Wrapper } from '../../../components/FormsLogin/styles';
 
 export const ContainerVisit = styled(RNView)`
   min-width: 90%;
@@ -136,10 +139,11 @@ export const ModalContainer = styled(RNView)`
 `;
 
 export const ModalContent = styled(RNView)`
-  width: 80%;
+  width: 90%;
   background-color: white;
   padding: 20px;
   border-radius: 10px;
+  margin: 50% auto;
 `;
 
 export const Input = styled(RNTextInput)`
@@ -150,4 +154,118 @@ export const Input = styled(RNTextInput)`
 export const ModalButtonsContainer = styled(RNView)`
   flex-direction: row;
   justify-content: space-between;
+`;
+
+export const CreatedTemplateContainer = styled(RNView)`
+  min-width: 100%;
+  margin: 16px auto;
+
+  border: 1px solid #d7dbdf;
+
+  border-radius: 8px;
+`;
+
+export const WrapperTemplate = styled(Wrapper)`
+  min-width: 90%;
+  height: auto;
+
+  padding: 16px;
+  margin: 16px auto;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background-color: transparent;
+
+  gap: 16px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  padding: 8px;
+`;
+
+export const TitleCreatedTemplate = styled(RNText)`
+  font-size: 14px;
+  font-family: Poppins;
+`;
+
+export const InputNameTemplate = styled(RNTextInput)`
+  min-width: 90% !important;
+
+  border-radius: 4px;
+  border: 1px solid #d7dbdf;
+  font-size: 12px;
+  background-color: #f1f3f5;
+
+  padding: 4px 8px;
+  font-family: Poppins;
+  ::placeholder {
+    color: #687076;
+  }
+`;
+
+export const FormButtonsContainer = styled(RNView)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 90%;
+`;
+
+export const ButtonGeneric = styled(RNTouchableOpacity)`
+  padding: 8px 16px;
+  border-radius: 4px;
+
+  background-color: #3e63dd;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ModalStyled = styled(Modal)`
+  padding: 8px 16px;
+  border-radius: 4px;
+
+  box-sizing: border-box;
+
+  height: auto;
+
+  border: 1px solid #3e63dd;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const SwitchContainer = styled(RNView)`
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 20px;
+
+  max-width: 90%;
+`;
+
+export const SwitchLabel = styled(RNText)`
+  font-size: 16px;
+  color: #333;
+  margin-right: 4px;
+`;
+
+export const ButtonGenericText = styled(RNText)`
+  color: white;
+  font-size: 14px;
+  font-family: Poppins;
+`;
+export const Switch = styled(RNSwitch).attrs(({ value }) => ({
+  trackColor: {
+    false: '#e0e0e0',
+    true: '#e0e0e0',
+  },
+  thumbColor: value ? '#3e63dd' : '#3e63dd',
+}))`
+  margin-left: 10px;
 `;
