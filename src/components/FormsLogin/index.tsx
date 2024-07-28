@@ -65,8 +65,9 @@ const FormsLogin: React.FC = () => {
             <S.DivFields>
               <S.LabelEmail>{'Digite seu E-mail'}</S.LabelEmail>
               <S.Input
-                placeholder={'marco.rudas@gmail.com'}
+                placeholder={'email@example.com'}
                 keyboardType={'email-address'}
+                autoCapitalize="none"
                 value={email}
                 onChangeText={(text) => setEmail(text)}
               />
@@ -78,6 +79,7 @@ const FormsLogin: React.FC = () => {
                 <S.Input
                   placeholder={'Senha'}
                   keyboardType="default"
+                  autoCapitalize="none"
                   secureTextEntry={!showPassword}
                   value={password}
                   onChangeText={(text) => setPassword(text)}
