@@ -1,12 +1,6 @@
 import * as S from './styles';
 import { StatusBar } from 'expo-status-bar';
-import {
-  ActivityIndicator,
-  ScrollView,
-  View,
-  StyleSheet,
-  Text,
-} from 'react-native';
+import { ActivityIndicator, ScrollView, Text } from 'react-native';
 import AccordionVisit from '@components/AccordionVisit';
 import React, { useEffect, useState } from 'react';
 
@@ -19,7 +13,6 @@ import IQuestions from '@interfaces/Visit/Questions';
 import IQuestionGrade from '@interfaces/Visit/QuestionGrade';
 import SellerService from '@services/SellerServices';
 import Visit from '@interfaces/Visit/Visit';
-import User from '../../../../interfaces/User';
 
 const VisitComponent = ({ route }) => {
   const { idEmployee, cargo, companyId } = route.params;
@@ -138,9 +131,9 @@ const VisitComponent = ({ route }) => {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
+      <S.LoadingContainer>
         <ActivityIndicator size="large" color="#3E63DD" />
-      </View>
+      </S.LoadingContainer>
     );
   }
 
@@ -211,29 +204,14 @@ const VisitComponent = ({ route }) => {
               </S.ViewWrapper>
             ))
           ) : (
-            <View style={styles.noVisitsContainer}>
+            <S.NoVisitsContainer>
               <Text>{`${cargo} não tem visitas cadastradas.`}</Text>
-            </View>
+            </S.NoVisitsContainer>
           )}
         </S.WrapperView>
       </ScrollView>
     </S.Wrapper>
   );
 };
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  noVisitsContainer: {
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default VisitComponent;
