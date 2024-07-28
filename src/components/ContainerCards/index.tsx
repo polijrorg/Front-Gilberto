@@ -13,24 +13,7 @@ const Container: React.FC<{
   media?: { [key: string]: number };
   userType?: string;
 }> = ({ search, data, loading, title, media = {}, userType }) => {
-  let filteredData: Array<ISeller | ISupervisor> = data;
-
-  const filterData = () => {
-    if (userType !== 'Supervisor') {
-      const removeAccents = (str: string) => {
-        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-      };
-
-      const searchTerm = search ? removeAccents(search.toLowerCase()) : '';
-
-      filteredData = data.filter((item) => {
-        const itemName = removeAccents(item.name.toLowerCase());
-        return !search || itemName.includes(searchTerm);
-      });
-    }
-  };
-
-  filterData();
+  const filteredData = filterData(data, search, userType);
 
   return (
     <S.DivWrapper>
@@ -43,25 +26,11 @@ const Container: React.FC<{
             <>
               <S.DivVisita>
                 <S.TitleSection>Visita</S.TitleSection>
-                {filteredData
-                  .filter(
-                    (item): item is ISeller =>
-                      'stage' in item && item.stage === 'Visita'
-                  )
-                  .map((item, index) => (
-                    <CardItem key={index} item={item} media={media} />
-                  ))}
+                {renderFilteredData(filteredData, 'Visita', media)}
               </S.DivVisita>
               <S.DivMentoria>
                 <S.TitleSection>Mentoria</S.TitleSection>
-                {filteredData
-                  .filter(
-                    (item): item is ISeller =>
-                      'stage' in item && item.stage === 'Mentoria'
-                  )
-                  .map((item, index) => (
-                    <CardItem key={index} item={item} media={media} />
-                  ))}
+                {renderFilteredData(filteredData, 'Mentoria', media)}
               </S.DivMentoria>
             </>
           ) : (
@@ -70,13 +39,38 @@ const Container: React.FC<{
             ))
           )
         ) : (
-          <NoDataMessage
-            title={userType === 'Supervisor' ? 'Visita' : 'Dados'}
-          />
+          <NoDataMessage title={userType === 'Supervisor' ? '' : 'Dados'} />
         )}
       </S.Cards>
     </S.DivWrapper>
   );
+};
+
+const filterData = (data, search, userType) => {
+  if (userType === 'Supervisor') return data;
+
+  const removeAccents = (str: string) =>
+    str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const searchTerm = search ? removeAccents(search.toLowerCase()) : '';
+
+  return data.filter((item) => {
+    const itemName = removeAccents(item.name.toLowerCase());
+    return !search || itemName.includes(searchTerm);
+  });
+};
+
+const renderFilteredData = (data, stage, media) => {
+  const filtered = data.filter(
+    (item): item is ISeller => 'stage' in item && item.stage === stage
+  );
+
+  if (filtered.length === 0) {
+    return <NoDataMessage key="no-data" title={stage} />;
+  }
+
+  return filtered.map((item, index) => (
+    <CardItem key={index} item={item} media={media} />
+  ));
 };
 
 const LoadingIndicator: React.FC = () => (
@@ -87,7 +81,9 @@ const LoadingIndicator: React.FC = () => (
 
 const NoDataMessage: React.FC<{ title: string }> = ({ title }) => (
   <S.CenteredView>
-    <S.TitleSellers>Não há {title.toLowerCase()} cadastrados</S.TitleSellers>
+    <S.TitleSellers>
+      Não há vendedores no estágio {title.toLowerCase()} cadastrados
+    </S.TitleSellers>
   </S.CenteredView>
 );
 
@@ -97,16 +93,10 @@ const CardItem: React.FC<{
 }> = ({ item, media }) => {
   const fullName = item.name || 'Usuário';
   const nameParts = fullName.split(' ');
-  let displayName = '';
-
-  if (nameParts.length > 1) {
-    const firstName = nameParts[0];
-    const lastName = nameParts[nameParts.length - 1];
-    displayName = `${firstName} ${lastName}`;
-  } else {
-    displayName = fullName;
-  }
-
+  const displayName =
+    nameParts.length > 1
+      ? `${nameParts[0]} ${nameParts[nameParts.length - 1]}`
+      : fullName;
   const sellerMedia = media[item.id] || 0;
   const isSeller = 'stage' in item;
 
@@ -117,7 +107,7 @@ const CardItem: React.FC<{
       stage={isSeller ? (item as ISeller).stage : 'Pendente'}
       cargo={item.job}
       companyId={item.companyId}
-      nota={sellerMedia || 0}
+      nota={sellerMedia}
     />
   );
 };

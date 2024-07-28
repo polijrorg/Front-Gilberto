@@ -29,6 +29,7 @@ const MatrizSlider: React.FC = () => {
   const fetchModuleGradesAverages = async () => {
     try {
       const moduleInfoAll = await ModuleGradeServices.getAllModulesInfo();
+      console.log('moduleInfoAll:', moduleInfoAll);
       setModuleAll(moduleInfoAll);
       const averageGrades = await VisitGradeService.getAverageGrades();
       setQuestionsBar(averageGrades);

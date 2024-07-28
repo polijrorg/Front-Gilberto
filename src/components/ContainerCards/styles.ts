@@ -36,6 +36,8 @@ export const CenteredView = styled(View)`
 export const TitleSellers = styled(Text)`
   text-transform: uppercase;
   font-family: Poppins;
+  text-align: center;
+  font-size: 13px;
 `;
 
 export const DivVisita = styled(View)`
