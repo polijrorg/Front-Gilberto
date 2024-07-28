@@ -1,14 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  Dimensions,
-  TouchableOpacity,
-  Text,
-  ActivityIndicator,
-} from 'react-native';
-import BarChartComponent, { BarChartProps } from '@components/BarChart';
+import { ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 import * as S from './styles';
+import BarChartComponent, { BarChartProps } from '@components/BarChart';
 import ModuleGradeServices from '@services/ModuleGradeService';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import VisitGradeService from '@services/VisitGradesService';
@@ -29,7 +22,7 @@ const MatrizSlider: React.FC = () => {
     | null
   >();
   const [isLoading, setIsLoading] = useState(true);
-  const [currentIndex, setCurrentIndex] = useState(0); // Estado para controlar o índice atual do slider
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const data = ['modulo', 'matriz'];
 
@@ -51,7 +44,7 @@ const MatrizSlider: React.FC = () => {
   const handleScroll = (event) => {
     const offsetX = event.nativeEvent.contentOffset.x;
     const index = Math.round(offsetX / windowWidth);
-    setCurrentIndex(index); // Atualiza o índice atual do slider
+    setCurrentIndex(index);
   };
 
   const scrollToIndex = (index: number) => {
@@ -67,8 +60,7 @@ const MatrizSlider: React.FC = () => {
   const handleReload = async () => {
     setIsLoading(true);
     try {
-      const averageGrades = await fetchModuleGradesAverages();
-      setQuestionsBar(averageGrades);
+      await fetchModuleGradesAverages();
     } catch (error) {
       console.error('Erro ao recarregar os dados:', error);
     } finally {
@@ -80,8 +72,7 @@ const MatrizSlider: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const averageGrades = await fetchModuleGradesAverages();
-        setQuestionsBar(averageGrades);
+        await fetchModuleGradesAverages();
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       }
@@ -93,15 +84,9 @@ const MatrizSlider: React.FC = () => {
   return (
     <S.Wrapper>
       {isLoading ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
+        <S.LoadingContainer>
           <ActivityIndicator size="large" color="#3E63DD" />
-        </View>
+        </S.LoadingContainer>
       ) : (
         <ScrollView
           ref={scrollRef}
@@ -155,18 +140,10 @@ const BarChartSection: React.FC<BarChartSectionProps> = ({
   sectionIndex,
   modulesInfoAll,
 }) => {
-  // Verifica se esta seção é a seção atualmente visível
   const isVisible = currentIndex === sectionIndex;
 
   return (
-    <View
-      style={{
-        width: windowWidth,
-        borderBottomWidth: 1,
-        borderTopWidth: 1,
-        borderColor: '#d1d1d1',
-      }}
-    >
+    <S.SectionWrapper windowWidth={windowWidth}>
       {isVisible && (
         <BarChartComponent
           type={type}
@@ -175,7 +152,7 @@ const BarChartSection: React.FC<BarChartSectionProps> = ({
         />
       )}
       <ReloadButton onPress={onReload} />
-    </View>
+    </S.SectionWrapper>
   );
 };
 
@@ -185,21 +162,11 @@ interface ReloadButtonProps {
 
 const ReloadButton: React.FC<ReloadButtonProps> = ({ onPress }) => {
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={{
-        position: 'absolute',
-        top: 10,
-        right: 10,
-        backgroundColor: '#fff1',
-        padding: 8,
-        borderRadius: 8,
-      }}
-    >
-      <Text style={{ color: 'white', fontWeight: 'bold' }}>
+    <S.ReloadButton onPress={onPress}>
+      <S.ReloadButtonText>
         <MaterialCommunityIcons name="reload" size={20} color="#3E63DD" />
-      </Text>
-    </TouchableOpacity>
+      </S.ReloadButtonText>
+    </S.ReloadButton>
   );
 };
 
