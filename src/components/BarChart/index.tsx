@@ -1,7 +1,6 @@
 import React from 'react';
 import * as S from './styles';
 import { Dimensions } from 'react-native';
-import Svg, { Circle, Line, Text } from 'react-native-svg';
 import { BarChart } from 'react-native-chart-kit';
 import ScatterPlotComponent from '@components/Scratter';
 
@@ -23,14 +22,11 @@ const BarChartComponent: React.FC<BarChartProps> = ({
   moduleAverages,
   infoAll,
 }) => {
-  const padding = 20; // Espaçamento interno do gráfico
-  const chartWidth = Dimensions.get('window').width - 50; // Largura do gráfico
-  const chartHeight = 200; // Altura do gráfico
-  const circleRadius = 5; // Raio do círculo que representa cada ponto
+  const chartWidth = Dimensions.get('window').width - 50;
+  const chartHeight = 200;
 
-  // Configuração do gráfico de barras
   const barChartData = {
-    labels: moduleAverages.map((item, index) => `${index + 1}`),
+    labels: moduleAverages.map((_item, index) => `${index + 1}`),
     datasets: [
       {
         data: moduleAverages.map((item) =>
@@ -58,59 +54,6 @@ const BarChartComponent: React.FC<BarChartProps> = ({
     minValue: 0,
     maxValue: 5,
   };
-
-  // Eixos X e Y do gráfico de dispersão
-  const xAxis = (
-    <Line
-      x1={padding}
-      y1={chartHeight - padding}
-      x2={chartWidth - padding}
-      y2={chartHeight - padding}
-      stroke="black"
-      strokeWidth={1}
-    />
-  );
-
-  const yAxis = (
-    <Line
-      x1={padding}
-      y1={padding}
-      x2={padding}
-      y2={chartHeight - padding}
-      stroke="black"
-      strokeWidth={1}
-    />
-  );
-
-  const yAxisLabels = Array.from({ length: 6 }).map((_, i) => (
-    <Text
-      key={`yLabel-${i}`}
-      x={padding - 10}
-      y={chartHeight - padding - ((chartHeight - 2 * padding) * i) / 5}
-      textAnchor="end"
-      alignmentBaseline="middle"
-      fontSize={10}
-      fill="#555"
-    >
-      {5 - i}
-    </Text>
-  ));
-
-  const xAxisLabels = barChartData.labels.map((label, index) => (
-    <Text
-      key={`xLabel-${index}`}
-      x={
-        padding +
-        ((chartWidth - 2 * padding) * index) / (moduleAverages.length - 1)
-      }
-      y={chartHeight - padding + 16}
-      textAnchor="middle"
-      fontSize={10}
-      fill="#555"
-    >
-      {label}
-    </Text>
-  ));
 
   return (
     <S.Container>
