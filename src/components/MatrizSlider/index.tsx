@@ -9,15 +9,15 @@ import {
 } from 'react-native';
 import BarChartComponent, { BarChartProps } from '@components/BarChart';
 import * as S from './styles';
-import ModulesServices from '@services/ModuleServices';
 import ModuleGradeServices from '@services/ModuleGradeService';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import VisitGradeService from '@services/VisitGradesService';
 
 const MatrizSlider: React.FC = () => {
   const scrollRef = useRef<ScrollView>(null);
   const { width: windowWidth } = Dimensions.get('window');
-  const [moduleAverages, setModuleAverages] = useState<
-    BarChartProps['moduleAverages']
+  const [questionsBar, setQuestionsBar] = useState<
+    BarChartProps['questionsBar']
   >([]);
   const [moduleAll, setModuleAll] = useState<
     | {
@@ -37,20 +37,9 @@ const MatrizSlider: React.FC = () => {
     try {
       const moduleInfoAll = await ModuleGradeServices.getAllModulesInfo();
       setModuleAll(moduleInfoAll);
-      const modulesGrades = await ModuleGradeServices.getGradeModuleAll();
-      const modulesWithAverages = await Promise.all(
-        modulesGrades.map(async (module) => {
-          const moduleData = await ModulesServices.getModuleById(
-            module.moduleId
-          );
-          return {
-            module: module.moduleId,
-            nameModule: moduleData.name,
-            average: module.average,
-          };
-        })
-      );
-      return modulesWithAverages;
+      const averageGrades = await VisitGradeService.getAverageGrades();
+      setQuestionsBar(averageGrades);
+      return averageGrades;
     } catch (error) {
       console.error('Erro ao buscar médias dos módulos:', error);
       throw error;
@@ -78,8 +67,8 @@ const MatrizSlider: React.FC = () => {
   const handleReload = async () => {
     setIsLoading(true);
     try {
-      const moduleAveragesData = await fetchModuleGradesAverages();
-      setModuleAverages(moduleAveragesData);
+      const averageGrades = await fetchModuleGradesAverages();
+      setQuestionsBar(averageGrades);
     } catch (error) {
       console.error('Erro ao recarregar os dados:', error);
     } finally {
@@ -91,8 +80,8 @@ const MatrizSlider: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const moduleAveragesData = await fetchModuleGradesAverages();
-        setModuleAverages(moduleAveragesData);
+        const averageGrades = await fetchModuleGradesAverages();
+        setQuestionsBar(averageGrades);
       } catch (error) {
         console.error('Erro ao buscar dados:', error);
       }
@@ -127,7 +116,7 @@ const MatrizSlider: React.FC = () => {
               key={index}
               windowWidth={windowWidth}
               type={type}
-              moduleAverages={moduleAverages}
+              questionsBar={questionsBar}
               onReload={handleReload}
               currentIndex={currentIndex}
               sectionIndex={index}
@@ -143,7 +132,7 @@ const MatrizSlider: React.FC = () => {
 interface BarChartSectionProps {
   windowWidth: number;
   type: string;
-  moduleAverages: BarChartProps['moduleAverages'];
+  questionsBar: BarChartProps['questionsBar'];
   onReload: () => void;
   currentIndex: number;
   sectionIndex: number;
@@ -160,7 +149,7 @@ interface BarChartSectionProps {
 const BarChartSection: React.FC<BarChartSectionProps> = ({
   windowWidth,
   type,
-  moduleAverages,
+  questionsBar,
   onReload,
   currentIndex,
   sectionIndex,
@@ -181,8 +170,8 @@ const BarChartSection: React.FC<BarChartSectionProps> = ({
       {isVisible && (
         <BarChartComponent
           type={type}
-          moduleAverages={moduleAverages}
           infoAll={modulesInfoAll}
+          questionsBar={questionsBar}
         />
       )}
       <ReloadButton onPress={onReload} />

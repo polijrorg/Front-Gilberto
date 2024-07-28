@@ -15,10 +15,13 @@ import VisitGradesService from '@services/VisitGradesService';
 
 import ISeller from '@interfaces/Seller';
 import ICategories from '@interfaces/Visit/Categories';
-import QuestionsGrade from '@interfaces/Visit/QuestionGrade';
+import IQuestions from '@interfaces/Visit/Questions';
 import ITemplateVisit from '@interfaces/Visit/TemplateVisit';
 import PdfService from '@services/PdfService';
 import Visit from '@interfaces/Visit/Visit';
+import BarChartComponent from '@components/BarChart';
+import ModuleGradeServices from '@services/ModuleGradeService';
+import ModulesServices from '@services/ModuleServices';
 
 interface VisitGrade {
   questionId: string;
@@ -137,7 +140,6 @@ const EvaluateVisit = () => {
     }
 
     setIndexScreen(indexScreen < categories.length + 1 ? indexScreen + 1 : 1);
-    console.log('index:', indexScreen);
   };
 
   const handleNavigation = (index: number) => {
@@ -157,7 +159,6 @@ const EvaluateVisit = () => {
 
       setLoading(true);
       for (const answer of fetchedVisitGrade) {
-        console.log('answer:', answer);
         await createGrades(answer);
       }
       await pdfAndEmail(selectedSeller.id);
@@ -203,7 +204,6 @@ const EvaluateVisit = () => {
     visitId: string;
   }) => {
     try {
-      console.log(visitToDay);
       await VisitGradesService.create({
         grade: answer.grade,
         sellerId: answer.sellerId,
@@ -212,17 +212,6 @@ const EvaluateVisit = () => {
       });
     } catch (error) {
       console.error('Erro ao criar as notas:', error);
-    }
-  };
-
-  const updateGrades = async (
-    questionGrade: QuestionsGrade,
-    answer: { grade: number }
-  ) => {
-    try {
-      await VisitGradesService.update(questionGrade.id, answer.grade);
-    } catch (error) {
-      console.error('Erro ao atualizar as notas:', error);
     }
   };
 
@@ -295,7 +284,6 @@ const EvaluateVisit = () => {
                 onUpdateAnswers={handleUpdateAnswers}
               />
             ))}
-          {/* console.log('indexScreen:', indexScreen) */}
           {indexScreen <= categories.length && (
             <S.ButtonIniciar
               onPress={handleAdvance}
@@ -305,20 +293,79 @@ const EvaluateVisit = () => {
             </S.ButtonIniciar>
           )}
           {indexScreen > categories.length && user.job === 'Supervisor' && (
-            <FinishedSection
-              setStoreName={setStoreName}
-              selectedSeller={setSelectedSeller}
-              setIndexScreen={setIndexScreen}
-              finishedVisit={finishedVisit}
-              array={fetchedVisitGrade}
-              loading={loading}
-            />
+            <>
+              {/* <OverView
+                categories={categories}
+                sellerId={selectedSeller.id}
+                specificDate={dateVisited}
+              /> */}
+              <FinishedSection
+                setStoreName={setStoreName}
+                selectedSeller={setSelectedSeller}
+                setIndexScreen={setIndexScreen}
+                finishedVisit={finishedVisit}
+                array={fetchedVisitGrade}
+                loading={loading}
+              />
+            </>
           )}
         </S.ContainerFields>
       </S.WrapperView>
     </>
   );
 };
+
+// const OverView = ({ categories, sellerId, specificDate }) => {
+//   const [categoryQuestions, setCategoryQuestions] = useState([]);
+//   const [moduleAverages, setModuleAverages] = useState([]);
+
+//   useEffect(() => {
+//     const fetchQuestionsAndModules = async () => {
+//       try {
+//         // Fetch questions for each category
+//         const questionsPromises = categories.map((category) =>
+//           VisitService.getQuestionsByIdCategory(category.id)
+//         );
+//         const questionsResults = await Promise.all(questionsPromises);
+
+//         // Flatten the array of questions
+//         const questions = questionsResults.flat();
+//         setCategoryQuestions(questions);
+
+//         // Fetch module data (question names) and grades for each question
+//         const modulesWithAverages = await Promise.all(
+//           questions.map(async (question) => {
+//             const moduleData = await ModulesServices.getModuleById(question.id);
+//             const grade = await VisitGradesService.getGradeByQuestionAndSeller(
+//               question.id,
+//               sellerId,
+//               specificDate
+//             );
+//             return {
+//               module: question.id,
+//               nameModule: moduleData.name,
+//               average: grade.average,
+//             };
+//           })
+//         );
+
+//         // Set module averages state
+//         setModuleAverages(modulesWithAverages);
+//       } catch (error) {
+//         console.error(error);
+//       }
+//     };
+
+//     fetchQuestionsAndModules();
+//   }, [categories, sellerId, specificDate]);
+
+//   return (
+//     <S.ContainerFields>
+//       <S.Title>OverView</S.Title>
+//       <BarChartComponent type="modulo" moduleAverages={moduleAverages} />
+//     </S.ContainerFields>
+//   );
+// };
 
 const FinishedSection = ({
   setStoreName,

@@ -22,6 +22,15 @@ export default class VisitGradeService {
     return questionsResponse.data;
   }
 
+  static async getAverageGrades(): Promise<
+    { questionId: string; questionName: string; averageGrade: number }[]
+  > {
+    const response: AxiosResponse<
+      { questionId: string; questionName: string; averageGrade: number }[]
+    > = await api.get(`/questionsGrades/averageGradeByQuestions`);
+    return response.data;
+  }
+
   static async create({
     grade,
     sellerId,

@@ -15,9 +15,17 @@ export const WrapperView = styled(View)`
   display: flex;
 `;
 
+export const Title = styled(Text)`
+  font-family: Poppins;
+  font-size: 24px;
+  font-weight: bold;
+  text-transform: capitalize;
+  margin: 16px 0;
+`;
+
 export const ContainerFields = styled(View)`
   max-width: 100%;
-
+  display: flex;
   gap: 8px;
 `;
 

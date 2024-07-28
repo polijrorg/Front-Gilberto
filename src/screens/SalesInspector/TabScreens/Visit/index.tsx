@@ -19,6 +19,7 @@ import IQuestions from '@interfaces/Visit/Questions';
 import IQuestionGrade from '@interfaces/Visit/QuestionGrade';
 import SellerService from '@services/SellerServices';
 import Visit from '@interfaces/Visit/Visit';
+import User from '../../../../interfaces/User';
 
 const VisitComponent = ({ route }) => {
   const { idEmployee, cargo, companyId } = route.params;
@@ -35,17 +36,21 @@ const VisitComponent = ({ route }) => {
     [key: string]: IQuestionGrade[];
   }>({});
 
+  const { user } = useAuth();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (cargo === 'Vendedor') {
-          setLoading(true);
+        setLoading(true);
 
+        if (cargo === 'Vendedor') {
           const sellerData =
             await SellerService.getAllSellerFromCompany(companyId);
+
           const foundSeller = sellerData.find(
             (seller) => seller.id === idEmployee
           );
+
           if (foundSeller) {
             setSeller(foundSeller);
 
@@ -54,9 +59,24 @@ const VisitComponent = ({ route }) => {
             );
             setVisits(visitsData);
 
-            const templates = await VisitService.getTemplateByCompanyId(
-              foundSeller.companyId
-            );
+            // Busca todos os templates disponíveis
+            let templates = [];
+            if (user.managerId) {
+              templates = await VisitService.getTemplateByManagerId(
+                user.managerId
+              );
+            }
+            if (user.job === 'Diretor') {
+              const directorTemplates =
+                await VisitService.getTemplateByDirectorId(user.id);
+              templates = [...templates, ...directorTemplates];
+            }
+            if (user.companyId) {
+              const companyTemplates =
+                await VisitService.getTemplateByCompanyId(user.companyId);
+              templates = [...templates, ...companyTemplates];
+            }
+
             const fetchedCategories: { [key: string]: ICategories[] } = {};
             const fetchedQuestions: { [key: string]: IQuestions[] } = {};
             const fetchedQuestionGrades: { [key: string]: IQuestionGrade[] } =
@@ -71,11 +91,14 @@ const VisitComponent = ({ route }) => {
                 const categories = await VisitService.getCategoriesByIdTemplate(
                   template.id
                 );
+
                 for (const category of categories) {
                   if (category.visitTemplateId === visit.visitTemplateId) {
                     fetchedCategories[visit.id].push(category);
+
                     const questions =
                       await VisitService.getQuestionsByIdCategory(category.id);
+
                     const questionGrades =
                       await VisitGradesService.getAllQuestionsBySeller(
                         foundSeller.id
@@ -103,7 +126,15 @@ const VisitComponent = ({ route }) => {
     };
 
     fetchData();
-  }, [cargo, idEmployee, companyId]);
+  }, [
+    cargo,
+    idEmployee,
+    companyId,
+    user.managerId,
+    user.companyId,
+    user.job,
+    user.id,
+  ]);
 
   if (loading) {
     return (
@@ -118,14 +149,12 @@ const VisitComponent = ({ route }) => {
       questions[visitId]?.filter(
         (question) => question.categoriesId === categoryId
       ) || [];
-
     const relevantGrades =
       questionGrades[visitId]?.filter((grade) =>
         relevantQuestions.some(
           (question) => question.id === grade.questionsId && grade.grade !== 0
         )
       ) || [];
-
     const totalGrades = relevantGrades.reduce(
       (total, grade) => total + grade.grade,
       0
@@ -138,7 +167,6 @@ const VisitComponent = ({ route }) => {
       questions[visitId]?.filter(
         (question) => question.categoriesId === categoryId
       ) || [];
-
     const questionsWithGrades: { question: string; grade: string }[] = [];
 
     relevantQuestions.forEach((question) => {
@@ -183,15 +211,7 @@ const VisitComponent = ({ route }) => {
               </S.ViewWrapper>
             ))
           ) : (
-            <View
-              style={{
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
+            <View style={styles.noVisitsContainer}>
               <Text>{`${cargo} não tem visitas cadastradas.`}</Text>
             </View>
           )}
@@ -206,6 +226,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  noVisitsContainer: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

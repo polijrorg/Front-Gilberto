@@ -3,11 +3,16 @@ import * as S from './styles';
 import { Dimensions } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 import ScatterPlotComponent from '@components/Scratter';
+import IQuestionGrade from '@interfaces/Visit/QuestionGrade';
 
 export interface BarChartProps {
-  type: string;
-  moduleAverages: { module: string; nameModule: string; average: number }[];
-  infoAll:
+  type: 'modulo' | 'matriz' | string;
+  questionsBar?: {
+    questionId: string;
+    questionName: string;
+    averageGrade: number;
+  }[];
+  infoAll?:
     | {
         module: string;
         nameModule: string;
@@ -19,20 +24,19 @@ export interface BarChartProps {
 
 const BarChartComponent: React.FC<BarChartProps> = ({
   type,
-  moduleAverages,
+  questionsBar,
   infoAll,
 }) => {
   const chartWidth = Dimensions.get('window').width - 50;
   const chartHeight = 200;
-
   const barChartData = {
-    labels: moduleAverages.map((_item, index) => `${index + 1}`),
+    labels: questionsBar.map((_item, index) => `${index + 1}`),
     datasets: [
       {
-        data: moduleAverages.map((item) =>
-          Math.min(Math.max(item.average, 0), 5)
+        data: questionsBar.map((item) =>
+          Math.min(Math.max(item.averageGrade, 0), 5)
         ),
-        colors: moduleAverages.map(
+        colors: questionsBar.map(
           () =>
             (_opacity = 1) =>
               '#3E63DD'
