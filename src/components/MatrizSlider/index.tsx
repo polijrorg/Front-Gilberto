@@ -38,7 +38,7 @@ const MatrizSlider: React.FC = () => {
       setModuleAll(moduleInfoAll);
 
       const jobToServiceMap = {
-        supervisor: VisitGradeService.getAverageGradesSupervisor,
+        Supervisor: VisitGradeService.getAverageGradesSupervisor,
         Gerente: VisitGradeService.getAverageGradesManager,
       };
 
@@ -116,7 +116,7 @@ const MatrizSlider: React.FC = () => {
           onScroll={handleScroll}
           scrollEventThrottle={16}
         >
-          {data.map((type, index) => (
+          {data?.map((type, index) => (
             <BarChartSection
               key={index}
               windowWidth={windowWidth}

@@ -30,13 +30,13 @@ const BarChartComponent: React.FC<BarChartProps> = ({
   const chartWidth = Dimensions.get('window').width - 50;
   const chartHeight = 200;
   const barChartData = {
-    labels: questionsBar.map((_item, index) => `${index + 1}`),
+    labels: questionsBar?.map((_item, index) => `${index + 1}`),
     datasets: [
       {
-        data: questionsBar.map((item) =>
+        data: questionsBar?.map((item) =>
           Math.min(Math.max(item.averageGrade, 0), 5)
         ),
-        colors: questionsBar.map(
+        colors: questionsBar?.map(
           () =>
             (_opacity = 1) =>
               '#3E63DD'

@@ -48,7 +48,7 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
   );
 
   // Rótulos e marcadores dos eixos
-  const yAxisLabels = Array.from({ length: 6 }).map((_, i) => (
+  const yAxisLabels = Array.from({ length: 6 })?.map((_, i) => (
     <Text
       key={`yLabel-${i}`}
       x={padding - labelOffset}
@@ -62,7 +62,7 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
     </Text>
   ));
 
-  const xAxisLabels = Array.from({ length: 6 }).map((_, i) => (
+  const xAxisLabels = Array.from({ length: 6 })?.map((_, i) => (
     <Text
       key={`xLabel-${i}`}
       x={padding + ((chartWidth - 2 * padding) * i) / 5}
@@ -126,7 +126,7 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
   );
 
   // Cálculo das coordenadas para os círculos
-  const circles = moduleAverages.map((item, index) => {
+  const circles = moduleAverages?.map((item, index) => {
     const x =
       padding + ((chartWidth - 2 * padding) * (item.implementation - 1)) / 4;
     const y =
