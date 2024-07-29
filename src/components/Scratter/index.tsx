@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import * as S from './styles';
-import { Dimensions } from 'react-native';
+import { Dimensions, TouchableOpacity } from 'react-native';
 import Svg, { Circle, Line, Text } from 'react-native-svg';
+import SellerService from '@services/SellerServices';
+import { FontAwesome } from '@expo/vector-icons';
 
 export interface ScatterPlotProps {
   moduleAverages:
@@ -16,16 +18,51 @@ export interface ScatterPlotProps {
 const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
   moduleAverages,
 }) => {
-  const padding = 40; // Espaçamento interno do gráfico
-  const chartWidth = Dimensions.get('window').width - 50; // Largura do gráfico
-  const chartHeight = 270; // Altura do gráfico
-  const circleRadius = 5; // Raio do círculo que representa cada ponto
-  const labelOffset = 10; // Espaçamento entre os rótulos e os eixos
-  const axisLabelOffset = 20; // Distância das linhas de indicação aos eixos
-  const middleLineColor = '#C6D4F9'; // Cor das linhas de meio
-  const textColor = '#687076'; // Cor dos textos
+  const [tooltip, setTooltip] = useState<{
+    visible: boolean;
+    x: number;
+    y: number;
+    name: string;
+    averageImplementation: number;
+    averageKnowledge: number;
+  } | null>(null);
 
-  // Eixos X e Y do gráfico de dispersão
+  const padding = 40;
+  const chartWidth = Dimensions.get('window').width - 20;
+  const chartHeight = 290;
+  const circleRadius = 6;
+  const labelOffset = 12;
+  const axisLabelOffset = 20;
+  const middleLineColor = '#C6D4F9';
+  const textColor = '#687076';
+
+  // Função para lidar com o clique no ponto
+  const handleCirclePress = async (
+    event: any,
+    sellerId: string,
+    averageImplementation: number,
+    averageKnowledge: number,
+    x: number,
+    y: number
+  ) => {
+    const seller = await SellerService.findSellerById(sellerId);
+
+    // Se o tooltip já estiver visível e nas mesmas coordenadas, esconda-o
+    if (tooltip && tooltip.visible && tooltip.x === x && tooltip.y === y) {
+      setTooltip(null);
+    } else {
+      setTooltip({
+        visible: true,
+        x,
+        y,
+        name: seller.name,
+        averageImplementation,
+        averageKnowledge,
+      });
+    }
+  };
+
+  // Eixo X - Conhecimento
   const xAxis = (
     <Line
       x1={padding}
@@ -37,6 +74,7 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
     />
   );
 
+  // Eixo Y - Implementação
   const yAxis = (
     <Line
       x1={padding}
@@ -48,35 +86,35 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
     />
   );
 
-  // Rótulos e marcadores dos eixos
-  const yAxisLabels = Array.from({ length: 6 }).map((_, i) => (
-    <Text
-      key={`yLabel-${i}`}
-      x={padding - labelOffset}
-      y={chartHeight - padding - ((chartHeight - 2 * padding) * i) / 5}
-      textAnchor="middle"
-      alignmentBaseline="middle"
-      fontSize={10}
-      fill={textColor}
-    >
-      {((i / 5) * 4).toFixed(1)} {/* Ajuste para mostrar valores de 0 a 4 */}
-    </Text>
-  ));
-
+  // Rótulos do eixo X - Conhecimento
   const xAxisLabels = Array.from({ length: 6 }).map((_, i) => (
     <Text
       key={`xLabel-${i}`}
       x={padding + ((chartWidth - 2 * padding) * i) / 5}
-      y={chartHeight - padding + labelOffset * 2}
+      y={chartHeight - padding + axisLabelOffset}
       textAnchor="middle"
-      fontSize={10}
+      fontSize={9}
       fill={textColor}
     >
-      {((i / 5) * 4).toFixed(1)} {/* Ajuste para mostrar valores de 0 a 4 */}
+      {((i / 5) * 5).toFixed(1).replace('.', ',')}
     </Text>
   ));
 
-  // Linha de indicação "Implementation"
+  // Rótulos do eixo Y - Implementação
+  const yAxisLabels = Array.from({ length: 6 }).map((_, i) => (
+    <Text
+      key={`yLabel-${i}`}
+      x={padding - axisLabelOffset}
+      y={chartHeight - padding - ((chartHeight - 2 * padding) * i) / 5}
+      textAnchor="middle"
+      fontSize={9}
+      fill={textColor}
+    >
+      {((i / 5) * 5).toFixed(1).replace('.', ',')}
+    </Text>
+  ));
+
+  // Linha de Implementação
   const implementationLine = (
     <Line
       x1={padding}
@@ -88,20 +126,21 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
     />
   );
 
+  // Rótulo da Linha de Implementação (Girado 180 graus)
   const implementationLabel = (
     <Text
-      x={chartWidth - padding}
-      y={chartHeight - padding - (chartHeight - 2 * padding) / 2 + labelOffset}
-      textAnchor="end"
-      alignmentBaseline="middle"
-      fontSize={10}
+      x={chartWidth - 80 + labelOffset}
+      y={chartHeight - padding - (chartHeight - 2 * padding) / 2}
+      textAnchor="start"
+      fontSize={12}
       fill={textColor}
+      transform={`rotate(90 ${chartWidth - padding + labelOffset},${chartHeight - padding - (chartHeight - 2 * padding) / 2})`}
     >
       Implementação
     </Text>
   );
 
-  // Linha de indicação "Knowledge"
+  // Linha de Conhecimento
   const knowledgeLine = (
     <Line
       x1={padding + (chartWidth - 2 * padding) / 2}
@@ -113,29 +152,51 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
     />
   );
 
+  // Rótulo da Linha de Conhecimento
   const knowledgeLabel = (
     <Text
-      x={padding + (chartWidth - 2 * padding) / 2 - labelOffset}
-      y={padding - 10}
+      x={padding + (chartWidth - 2 * padding) / 2}
+      y={padding - labelOffset}
       textAnchor="middle"
-      alignmentBaseline="middle"
-      fontSize={10}
+      fontSize={12}
       fill={textColor}
     >
       Conhecimento
     </Text>
   );
 
-  // Cálculo das coordenadas para os círculos
+  // Circulos
   const circles = moduleAverages.map((item, index) => {
     const x =
-      padding + ((chartWidth - 2 * padding) * item.averageImplementation) / 4;
+      padding + ((chartWidth - 2 * padding) * item.averageKnowledge) / 5;
     const y =
       chartHeight -
       padding -
-      ((chartHeight - 2 * padding) * item.averageKnowledge) / 4;
-    return <Circle key={index} cx={x} cy={y} r={circleRadius} fill="#3E63DD" />;
+      ((chartHeight - 2 * padding) * item.averageImplementation) / 5;
+    return (
+      <Circle
+        key={index}
+        cx={x}
+        cy={y}
+        r={circleRadius}
+        fill="#3E63DD"
+        onPress={(event) =>
+          handleCirclePress(
+            event,
+            item.sellerId,
+            item.averageImplementation,
+            item.averageKnowledge,
+            x,
+            y
+          )
+        }
+      />
+    );
   });
+
+  const handleCloseTooltip = () => {
+    setTooltip(null);
+  };
 
   return (
     <S.Container>
@@ -145,11 +206,34 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
         {yAxis}
         {yAxisLabels}
         {circles}
-        {implementationLine}
-        {implementationLabel}
         {knowledgeLine}
         {knowledgeLabel}
+        {implementationLine}
+        {implementationLabel}
       </Svg>
+      {tooltip?.visible && (
+        <S.Tooltip
+          style={{
+            left: tooltip.x,
+            top: tooltip.y,
+          }}
+        >
+          <S.CloseButton onPress={handleCloseTooltip}>
+            <S.CloseButtonText>
+              <FontAwesome name="close" size={12} color="#750101" />
+            </S.CloseButtonText>
+          </S.CloseButton>
+          <S.TooltipText>{tooltip.name}</S.TooltipText>
+          <S.TooltipText>
+            Implementação:{' '}
+            {tooltip.averageImplementation.toFixed(1).replace('.', ',')}
+          </S.TooltipText>
+          <S.TooltipText>
+            Conhecimento:{' '}
+            {tooltip.averageKnowledge.toFixed(1).replace('.', ',')}
+          </S.TooltipText>
+        </S.Tooltip>
+      )}
     </S.Container>
   );
 };

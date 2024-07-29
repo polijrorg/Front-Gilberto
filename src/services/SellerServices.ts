@@ -75,6 +75,11 @@ export default class SellerService {
     return sellerResponse.data;
   }
 
+  static async findSellerById(idSeller: string): Promise<ISeller> {
+    const sellerResponse = await api.get(`/seller/${idSeller}`);
+    return sellerResponse.data;
+  }
+
   static async getManagerAndDirectorFromSeller(
     idSeller: string
   ): Promise<{ managerId: string | null; directorId: string | null } | null> {
