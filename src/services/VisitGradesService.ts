@@ -22,12 +22,29 @@ export default class VisitGradeService {
     return questionsResponse.data;
   }
 
-  static async getAverageGrades(): Promise<
+  static async getAverageGradesSupervisor(
+    idSupervisor: string
+  ): Promise<
     { questionId: string; questionName: string; averageGrade: number }[]
   > {
     const response: AxiosResponse<
       { questionId: string; questionName: string; averageGrade: number }[]
-    > = await api.get(`/questionsGrades/averageGradeByQuestions`);
+    > = await api.get(
+      `/questionsGrades/averageGradeByQuestions/supervisor/${idSupervisor}`
+    );
+    return response.data;
+  }
+
+  static async getAverageGradesManager(
+    idManager: string
+  ): Promise<
+    { questionId: string; questionName: string; averageGrade: number }[]
+  > {
+    const response: AxiosResponse<
+      { questionId: string; questionName: string; averageGrade: number }[]
+    > = await api.get(
+      `/questionsGrades/averageGradeByQuestions/manager/${idManager}`
+    );
     return response.data;
   }
 

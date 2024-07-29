@@ -1,14 +1,16 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 import * as S from './styles';
 import BarChartComponent, { BarChartProps } from '@components/BarChart';
 import ModuleGradeServices from '@services/ModuleGradeService';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import VisitGradeService from '@services/VisitGradesService';
+import useAuth from '@hooks/useAuth';
 
 const MatrizSlider: React.FC = () => {
   const scrollRef = useRef<ScrollView>(null);
   const { width: windowWidth } = Dimensions.get('window');
+
   const [questionsBar, setQuestionsBar] = useState<
     BarChartProps['questionsBar']
   >([]);
@@ -21,17 +23,32 @@ const MatrizSlider: React.FC = () => {
       }[]
     | null
   >();
+
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const { user } = useAuth();
+
   const data = ['modulo', 'matriz'];
 
-  const fetchModuleGradesAverages = async () => {
+  const fetchModuleGradesAverages = useCallback(async () => {
     try {
       const moduleInfoAll = await ModuleGradeServices.getAllModulesInfo();
       console.log('moduleInfoAll:', moduleInfoAll);
       setModuleAll(moduleInfoAll);
-      const averageGrades = await VisitGradeService.getAverageGrades();
+
+      const jobToServiceMap = {
+        supervisor: VisitGradeService.getAverageGradesSupervisor,
+        Gerente: VisitGradeService.getAverageGradesManager,
+      };
+
+      const fetchAverageGrades = jobToServiceMap[user.job];
+
+      if (!fetchAverageGrades) {
+        throw new Error(`Invalid job type: ${user.job}`);
+      }
+
+      const averageGrades = await fetchAverageGrades(user.id);
       setQuestionsBar(averageGrades);
       return averageGrades;
     } catch (error) {
@@ -40,9 +57,11 @@ const MatrizSlider: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user.id, user.job]);
 
-  const handleScroll = (event) => {
+  const handleScroll = (event: {
+    nativeEvent: { contentOffset: { x: any } };
+  }) => {
     const offsetX = event.nativeEvent.contentOffset.x;
     const index = Math.round(offsetX / windowWidth);
     setCurrentIndex(index);
@@ -80,7 +99,7 @@ const MatrizSlider: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [fetchModuleGradesAverages]);
 
   return (
     <S.Wrapper>
