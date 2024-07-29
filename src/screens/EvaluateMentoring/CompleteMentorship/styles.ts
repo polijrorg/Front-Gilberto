@@ -16,6 +16,7 @@ export const Wrapper = styled(ScrollView)`
   margin-top: ${RNStatusBar.currentHeight || 0}px;
   background-color: ${theme.colors.primary.main};
   position: relative;
+  padding: 24px;
 `;
 
 export const DivFields = styled(View)`

@@ -30,7 +30,6 @@ const MatrizSlider: React.FC = () => {
         user.id
       );
       setModuleAll(moduleInfoAll);
-
       const jobToServiceMap = {
         Supervisor: VisitGradeService.getAverageGradesSupervisor,
         Gerente: VisitGradeService.getAverageGradesManager,
