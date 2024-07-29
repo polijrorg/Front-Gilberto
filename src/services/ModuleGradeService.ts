@@ -19,6 +19,7 @@ interface ModuleGradeUpdate {
 }
 
 import api from './api';
+import { ScatterPlotProps } from '@components/Scratter';
 
 export default class ModuleGradeServices {
   static async create({
@@ -59,24 +60,11 @@ export default class ModuleGradeServices {
     });
   }
 
-  static async getAllModulesInfo(): Promise<
-    | {
-        module: string;
-        nameModule: string;
-        knowledge: number;
-        implementation: number;
-      }[]
-    | null
-  > {
-    const moduleGradeSellerResponse: AxiosResponse<
-      | {
-          module: string;
-          nameModule: string;
-          knowledge: number;
-          implementation: number;
-        }[]
-      | null
-    > = await api.get(`/module/getAllModuleInfo`);
+  static async getAllModulesInfo(
+    supervisorID: string
+  ): Promise<ScatterPlotProps[]> {
+    const moduleGradeSellerResponse: AxiosResponse<ScatterPlotProps[]> =
+      await api.get(`/module/getAllModuleInfo/${supervisorID}`);
     return moduleGradeSellerResponse.data;
   }
 

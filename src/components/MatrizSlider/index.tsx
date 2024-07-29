@@ -6,6 +6,7 @@ import ModuleGradeServices from '@services/ModuleGradeService';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import VisitGradeService from '@services/VisitGradesService';
 import useAuth from '@hooks/useAuth';
+import { ScatterPlotProps } from '@components/Scratter';
 
 const MatrizSlider: React.FC = () => {
   const scrollRef = useRef<ScrollView>(null);
@@ -14,15 +15,7 @@ const MatrizSlider: React.FC = () => {
   const [questionsBar, setQuestionsBar] = useState<
     BarChartProps['questionsBar']
   >([]);
-  const [moduleAll, setModuleAll] = useState<
-    | {
-        module: string;
-        nameModule: string;
-        knowledge: number;
-        implementation: number;
-      }[]
-    | null
-  >();
+  const [moduleAll, setModuleAll] = useState<ScatterPlotProps[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -33,8 +26,9 @@ const MatrizSlider: React.FC = () => {
 
   const fetchModuleGradesAverages = useCallback(async () => {
     try {
-      const moduleInfoAll = await ModuleGradeServices.getAllModulesInfo();
-      console.log('moduleInfoAll:', moduleInfoAll);
+      const moduleInfoAll = await ModuleGradeServices.getAllModulesInfo(
+        user.id
+      );
       setModuleAll(moduleInfoAll);
 
       const jobToServiceMap = {
@@ -91,11 +85,7 @@ const MatrizSlider: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        await fetchModuleGradesAverages();
-      } catch (error) {
-        console.error('Erro ao buscar dados:', error);
-      }
+      await fetchModuleGradesAverages();
     };
 
     fetchData();
@@ -141,14 +131,7 @@ interface BarChartSectionProps {
   onReload: () => void;
   currentIndex: number;
   sectionIndex: number;
-  modulesInfoAll:
-    | {
-        module: string;
-        nameModule: string;
-        knowledge: number;
-        implementation: number;
-      }[]
-    | null;
+  modulesInfoAll: ScatterPlotProps[];
 }
 
 const BarChartSection: React.FC<BarChartSectionProps> = ({
@@ -167,7 +150,7 @@ const BarChartSection: React.FC<BarChartSectionProps> = ({
       {isVisible && (
         <BarChartComponent
           type={type}
-          infoAll={modulesInfoAll}
+          moduleAverages={modulesInfoAll}
           questionsBar={questionsBar}
         />
       )}

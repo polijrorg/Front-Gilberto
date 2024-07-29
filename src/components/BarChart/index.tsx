@@ -2,8 +2,7 @@ import React from 'react';
 import * as S from './styles';
 import { Dimensions } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
-import ScatterPlotComponent from '@components/Scratter';
-import IQuestionGrade from '@interfaces/Visit/QuestionGrade';
+import ScatterPlotComponent, { ScatterPlotProps } from '@components/Scratter';
 
 export interface BarChartProps {
   type: 'modulo' | 'matriz' | string;
@@ -12,20 +11,13 @@ export interface BarChartProps {
     questionName: string;
     averageGrade: number;
   }[];
-  infoAll?:
-    | {
-        module: string;
-        nameModule: string;
-        knowledge: number;
-        implementation: number;
-      }[]
-    | null;
+  moduleAverages?: ScatterPlotProps[];
 }
 
 const BarChartComponent: React.FC<BarChartProps> = ({
   type,
   questionsBar,
-  infoAll,
+  moduleAverages,
 }) => {
   const chartWidth = Dimensions.get('window').width - 50;
   const chartHeight = 200;
@@ -81,7 +73,17 @@ const BarChartComponent: React.FC<BarChartProps> = ({
           />
         </>
       )}
-      {type === 'matriz' && <ScatterPlotComponent moduleAverages={infoAll} />}
+      {type === 'matriz' && (
+        <ScatterPlotComponent
+          moduleAverages={
+            moduleAverages as unknown as {
+              averageImplementation: number;
+              averageKnowledge: number;
+              sellerId: string;
+            }[]
+          }
+        />
+      )}
     </S.Container>
   );
 };

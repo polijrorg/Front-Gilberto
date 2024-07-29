@@ -1,15 +1,16 @@
 import React from 'react';
 import * as S from './styles';
 import { Dimensions } from 'react-native';
-import Svg, { Circle, Line, Text, Rect } from 'react-native-svg';
+import Svg, { Circle, Line, Text } from 'react-native-svg';
 
 export interface ScatterPlotProps {
-  moduleAverages: {
-    module: string;
-    nameModule: string;
-    knowledge: number;
-    implementation: number;
-  }[];
+  moduleAverages:
+    | {
+        averageImplementation: number;
+        averageKnowledge: number;
+        sellerId: string;
+      }[]
+    | null;
 }
 
 const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
@@ -48,7 +49,7 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
   );
 
   // Rótulos e marcadores dos eixos
-  const yAxisLabels = Array.from({ length: 6 })?.map((_, i) => (
+  const yAxisLabels = Array.from({ length: 6 }).map((_, i) => (
     <Text
       key={`yLabel-${i}`}
       x={padding - labelOffset}
@@ -58,20 +59,20 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
       fontSize={10}
       fill={textColor}
     >
-      {i}
+      {((i / 5) * 4).toFixed(1)} {/* Ajuste para mostrar valores de 0 a 4 */}
     </Text>
   ));
 
-  const xAxisLabels = Array.from({ length: 6 })?.map((_, i) => (
+  const xAxisLabels = Array.from({ length: 6 }).map((_, i) => (
     <Text
       key={`xLabel-${i}`}
       x={padding + ((chartWidth - 2 * padding) * i) / 5}
-      y={chartHeight - padding + labelOffset * 2} // Ajustado o espaçamento abaixo do eixo X
+      y={chartHeight - padding + labelOffset * 2}
       textAnchor="middle"
       fontSize={10}
       fill={textColor}
     >
-      {i}
+      {((i / 5) * 4).toFixed(1)} {/* Ajuste para mostrar valores de 0 a 4 */}
     </Text>
   ));
 
@@ -126,13 +127,13 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
   );
 
   // Cálculo das coordenadas para os círculos
-  const circles = moduleAverages?.map((item, index) => {
+  const circles = moduleAverages.map((item, index) => {
     const x =
-      padding + ((chartWidth - 2 * padding) * (item.implementation - 1)) / 4;
+      padding + ((chartWidth - 2 * padding) * item.averageImplementation) / 4;
     const y =
       chartHeight -
       padding -
-      ((chartHeight - 2 * padding) * (item.knowledge - 1)) / 4;
+      ((chartHeight - 2 * padding) * item.averageKnowledge) / 4;
     return <Circle key={index} cx={x} cy={y} r={circleRadius} fill="#3E63DD" />;
   });
 
