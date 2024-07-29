@@ -17,6 +17,12 @@ export default class SupervisorServices {
     return supervisor || null;
   }
 
+  static async findByID(supervisorId: string): Promise<ISupervisor> {
+    const response = await api.get<ISupervisor>(`/supervisor/${supervisorId}`);
+
+    return response.data;
+  }
+
   static async getAllSupervisorsFromManager(
     managerId: string
   ): Promise<ISupervisor[]> {

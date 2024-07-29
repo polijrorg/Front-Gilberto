@@ -4,6 +4,8 @@ import { Dimensions, TouchableOpacity } from 'react-native';
 import Svg, { Circle, Line, Text } from 'react-native-svg';
 import SellerService from '@services/SellerServices';
 import { FontAwesome } from '@expo/vector-icons';
+import SupervisorServices from '@services/SupervisorServices';
+import useAuth from '@hooks/useAuth';
 
 export interface ScatterPlotProps {
   moduleAverages:
@@ -23,9 +25,14 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
     x: number;
     y: number;
     name: string;
+    supervisorName: string;
     averageImplementation: number;
     averageKnowledge: number;
   } | null>(null);
+
+  const [selectedSellerId, setSelectedSellerId] = useState<string | null>(null);
+
+  const { user } = useAuth();
 
   const padding = 40;
   const chartWidth = Dimensions.get('window').width - 20;
@@ -35,6 +42,7 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
   const axisLabelOffset = 20;
   const middleLineColor = '#C6D4F9';
   const textColor = '#687076';
+  const selectedCircleColor = '#FF6347'; // Cor para o ponto selecionado
 
   // Função para lidar com o clique no ponto
   const handleCirclePress = async (
@@ -46,19 +54,23 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
     y: number
   ) => {
     const seller = await SellerService.findSellerById(sellerId);
+    const supervisor = await SupervisorServices.findByID(seller.supervisorId);
 
     // Se o tooltip já estiver visível e nas mesmas coordenadas, esconda-o
     if (tooltip && tooltip.visible && tooltip.x === x && tooltip.y === y) {
       setTooltip(null);
+      setSelectedSellerId(null); // Resetar seleção ao fechar o tooltip
     } else {
       setTooltip({
         visible: true,
         x,
         y,
         name: seller.name,
+        supervisorName: supervisor.name,
         averageImplementation,
         averageKnowledge,
       });
+      setSelectedSellerId(sellerId); // Selecionar o ponto
     }
   };
 
@@ -179,7 +191,9 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
         cx={x}
         cy={y}
         r={circleRadius}
-        fill="#3E63DD"
+        fill={
+          selectedSellerId === item.sellerId ? selectedCircleColor : '#3E63DD'
+        } // Cor do ponto selecionado
         onPress={(event) =>
           handleCirclePress(
             event,
@@ -196,6 +210,30 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
 
   const handleCloseTooltip = () => {
     setTooltip(null);
+    setSelectedSellerId(null); // Resetar seleção ao fechar o tooltip
+  };
+
+  // Função para ajustar a posição do tooltip
+  const adjustTooltipPosition = (tooltipX: number, tooltipY: number) => {
+    const { width: windowWidth, height: windowHeight } =
+      Dimensions.get('window');
+    const tooltipWidth = 200; // Ajuste conforme necessário
+    const tooltipHeight = 100; // Ajuste conforme necessário
+
+    let adjustedX = tooltipX;
+    let adjustedY = tooltipY + circleRadius + 10; // Mantenha o tooltip abaixo da bolinha
+
+    // Ajuste horizontal
+    if (adjustedX + tooltipWidth > windowWidth) {
+      adjustedX = windowWidth - tooltipWidth - 10; // 10px de margem
+    }
+
+    // Ajuste vertical
+    if (adjustedY + tooltipHeight > windowHeight) {
+      adjustedY = windowHeight - tooltipHeight - 10; // 10px de margem
+    }
+
+    return { x: adjustedX, y: adjustedY };
   };
 
   return (
@@ -214,8 +252,8 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
       {tooltip?.visible && (
         <S.Tooltip
           style={{
-            left: tooltip.x,
-            top: tooltip.y,
+            left: adjustTooltipPosition(tooltip.x, tooltip.y).x,
+            top: adjustTooltipPosition(tooltip.x, tooltip.y).y,
           }}
         >
           <S.CloseButton onPress={handleCloseTooltip}>
@@ -223,13 +261,16 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
               <FontAwesome name="close" size={12} color="#750101" />
             </S.CloseButtonText>
           </S.CloseButton>
-          <S.TooltipText>{tooltip.name}</S.TooltipText>
           <S.TooltipText>
-            Implementação:{' '}
+            {tooltip.name}
+            {user.job === 'Gerente' && (
+              <S.TooltipText>
+                {'\n'}Responsável: {tooltip.supervisorName}
+              </S.TooltipText>
+            )}
+            {'\n'}Implementação:{' '}
             {tooltip.averageImplementation.toFixed(1).replace('.', ',')}
-          </S.TooltipText>
-          <S.TooltipText>
-            Conhecimento:{' '}
+            {'\n'}Conhecimento:{' '}
             {tooltip.averageKnowledge.toFixed(1).replace('.', ',')}
           </S.TooltipText>
         </S.Tooltip>

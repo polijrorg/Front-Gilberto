@@ -22,7 +22,7 @@ export const TitleSlider = styled(Text)`
 export const Tooltip = styled(View)`
   position: absolute;
   background-color: #fff;
-  padding: 10px;
+  padding: 10px 20px;
   border-radius: 8px;
   shadow-color: #000;
   shadow-offset: 0px 4px;
