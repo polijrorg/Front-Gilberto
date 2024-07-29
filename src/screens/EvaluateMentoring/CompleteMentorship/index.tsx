@@ -8,13 +8,7 @@ import DivGradient from '@components/DivGradient';
 import HeaderPages from '@components/HeaderPages';
 import ISeller from '@interfaces/Seller';
 import { useToast } from 'react-native-toast-notifications';
-import {
-  ActivityIndicator,
-  View,
-  Text,
-  StyleSheet,
-  Platform,
-} from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDataContext } from '../../../context/DataContext';
 import SellerServices from '@services/SellerServices';
@@ -187,6 +181,7 @@ interface ModuleEvaluationProps {
     comment?: string;
   };
 }
+
 const ModuleEvaluation: React.FC<ModuleEvaluationProps> = ({ moduleData }) => {
   const [module, setModule] = useState<IModule | null>(null);
 
@@ -210,64 +205,30 @@ const ModuleEvaluation: React.FC<ModuleEvaluationProps> = ({ moduleData }) => {
   }
 
   return (
-    <View style={styles.moduleContainer}>
+    <S.ModuleContainer>
       {module.name && (
-        <Text style={styles.moduleName}>Módulo Nome: {module?.name || ''}</Text>
+        <S.ModuleName>Módulo Nome: {module?.name || ''}</S.ModuleName>
       )}
       {moduleData.conhecimento !== undefined && (
-        <Text style={styles.moduleLabel}>
+        <S.ModuleLabel>
           Conhecimento:{' '}
           {moduleData?.conhecimento?.toFixed(2).replace('.', ',') || ''}
-        </Text>
+        </S.ModuleLabel>
       )}
       {moduleData.implementacao !== undefined && (
-        <Text style={styles.moduleLabel}>
+        <S.ModuleLabel>
           Implementação:{' '}
           {moduleData?.implementacao?.toFixed(2).replace('.', ',') || ''}
-        </Text>
+        </S.ModuleLabel>
       )}
       {moduleData.comment && (
-        <Text style={styles.moduleLabel}>
+        <S.ModuleLabel>
           {'Comentário: ' + moduleData?.comment || ''}
-        </Text>
+        </S.ModuleLabel>
       )}
-    </View>
+    </S.ModuleContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  moduleContainer: {
-    maxWidth: '95%',
-    minWidth: '95%',
-    padding: 16,
-    marginHorizontal: 'auto',
-    marginVertical: 8,
-    backgroundColor: '#fff',
-    borderRadius: 4,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-      },
-      android: {
-        elevation: 2,
-      },
-    }),
-  },
-  moduleName: {
-    fontWeight: 'bold',
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  moduleLabel: {
-    fontSize: 12,
-    fontFamily: 'Poppins',
-    marginBottom: 4,
-  },
-});
 
 const ButtonsSection: React.FC<{
   handleComplete: () => void;

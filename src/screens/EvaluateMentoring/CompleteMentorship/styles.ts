@@ -2,10 +2,9 @@ import {
   ScrollView,
   View,
   Text,
-  StatusBar as RNStatusBar,
   TouchableOpacity,
   Image,
-  TextInput,
+  StatusBar as RNStatusBar,
 } from 'react-native';
 import styled from 'styled-components/native';
 import { theme } from '@styles/default.theme';
@@ -16,7 +15,6 @@ export const Wrapper = styled(ScrollView)`
   margin-top: ${RNStatusBar.currentHeight || 0}px;
   background-color: ${theme.colors.primary.main};
   position: relative;
-  padding: 24px;
 `;
 
 export const DivFields = styled(View)`
@@ -48,131 +46,62 @@ export const TextName = styled(Text)`
 
 export const TextFunction = styled(Text)`
   font-family: Poppins;
-  color: #fbfcfd;
-  font-size: 16px;
+  color: #b7b8bb;
+  font-size: 14px;
+`;
+
+export const BtnHomeScreen = styled(TouchableOpacity)`
+  padding: 12px;
 `;
 
 export const DivTexts = styled(View)`
-  display: flex;
-  margin-left: 16px;
-  align-items: flex-start;
-  flex-direction: column;
+  padding-left: 10px;
 `;
 
-export const Container = styled(View)`
-  width: 100%;
-  height: auto;
-  padding: 0 16px;
-  margin: 24px auto;
-  gap: 24px;
+export const ModuleContainer = styled(View)`
+  margin: 10px 24px;
+  padding: 24px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
-export const BtnHomeScreen = styled(TouchableOpacity)``;
-
-export const DivInputs = styled(View)`
-  display: flex;
-  gap: 8px;
+export const ModuleName = styled(Text)`
+  font-family: PoppinsBold;
+  font-size: 16px;
+  color: ${theme.colors.primary.dark};
 `;
 
-export const Label = styled(Text)`
+export const ModuleLabel = styled(Text)`
   font-family: Poppins;
   font-size: 14px;
-  color: #11181c;
-`;
-
-export const InputAction = styled(TextInput)`
-  background-color: #f1f3f5;
-  border: 1px;
-  border-width: 1px;
-  border-color: #d7dbdf;
-  color: #687076;
-  font-size: 16px;
-  padding: 4px 10px;
-  border-radius: 8px;
-`;
-
-export const TextArea = styled(TextInput)`
-  background-color: #f1f3f5;
-  border: 1px;
-  border-width: 1px;
-  border-color: #d7dbdf;
-  color: #687076;
-  font-size: 16px;
-  padding: 16px;
-  border-radius: 8px;
-  vertical-align: top;
-`;
-
-export const DivPicker = styled(View)`
-  display: flex;
-  flex-direction: row;
-`;
-
-export const BtnData = styled(TouchableOpacity)`
-  border-radius: 8px;
-  border-radius: 1px;
-  color: #687076;
-  background-color: #f1f3f5;
-  border: 1px solid #d7dbdf;
-  padding: 8px 12px;
-  border: 1px solid #ccc2;
-`;
-
-export const TextBtnData = styled(Text)`
-  font-size: 16px;
-  font-family: Poppins;
+  color: ${theme.colors.primary.dark};
+  margin-top: 5px;
 `;
 
 export const BtnConcluirPlano = styled(TouchableOpacity)`
-  width: 95%;
-  padding: 10px 8px;
-  font-size: 16px;
-  margin: 0 auto;
-  display: flex;
+  height: 56px;
+  border-radius: 8px;
   justify-content: center;
   align-items: center;
-  border-radius: 8px;
+  margin: 24px 24px;
   background-color: ${theme.colors.secundary.main};
 `;
 
-export const Message = styled(Text)`
+export const TextBtnPlano = styled(Text)`
+  font-family: PoppinsBold;
   font-size: 16px;
-  color: #888;
-  text-align: center;
-  font-family: Poppins;
-  margin-top: 20px;
+  color: white;
 `;
 
 export const ViewWrapperCrome = styled(View)`
-  width: 100%;
-  height: 40%;
-  display: flex;
-  justify-content: center;
+  flex: 1;
   align-items: center;
-`;
-
-export const BtnConcluirSemPlano = styled(TouchableOpacity)`
-  width: 100%;
-  padding: 10px 8px;
-  font-size: 16px;
-  margin: 16px auto;
-  display: flex;
   justify-content: center;
-  align-items: center;
-  border-radius: 8px;
-  border-width: 1px;
-  border-color: ${theme.colors.secundary.main};
-  background-color: ${theme.colors.primary.main};
 `;
 
-export const TextBtnPlano = styled(Text)`
+export const Message = styled(Text)`
   font-family: Poppins;
-  color: #f8faff;
-  text-transform: uppercase;
-`;
-
-export const TextBtnSemPlano = styled(Text)`
-  font-family: Poppins;
-  text-transform: uppercase;
-  color: ${theme.colors.secundary.main};
+  color: white;
+  font-size: 18px;
 `;
