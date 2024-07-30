@@ -339,7 +339,6 @@ const OverView: React.FC<OverViewProps> = ({ sellerId, dateVisit }) => {
           questionName: item.questionName,
           averageGrade: item.averageGrade,
         }));
-        console.log('processedData:', processedData);
         setQuestionsBar(processedData);
       } catch (error) {
         console.error('Error fetching questions and modules:', error);

@@ -59,15 +59,20 @@ const VisitComponent = ({ route }) => {
                 user.managerId
               );
             }
+
             if (user.job === 'Diretor') {
               const directorTemplates =
                 await VisitService.getTemplateByDirectorId(user.id);
-              templates = [...templates, ...directorTemplates];
+              if (directorTemplates) {
+                templates = [...templates, ...directorTemplates];
+              }
             }
             if (user.companyId) {
               const companyTemplates =
                 await VisitService.getTemplateByCompanyId(user.companyId);
-              templates = [...templates, ...companyTemplates];
+              if (companyTemplates) {
+                templates = [...templates, ...companyTemplates];
+              }
             }
 
             const fetchedCategories: { [key: string]: ICategories[] } = {};
