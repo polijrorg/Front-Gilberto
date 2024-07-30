@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import * as S from './styles';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Dimensions } from 'react-native';
 import Breadcrumb from '@components/Breadcrumb';
 import Dropdown from '@components/Dropdown';
 import HeaderPages from '@components/HeaderPages';
 import QuestionSection from '@components/QuestionSection';
 import { useToast } from 'react-native-toast-notifications';
+
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 import useAuth from '@hooks/useAuth';
 
@@ -15,13 +18,12 @@ import VisitGradesService from '@services/VisitGradesService';
 
 import ISeller from '@interfaces/Seller';
 import ICategories from '@interfaces/Visit/Categories';
-import IQuestions from '@interfaces/Visit/Questions';
 import ITemplateVisit from '@interfaces/Visit/TemplateVisit';
 import PdfService from '@services/PdfService';
 import Visit from '@interfaces/Visit/Visit';
-import BarChartComponent from '@components/BarChart';
 import ModuleGradeServices from '@services/ModuleGradeService';
-import ModulesServices from '@services/ModuleServices';
+import { BarChart } from 'react-native-chart-kit';
+import { FontAwesome } from '@expo/vector-icons';
 
 interface VisitGrade {
   questionId: string;
@@ -34,7 +36,7 @@ const EvaluateVisit = () => {
   const { user } = useAuth();
   const [sellers, setSellers] = useState<ISeller[]>([]);
   const [visitToDay, setVisitToDay] = useState<Visit>();
-  const [indexScreen, setIndexScreen] = useState(1);
+  const [indexScreen, setIndexScreen] = useState(0);
   const [evaluationStarted, setEvaluationStarted] = useState(false);
   const [selectedSeller, setSelectedSeller] = useState<ISeller | null>(null);
   const [categories, setCategories] = useState<ICategories[]>([]);
@@ -71,31 +73,32 @@ const EvaluateVisit = () => {
 
       const { directorId, managerId } =
         await SellerService.getManagerAndDirectorFromSeller(seller.id);
-      const fetchedCategories: ICategories[] = [];
-      let templates:
-        | any[]
-        | ((prevState: ITemplateVisit[]) => ITemplateVisit[]);
+      let templates: ITemplateVisit[] = [];
 
-      if (managerId !== undefined || managerId !== null) {
+      // Verificação na ordem: Gerente, Companhia, Diretor
+      if (managerId) {
         templates = await VisitService.getTemplateByManagerId(managerId);
-      } else if (directorId !== undefined || directorId !== null) {
-        templates = await VisitService.getTemplateByDirectorId(directorId);
-      } else {
+      }
+
+      if (templates.length === 0 && seller.companyId) {
         templates = await VisitService.getTemplateByCompanyId(seller.companyId);
       }
 
-      await Promise.all(
-        templates.map(async (template) => {
-          const categories = await VisitService.getCategoriesByIdTemplate(
-            template.id
-          );
-          categories.forEach((category) => {
-            fetchedCategories.push(category);
-          });
-        })
-      );
-      setTemplate(templates);
-      setCategories(fetchedCategories);
+      if (templates.length === 0 && directorId) {
+        templates = await VisitService.getTemplateByDirectorId(directorId);
+      }
+
+      if (templates.length > 0) {
+        const template = templates[0];
+        const categories = await VisitService.getCategoriesByIdTemplate(
+          template.id
+        );
+        setTemplate([template]);
+        setCategories(categories);
+      } else {
+        setTemplate([]);
+        setCategories([]);
+      }
     } catch (error) {
       console.error('Erro ao buscar dados de vendedores:', error);
     }
@@ -247,10 +250,10 @@ const EvaluateVisit = () => {
         <S.ContainerFields>
           <Breadcrumb
             key={indexScreen}
-            size={categories?.length}
-            handleNavigation={handleNavigation}
+            size={categories.length}
+            handleNavigation={(index) => setIndexScreen(index)}
             selected={indexScreen}
-            style={{ opacity: evaluationStarted ? 1 : 0 }}
+            style={{ opacity: indexScreen > 0 ? 1 : 0 }}
           />
           <S.DivSellerInfo>
             <S.DivSellerImage>
@@ -264,109 +267,146 @@ const EvaluateVisit = () => {
               </S.InfoSeller>
             </S.DivInfoSeller>
           </S.DivSellerInfo>
-          {indexScreen === 1 && (
+
+          {indexScreen === 0 && (
             <SellerSelection
               sellers={sellers}
               onSelectSeller={handleSelectSeller}
               onAdvance={handleAdvance}
               storeName={storeName}
-              onStoreNameChange={handleStoreNameChange}
+              onStoreNameChange={setStoreName}
             />
           )}
-          {indexScreen !== 1 &&
-            categories.map((category, idx) => (
-              <QuestionSection
-                key={category.id}
-                sellerId={selectedSeller?.id || ''}
-                category={category}
-                index={idx + 2}
-                selectedIndex={indexScreen}
-                onUpdateAnswers={handleUpdateAnswers}
-              />
-            ))}
-          {indexScreen <= categories.length && (
+
+          {indexScreen > 0 && indexScreen <= categories.length && (
+            <QuestionSection
+              sellerId={selectedSeller?.id || ''}
+              category={categories[indexScreen - 1]} // Ajustado para usar a categoria correta
+              index={indexScreen}
+              selectedIndex={indexScreen}
+              onUpdateAnswers={handleUpdateAnswers}
+            />
+          )}
+          {indexScreen >= 1 && indexScreen < categories.length && (
             <S.ButtonIniciar
               onPress={handleAdvance}
-              disabled={storeName === ''}
+              disabled={storeName === '' || loading}
             >
               <S.TextBtn>Próximo</S.TextBtn>
             </S.ButtonIniciar>
           )}
-          {indexScreen > categories.length && user.job === 'Supervisor' && (
-            <>
-              {/* <OverView
-                categories={categories}
-                sellerId={selectedSeller.id}
-                specificDate={dateVisited}
-              /> */}
-              <FinishedSection
-                setStoreName={setStoreName}
-                selectedSeller={setSelectedSeller}
-                setIndexScreen={setIndexScreen}
-                finishedVisit={finishedVisit}
-                array={fetchedVisitGrade}
-                loading={loading}
-              />
-            </>
+
+          {indexScreen === categories.length && categories.length !== 0 && (
+            <FinishedSection
+              setStoreName={setStoreName}
+              selectedSeller={selectedSeller}
+              setIndexScreen={setIndexScreen}
+              finishedVisit={finishedVisit}
+              array={fetchedVisitGrade}
+              loading={loading}
+              dateVisited={dateVisited}
+            />
           )}
         </S.ContainerFields>
       </S.WrapperView>
     </>
   );
 };
+interface OverViewProps {
+  sellerId: string;
+  dateVisit: string;
+}
 
-// const OverView = ({ categories, sellerId, specificDate }) => {
-//   const [categoryQuestions, setCategoryQuestions] = useState([]);
-//   const [moduleAverages, setModuleAverages] = useState([]);
+const OverView: React.FC<OverViewProps> = ({ sellerId, dateVisit }) => {
+  const [questionsBar, setQuestionsBar] = useState<
+    | { questionId: string; questionName: string; averageGrade: number }[]
+    | undefined
+  >([]);
 
-//   useEffect(() => {
-//     const fetchQuestionsAndModules = async () => {
-//       try {
-//         // Fetch questions for each category
-//         const questionsPromises = categories.map((category) =>
-//           VisitService.getQuestionsByIdCategory(category.id)
-//         );
-//         const questionsResults = await Promise.all(questionsPromises);
+  useEffect(() => {
+    if (!sellerId) {
+      return;
+    }
 
-//         // Flatten the array of questions
-//         const questions = questionsResults.flat();
-//         setCategoryQuestions(questions);
+    const fetchQuestionsAndModules = async () => {
+      try {
+        const result =
+          await ModuleGradeServices.getModulesAvailabreGradesBySellerID(
+            sellerId
+          );
+        const processedData = result.map((item: any) => ({
+          questionId: item.questionId,
+          questionName: item.questionName,
+          averageGrade: item.averageGrade,
+        }));
+        console.log('processedData:', processedData);
+        setQuestionsBar(processedData);
+      } catch (error) {
+        console.error('Error fetching questions and modules:', error);
+      }
+    };
 
-//         // Fetch module data (question names) and grades for each question
-//         const modulesWithAverages = await Promise.all(
-//           questions.map(async (question) => {
-//             const moduleData = await ModulesServices.getModuleById(question.id);
-//             const grade = await VisitGradesService.getGradeByQuestionAndSeller(
-//               question.id,
-//               sellerId,
-//               specificDate
-//             );
-//             return {
-//               module: question.id,
-//               nameModule: moduleData.name,
-//               average: grade.average,
-//             };
-//           })
-//         );
+    fetchQuestionsAndModules();
+  }, [sellerId]);
 
-//         // Set module averages state
-//         setModuleAverages(modulesWithAverages);
-//       } catch (error) {
-//         console.error(error);
-//       }
-//     };
+  const chartWidth = Dimensions.get('window').width - 50;
+  const chartHeight = 200;
 
-//     fetchQuestionsAndModules();
-//   }, [categories, sellerId, specificDate]);
+  const barChartData = {
+    labels: (questionsBar || []).map((_item, index) => `${index + 1}`),
+    datasets: [
+      {
+        data: (questionsBar || []).map((item) =>
+          Math.min(Math.max(item.averageGrade, 0), 5)
+        ),
+        colors: (questionsBar || []).map(
+          () =>
+            (_opacity = 1) =>
+              '#3E63DD'
+        ),
+      },
+    ],
+  };
 
-//   return (
-//     <S.ContainerFields>
-//       <S.Title>OverView</S.Title>
-//       <BarChartComponent type="modulo" moduleAverages={moduleAverages} />
-//     </S.ContainerFields>
-//   );
-// };
+  const barChartConfig = {
+    backgroundGradientFrom: 'rgba(0, 0, 0, 0)', // Fundo transparente
+    backgroundGradientFromOpacity: 0,
+    backgroundGradientTo: 'rgba(0, 0, 0, 0)', // Fundo transparente
+    backgroundGradientToOpacity: 0,
+    color: (opacity = 1) => `rgba(104, 112, 118, ${opacity})`,
+    strokeWidth: 0,
+    barPercentage: 0.6,
+    useShadowColorFromDataset: false,
+    decimalPlaces: 1,
+    minValue: 0,
+    maxValue: 5,
+  };
 
+  const formattedDate = format(new Date(dateVisit), 'dd/MM/yyyy', {
+    locale: ptBR,
+  });
+
+  return (
+    <S.ContainerChart>
+      <S.TitleBar>Overview Visitas - {formattedDate}</S.TitleBar>
+      <BarChart
+        data={barChartData}
+        width={chartWidth}
+        height={chartHeight}
+        yAxisLabel=""
+        yAxisSuffix=""
+        chartConfig={barChartConfig}
+        showValuesOnTopOfBars={false}
+        showBarTops={false}
+        fromZero
+        flatColor
+        fromNumber={5}
+        withInnerLines={false}
+        withCustomBarColorFromData
+      />
+    </S.ContainerChart>
+  );
+};
 const FinishedSection = ({
   setStoreName,
   setIndexScreen,
@@ -374,14 +414,38 @@ const FinishedSection = ({
   array,
   loading,
   selectedSeller,
+  dateVisited,
 }) => {
+  const [overView, setOverView] = useState(false);
+
   const handlePress = () => {
     setIndexScreen(1);
     selectedSeller(null);
     setStoreName('');
   };
+
+  const handleOverView = () => {
+    setOverView(!overView);
+  };
   return (
-    <S.ContainerFields>
+    <S.ContainerButton>
+      <S.ContainerOverView>
+        <S.BtnOverView onPress={handleOverView}>
+          {overView ? (
+            <FontAwesome name="eye" size={18} color="#3451b2" />
+          ) : (
+            <FontAwesome name="eye-slash" size={18} color="#3451b2" />
+          )}
+          <S.TitleOverView>
+            Overview do Dia {selectedSeller.name || 'Vendedor'}
+          </S.TitleOverView>
+        </S.BtnOverView>
+      </S.ContainerOverView>
+
+      {overView && (
+        <OverView sellerId={selectedSeller?.id} dateVisit={dateVisited} />
+      )}
+
       <S.BtnFinished
         onPress={finishedVisit}
         disabled={loading || array.length === 0} // Disable button if loading or array is empty
@@ -396,7 +460,7 @@ const FinishedSection = ({
       <S.Outline onPress={handlePress}>
         <S.TextBtnNova>Iniciar nova visita</S.TextBtnNova>
       </S.Outline>
-    </S.ContainerFields>
+    </S.ContainerButton>
   );
 };
 

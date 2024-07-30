@@ -21,9 +21,9 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
           <S.Button
             onPress={() => handleNavigation(index + 1)}
             Selected={
-              index + 2 === selected
+              index + 1 === selected
                 ? 'selected'
-                : index + 2 <= selected
+                : index + 1 <= selected
                   ? 'check'
                   : 'false'
             }

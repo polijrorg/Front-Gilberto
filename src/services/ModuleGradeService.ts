@@ -68,6 +68,13 @@ export default class ModuleGradeServices {
     return moduleGradeSellerResponse.data;
   }
 
+  static async getModulesAvailabreGradesBySellerID(sellerId: string) {
+    const response: AxiosResponse<IModuleGrade[]> = await api.get(
+      `/questionsGrades/averageGradeByQuestions/seller/${sellerId}`
+    );
+    return response.data;
+  }
+
   static async getModuleGradesByIdSeller(
     idSeller: string
   ): Promise<IModuleGrade[]> {

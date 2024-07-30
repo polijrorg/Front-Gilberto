@@ -248,9 +248,40 @@ const EvaluateVisitManager = () => {
                 </S.AddCategoryEmpty>
               </>
             ) : (
-              <S.NoCategoriesText>
-                Você não selecionou nenhum template
-              </S.NoCategoriesText>
+              <>
+                <S.NoCategoriesText>
+                  Você não selecionou nenhum template
+                </S.NoCategoriesText>
+                <S.AddCategoryButton
+                  onPress={() => setCreatedTemplate(!createdTemplate)}
+                >
+                  <S.AddCategoryText>Adicionar Template</S.AddCategoryText>
+                </S.AddCategoryButton>
+                {createdTemplate && (
+                  <S.CreatedTemplateContainer>
+                    <S.WrapperTemplate>
+                      <S.TitleCreatedTemplate>
+                        Adicione um novo template:
+                      </S.TitleCreatedTemplate>
+                      <S.InputNameTemplate
+                        placeholder="Nome do Template"
+                        value={newTemplateName}
+                        onChangeText={setNewTemplateName}
+                      />
+                      <S.FormButtonsContainer>
+                        <S.ButtonGeneric
+                          onPress={() => setCreatedTemplate(false)}
+                        >
+                          <S.ButtonGenericText>Cancelar</S.ButtonGenericText>
+                        </S.ButtonGeneric>
+                        <S.ButtonGeneric onPress={handleAddTemplate}>
+                          <S.ButtonGenericText>Adicionar</S.ButtonGenericText>
+                        </S.ButtonGeneric>
+                      </S.FormButtonsContainer>
+                    </S.WrapperTemplate>
+                  </S.CreatedTemplateContainer>
+                )}
+              </>
             )}
           </S.NoCategoriesContainer>
         ) : (

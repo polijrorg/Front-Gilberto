@@ -218,7 +218,7 @@ const QuestionSection: React.FC<Props> = ({
     <ScrollView
       style={{
         minWidth: '95%',
-        height: user.job === 'Gerente' ? 600 : 400,
+        height: user.job === 'Gerente' ? 600 : 'auto',
         marginVertical: 16,
         marginHorizontal: 16,
       }}

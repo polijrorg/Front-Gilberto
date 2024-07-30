@@ -47,7 +47,6 @@ const CompleteMentorship: React.FC = () => {
       showToast('Módulos avaliados com sucesso', 'success');
 
       const allModulesEvaluated = await checkAllModulesEvaluated();
-      console.log(allModulesEvaluated);
       if (allModulesEvaluated) {
         console.log(
           'Todos os módulos foram avaliados. Atualizando estágio para "Visita"...'

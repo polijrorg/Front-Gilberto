@@ -28,7 +28,6 @@ const PlainMentory: React.FC<PlainActionProps> = ({
   visits,
   addNewPlain,
 }) => {
-  console.log(visits);
   const [selectedValue, setSelectedValue] = useState<string>('');
   const [comment, setComment] = useState('');
   const [titleAction, setTitleAction] = useState('');
