@@ -254,3 +254,47 @@ export const BtnFinished = styled(TouchableOpacity)`
   border-radius: 8px;
   margin: 0px auto;
 `;
+
+export const TextForms = styled(Text)`
+  font-family: Poppins;
+  font-size: 16px;
+`;
+
+export const InputText = styled(TextInput)`
+  padding: 4px 12px;
+  font-family: Poppins;
+  border-radius: 1px;
+  color: #687076;
+  background-color: #f1f3f5;
+  border: 1px solid #d7dbdf;
+`;
+
+export const ContainerPlain = styled(View)`
+  width: 100%;
+  height: auto;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 16px;
+`;
+
+export const ButtonPlain = styled(TouchableOpacity)`
+  padding: 8px 24px;
+  background-color: #3e63dd;
+  width: 90%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  margin: 0px auto;
+`;
+
+export const TextBtnPlain = styled(Text)`
+  font-family: Poppins;
+  text-transform: uppercase;
+  color: #fff;
+  font-size: 16px;
+`;

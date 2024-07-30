@@ -188,12 +188,9 @@ interface DateTimePickerComponentProps {
   handleDateChange: (event: DateTimePickerEvent, selectedDate?: Date) => void;
 }
 
-const DateTimePickerComponent: React.FC<DateTimePickerComponentProps> = ({
-  date,
-  showDatePicker,
-  showDatePickerModal,
-  handleDateChange,
-}) => {
+export const DateTimePickerComponent: React.FC<
+  DateTimePickerComponentProps
+> = ({ date, showDatePicker, showDatePickerModal, handleDateChange }) => {
   return (
     <>
       <S.TextForms>Data</S.TextForms>

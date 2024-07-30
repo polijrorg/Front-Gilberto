@@ -1,22 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {
-  ActivityIndicator,
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
-
+import { ActivityIndicator, View, Text, ScrollView } from 'react-native';
 import * as S from './styles';
-
 import CardsMentory from '@components/CardsMentory';
 import PlainMentory from './Plain/MentoryAndVisit';
-
 import PlainService from '@services/PlainService';
 import SellerServices from '@services/SellerServices';
 import ModuleServices from '@services/ModuleServices';
 import VisitService from '@services/VisitService';
-
 import IPlains from '@interfaces/Plain';
 import ISeller from '@interfaces/Seller';
 import IModules from '@interfaces/Module';
@@ -95,12 +85,12 @@ const Action = ({ route }) => {
   return (
     <S.ViewWrapper>
       {loading ? (
-        <View style={styles.loadingContainer}>
+        <S.LoadingContainer>
           <ActivityIndicator size="large" color="#3E63DD" />
-        </View>
+        </S.LoadingContainer>
       ) : !isVisible ? (
         <ScrollView>
-          <View style={styles.sectionContainer}>
+          <S.SectionContainer>
             <PlanList
               title="Planos Pendentes"
               plains={plains}
@@ -108,14 +98,12 @@ const Action = ({ route }) => {
               handleMarkDone={handleMarkDone}
             />
             {plains.length === 0 && (
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>
-                  Você não tem planos pendentes
-                </Text>
-              </View>
+              <S.EmptyContainer>
+                <S.EmptyText>Você não tem planos pendentes</S.EmptyText>
+              </S.EmptyContainer>
             )}
-          </View>
-          <View style={styles.sectionContainer}>
+          </S.SectionContainer>
+          <S.SectionContainer>
             <CompletedPlanList
               title="Planos Concluídos"
               completedPlains={completedPlains}
@@ -124,13 +112,11 @@ const Action = ({ route }) => {
               complete
             />
             {completedPlains.length === 0 && (
-              <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>
-                  Você não tem planos concluídos
-                </Text>
-              </View>
+              <S.EmptyContainer>
+                <S.EmptyText>Você não tem planos concluídos</S.EmptyText>
+              </S.EmptyContainer>
             )}
-          </View>
+          </S.SectionContainer>
           <S.BtnCriarAction onPress={handleNavigator}>
             <S.TextBtn>criar plano de ação</S.TextBtn>
           </S.BtnCriarAction>
@@ -155,8 +141,8 @@ const PlanList = ({
   handleMarkDone,
 }) => {
   return (
-    <View>
-      <Text style={styles.sectionHeader}>{title}</Text>
+    <S.ListWrapper>
+      <S.SectionHeader>{title}</S.SectionHeader>
       {plains.map((plain: IPlains) => {
         return (
           <CardsMentory
@@ -170,7 +156,7 @@ const PlanList = ({
           />
         );
       })}
-    </View>
+    </S.ListWrapper>
   );
 };
 
@@ -182,8 +168,8 @@ const CompletedPlanList = ({
   complete,
 }) => {
   return (
-    <View>
-      <Text style={styles.sectionHeader}>{title}</Text>
+    <S.ListWrapper>
+      <S.SectionHeader>{title}</S.SectionHeader>
       {completedPlains.map((plain) => (
         <CardsMentory
           key={plain.id}
@@ -195,37 +181,8 @@ const CompletedPlanList = ({
           onMarkDone={() => handleMarkDone(plain.id)}
         />
       ))}
-    </View>
+    </S.ListWrapper>
   );
 };
 
 export default Action;
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sectionContainer: {
-    flex: 1,
-    marginBottom: 20,
-  },
-  emptyContainer: {
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  sectionHeader: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginVertical: 16,
-    paddingHorizontal: 16,
-  },
-});

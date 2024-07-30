@@ -24,6 +24,8 @@ import Visit from '@interfaces/Visit/Visit';
 import ModuleGradeServices from '@services/ModuleGradeService';
 import { BarChart } from 'react-native-chart-kit';
 import { FontAwesome } from '@expo/vector-icons';
+import PlainAction from '@components/PlainVisit';
+import PlainService from '@services/PlainService';
 
 interface VisitGrade {
   questionId: string;
@@ -305,6 +307,7 @@ const EvaluateVisit = () => {
               array={fetchedVisitGrade}
               loading={loading}
               dateVisited={dateVisited}
+              visitToDay={visitToDay}
             />
           )}
         </S.ContainerFields>
@@ -406,6 +409,7 @@ const OverView: React.FC<OverViewProps> = ({ sellerId, dateVisit }) => {
     </S.ContainerChart>
   );
 };
+
 const FinishedSection = ({
   setStoreName,
   setIndexScreen,
@@ -414,8 +418,10 @@ const FinishedSection = ({
   loading,
   selectedSeller,
   dateVisited,
+  visitToDay,
 }) => {
   const [overView, setOverView] = useState(false);
+  const [plainActionCreated, setPlainActionCreated] = useState(false);
 
   const handlePress = () => {
     setIndexScreen(1);
@@ -424,19 +430,24 @@ const FinishedSection = ({
   };
 
   const handleOverView = () => {
-    setOverView(!overView);
+    setOverView((prevState) => !prevState);
   };
+
+  const handleCancelPlainAction = () => {
+    setPlainActionCreated(false);
+  };
+
   return (
     <S.ContainerButton>
       <S.ContainerOverView>
         <S.BtnOverView onPress={handleOverView}>
-          {overView ? (
-            <FontAwesome name="eye" size={18} color="#3451b2" />
-          ) : (
-            <FontAwesome name="eye-slash" size={18} color="#3451b2" />
-          )}
+          <FontAwesome
+            name={overView ? 'eye' : 'eye-slash'}
+            size={18}
+            color="#3451b2"
+          />
           <S.TitleOverView>
-            Overview do Dia {selectedSeller.name || 'Vendedor'}
+            {`Overview do Dia ${selectedSeller?.name || 'Vendedor'}`}
           </S.TitleOverView>
         </S.BtnOverView>
       </S.ContainerOverView>
@@ -445,9 +456,25 @@ const FinishedSection = ({
         <OverView sellerId={selectedSeller?.id} dateVisit={dateVisited} />
       )}
 
+      <S.ContainerPlain>
+        <S.ButtonPlain
+          onPress={() => setPlainActionCreated(!plainActionCreated)}
+        >
+          <S.TextBtnPlain>Criar Plano de Ação</S.TextBtnPlain>
+        </S.ButtonPlain>
+
+        {plainActionCreated && (
+          <PlainAction
+            seller={selectedSeller}
+            dateVisited={visitToDay}
+            onCancel={handleCancelPlainAction}
+          />
+        )}
+      </S.ContainerPlain>
+
       <S.BtnFinished
         onPress={finishedVisit}
-        disabled={loading || array.length === 0} // Disable button if loading or array is empty
+        disabled={loading || array.length === 0}
         style={{ opacity: array.length === 0 ? 0.7 : 1 }}
       >
         {loading ? (
@@ -456,6 +483,7 @@ const FinishedSection = ({
           <S.TextBtn>Finalizar dia com esse vendedor</S.TextBtn>
         )}
       </S.BtnFinished>
+
       <S.Outline onPress={handlePress}>
         <S.TextBtnNova>Iniciar nova visita</S.TextBtnNova>
       </S.Outline>

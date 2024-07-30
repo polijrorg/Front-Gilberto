@@ -29,6 +29,9 @@ export const Container = styled(View)`
   width: 100%;
   padding: 4px 0px;
   display: flex;
+
+  justify-content: space-around;
+
   background-color: ${theme.colors.secundary.main};
 `;
 
