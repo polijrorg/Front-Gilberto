@@ -290,7 +290,6 @@ const EvaluateVisitManager = () => {
               <S.CategoryContainer key={category.id}>
                 <QuestionSection
                   key={category.id}
-                  loading={loading}
                   sellerId=""
                   category={category}
                   index={idx + 1}

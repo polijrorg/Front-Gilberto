@@ -57,7 +57,6 @@ export const NoVisitsContainer = styled(View)`
   height: 15%;
   display: flex;
 
-  background-color: red;
   align-items: 'center';
   justify-content: 'center';
 `;

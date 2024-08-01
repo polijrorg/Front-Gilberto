@@ -29,7 +29,6 @@ interface Props {
   onUpdateAnswers: (answers: any[]) => void;
   onCategoryUpdate?: (updatedCategory: ICategories) => void;
   onDeleteCategory?: (categoryId: string) => void; // Novo prop para deletar categoria
-  loading?: boolean;
 }
 
 const QuestionSection: React.FC<Props> = ({
@@ -40,7 +39,6 @@ const QuestionSection: React.FC<Props> = ({
   onUpdateAnswers,
   onCategoryUpdate,
   onDeleteCategory,
-  loading,
 }) => {
   const [categoryQuestions, setCategoryQuestions] = useState<IQuestions[]>([]);
   const [answers, setAnswers] = useState<any[]>([]);
@@ -52,10 +50,12 @@ const QuestionSection: React.FC<Props> = ({
   const [isDeleting, setIsDeleting] = useState(false); // Novo estado de carregamento
   const { user } = useAuth();
   const toast = useToast();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
+        setLoading(true);
         const questions = await VisitService.getQuestionsByIdCategory(
           category.id
         );
@@ -63,6 +63,8 @@ const QuestionSection: React.FC<Props> = ({
         setEditedQuestions(questions);
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchQuestions();
@@ -114,7 +116,7 @@ const QuestionSection: React.FC<Props> = ({
 
       for (const question of editedQuestions) {
         await VisitService.updateQuestion({
-          id: question.id,
+          id: question.id || '',
           question: question.question,
         });
       }
@@ -135,11 +137,13 @@ const QuestionSection: React.FC<Props> = ({
     setEditedCategory({ ...editedCategory, name });
   };
 
-  const handleQuestionChange = (id: string, question: string) => {
-    const updatedQuestions = editedQuestions.map((q) =>
-      q.id === id ? { ...q, question } : q
-    );
-    setEditedQuestions(updatedQuestions);
+  const handleQuestionChange = (id: string | undefined, question: string) => {
+    if (id) {
+      const updatedQuestions = editedQuestions.map((q) =>
+        q.id === id ? { ...q, question } : q
+      );
+      setEditedQuestions(updatedQuestions);
+    }
   };
 
   const showToast = (message: string, type: string) => {
@@ -249,12 +253,14 @@ const QuestionSection: React.FC<Props> = ({
               <TextInput
                 style={styles.questionInput}
                 value={question.question}
-                onChangeText={(text) => handleQuestionChange(question.id, text)}
+                onChangeText={(text) =>
+                  handleQuestionChange(question.id!, text)
+                }
                 placeholder="Edit Question"
                 placeholderTextColor="#666"
               />
               <TouchableOpacity
-                onPress={() => handleDeleteQuestion(question.id)}
+                onPress={() => handleDeleteQuestion(question.id!)}
               >
                 <FontAwesome
                   name="trash"
@@ -312,16 +318,20 @@ const QuestionSection: React.FC<Props> = ({
       ) : (
         <>
           <S.TemaQuestion>{category?.name || 'Tema Question'}</S.TemaQuestion>
-          {categoryQuestions.map((question, index) => (
-            <S.Wrapper key={question.id}>
-              <InputRange
-                onChangeValue={(id: string, value: number) =>
-                  handleInputChange(question.id, value, question.question)
-                }
-                textAsk={question.question}
-              />
-            </S.Wrapper>
-          ))}
+          {loading ? (
+            <ActivityIndicator size="large" color="#3E63DD" />
+          ) : (
+            categoryQuestions.map((question, index) => (
+              <S.Wrapper key={question.id}>
+                <InputRange
+                  onChangeValue={(id: string, value: number) =>
+                    handleInputChange(question.id!, value, question.question)
+                  }
+                  textAsk={question.question}
+                />
+              </S.Wrapper>
+            ))
+          )}
         </>
       )}
     </ScrollView>

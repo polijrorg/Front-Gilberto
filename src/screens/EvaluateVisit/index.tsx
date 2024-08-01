@@ -247,6 +247,7 @@ const EvaluateVisit = () => {
     setIndexScreen(1);
     setSelectedSeller(null);
     setStoreName('');
+    setCategories([]);
   };
 
   return (
@@ -304,12 +305,16 @@ const EvaluateVisit = () => {
 
           {indexScreen === categories.length && categories.length !== 0 && (
             <>
-              <S.ButtonIniciar onPress={() => setIndexScreen(indexScreen + 1)}>
-                <S.TextBtn>Ver Resumo do dia de visita</S.TextBtn>
-              </S.ButtonIniciar>
-              <S.Outline onPress={initialNewVisit}>
-                <S.TextBtnNova>Iniciar nova visita</S.TextBtnNova>
-              </S.Outline>
+              <S.ContainerButton>
+                <S.ButtonIniciar
+                  onPress={() => setIndexScreen(indexScreen + 1)}
+                >
+                  <S.TextBtn>Ver Resumo do dia de visita</S.TextBtn>
+                </S.ButtonIniciar>
+                <S.Outline onPress={initialNewVisit}>
+                  <S.TextBtnNova>Iniciar nova visita</S.TextBtnNova>
+                </S.Outline>
+              </S.ContainerButton>
             </>
           )}
 
