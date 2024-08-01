@@ -60,30 +60,29 @@ export const TextArea = styled(TextInput)`
   vertical-align: top;
 `;
 
-export const BtnCriarAction = styled(TouchableOpacity)`
-  padding: 12px 8px;
-  margin: 0px auto;
-
-  border-radius: 8px;
-
-  background-color: ${theme.colors.secundary.main};
+export const ButtonIniciar = styled(TouchableOpacity)`
+  padding: 8px 24px;
+  background-color: #3e63dd;
+  width: 100%;
+  height: auto;
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: 8px;
+  margin: 0px auto;
+`;
+
+export const TextBtn = styled(Text)`
+  font-family: Poppins;
+  text-transform: uppercase;
+  color: #fff;
+  font-size: 16px;
 `;
 
 export const ContainerButtons = styled.View`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 8px 16px;
 
   margin-top: 20px;
-`;
-
-export const TextBtn = styled.Text`
-  font-size: 16px;
-  text-transform: uppercase;
-  font-family: Poppins;
-  color: #fff;
 `;

@@ -8,16 +8,11 @@ import PlainService from '../../services/PlainService';
 import Visit from '@interfaces/Visit/Visit';
 
 interface PlainActionProps {
-  onCancel: () => void;
   seller: ISeller;
   dateVisited: Visit;
 }
 
-const PlainAction: React.FC<PlainActionProps> = ({
-  seller,
-  onCancel,
-  dateVisited,
-}) => {
+const PlainAction: React.FC<PlainActionProps> = ({ seller, dateVisited }) => {
   const [titleAction, setTitleAction] = useState('');
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -87,12 +82,9 @@ const PlainAction: React.FC<PlainActionProps> = ({
         onChangeText={setComment}
       />
       <S.ContainerButtons>
-        <S.BtnCriarAction onPress={handleSave}>
+        <S.ButtonIniciar onPress={handleSave}>
           <S.TextBtn>Criar plano de ação</S.TextBtn>
-        </S.BtnCriarAction>
-        <S.BtnCriarAction onPress={onCancel}>
-          <S.TextBtn>Cancelar</S.TextBtn>
-        </S.BtnCriarAction>
+        </S.ButtonIniciar>
       </S.ContainerButtons>
     </S.ContainerPlainVisit>
   );

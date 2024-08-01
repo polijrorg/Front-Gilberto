@@ -7,9 +7,6 @@ import HeaderPages from '@components/HeaderPages';
 import QuestionSection from '@components/QuestionSection';
 import { useToast } from 'react-native-toast-notifications';
 
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-
 import useAuth from '@hooks/useAuth';
 
 import SellerService from '@services/SellerServices';
@@ -21,11 +18,10 @@ import ICategories from '@interfaces/Visit/Categories';
 import ITemplateVisit from '@interfaces/Visit/TemplateVisit';
 import PdfService from '@services/PdfService';
 import Visit from '@interfaces/Visit/Visit';
-import ModuleGradeServices from '@services/ModuleGradeService';
-import { BarChart } from 'react-native-chart-kit';
-import { FontAwesome } from '@expo/vector-icons';
+
 import PlainAction from '@components/PlainVisit';
-import PlainService from '@services/PlainService';
+
+import OverView from '@components/Overview';
 
 interface VisitGrade {
   questionId: string;
@@ -57,9 +53,8 @@ const EvaluateVisit = () => {
           user.job === 'Supervisor'
             ? await SellerService.getAllSellerFromSupervisor(user.id)
             : await SellerService.getAllSellerFromManager(user.id);
-        const visitsSellers = sellersData.filter(
-          (seller) => seller.stage === 'Visita'
-        );
+        const visitsSellers =
+          sellersData?.filter((seller) => seller.stage === 'Visita') || [];
         setSellers(visitsSellers);
       } catch (error) {
         console.error('Erro ao buscar dados de vendedores:', error);
@@ -74,7 +69,10 @@ const EvaluateVisit = () => {
       setSelectedSeller(seller);
 
       const { directorId, managerId } =
-        await SellerService.getManagerAndDirectorFromSeller(seller.id);
+        (await SellerService.getManagerAndDirectorFromSeller(seller.id)) as {
+          managerId: string | null;
+          directorId: string | null;
+        };
       let templates: ITemplateVisit[] = [];
 
       // Verificação na ordem: Gerente, Companhia, Diretor
@@ -213,7 +211,7 @@ const EvaluateVisit = () => {
         grade: answer.grade,
         sellerId: answer.sellerId,
         questionsId: answer.questionId,
-        visitId: visitToDay?.id,
+        visitId: visitToDay?.id || '',
       });
     } catch (error) {
       console.error('Erro ao criar as notas:', error);
@@ -237,12 +235,18 @@ const EvaluateVisit = () => {
           questionId: answer.questionId,
           sellerId: selectedSeller?.id || '',
           grade: answer.value,
-          visitId: visitToDay?.id,
+          visitId: visitToDay?.id || '',
         });
       }
     });
 
     setFetchedVisitGrade(updatedGrades);
+  };
+
+  const initialNewVisit = () => {
+    setIndexScreen(1);
+    setSelectedSeller(null);
+    setStoreName('');
   };
 
   return (
@@ -299,177 +303,67 @@ const EvaluateVisit = () => {
           )}
 
           {indexScreen === categories.length && categories.length !== 0 && (
-            <FinishedSection
-              setStoreName={setStoreName}
-              selectedSeller={selectedSeller}
-              setIndexScreen={setIndexScreen}
-              finishedVisit={finishedVisit}
-              array={fetchedVisitGrade}
-              loading={loading}
-              dateVisited={dateVisited}
-              visitToDay={visitToDay}
-            />
+            <>
+              <S.ButtonIniciar onPress={() => setIndexScreen(indexScreen + 1)}>
+                <S.TextBtn>Ver Resumo do dia de visita</S.TextBtn>
+              </S.ButtonIniciar>
+              <S.Outline onPress={initialNewVisit}>
+                <S.TextBtnNova>Iniciar nova visita</S.TextBtnNova>
+              </S.Outline>
+            </>
+          )}
+
+          {indexScreen === categories.length + 1 && (
+            <>
+              <OverView
+                sellerId={selectedSeller?.id || ''}
+                dateVisit={dateVisited}
+                user={user}
+                templates={template}
+                setIndexScreen={() => setIndexScreen(indexScreen + 1)}
+              />
+            </>
+          )}
+
+          {indexScreen === categories.length + 2 && (
+            <>
+              <FinishedSection
+                selectedSeller={selectedSeller}
+                finishedVisit={finishedVisit}
+                array={fetchedVisitGrade}
+                loading={loading}
+                visitToDay={visitToDay}
+              />
+            </>
           )}
         </S.ContainerFields>
       </S.WrapperView>
     </>
   );
 };
-interface OverViewProps {
-  sellerId: string;
-  dateVisit: string;
+
+interface FinishedProps {
+  finishedVisit: () => void;
+  array: any[];
+  loading: boolean;
+  selectedSeller: ISeller | null;
+  visitToDay: Visit | undefined;
 }
 
-const OverView: React.FC<OverViewProps> = ({ sellerId, dateVisit }) => {
-  const [questionsBar, setQuestionsBar] = useState<
-    | { questionId: string; questionName: string; averageGrade: number }[]
-    | undefined
-  >([]);
-
-  useEffect(() => {
-    if (!sellerId) {
-      return;
-    }
-
-    const fetchQuestionsAndModules = async () => {
-      try {
-        const result =
-          await ModuleGradeServices.getModulesAvailabreGradesBySellerID(
-            sellerId
-          );
-        const processedData = result.map((item: any) => ({
-          questionId: item.questionId,
-          questionName: item.questionName,
-          averageGrade: item.averageGrade,
-        }));
-        setQuestionsBar(processedData);
-      } catch (error) {
-        console.error('Error fetching questions and modules:', error);
-      }
-    };
-
-    fetchQuestionsAndModules();
-  }, [sellerId]);
-
-  const chartWidth = Dimensions.get('window').width - 50;
-  const chartHeight = 200;
-
-  const barChartData = {
-    labels: (questionsBar || []).map((_item, index) => `${index + 1}`),
-    datasets: [
-      {
-        data: (questionsBar || []).map((item) =>
-          Math.min(Math.max(item.averageGrade, 0), 5)
-        ),
-        colors: (questionsBar || []).map(
-          () =>
-            (_opacity = 1) =>
-              '#3E63DD'
-        ),
-      },
-    ],
-  };
-
-  const barChartConfig = {
-    backgroundGradientFrom: 'rgba(0, 0, 0, 0)', // Fundo transparente
-    backgroundGradientFromOpacity: 0,
-    backgroundGradientTo: 'rgba(0, 0, 0, 0)', // Fundo transparente
-    backgroundGradientToOpacity: 0,
-    color: (opacity = 1) => `rgba(104, 112, 118, ${opacity})`,
-    strokeWidth: 0,
-    barPercentage: 0.6,
-    useShadowColorFromDataset: false,
-    decimalPlaces: 1,
-    minValue: 0,
-    maxValue: 5,
-  };
-
-  const formattedDate = format(new Date(dateVisit), 'dd/MM/yyyy', {
-    locale: ptBR,
-  });
-
-  return (
-    <S.ContainerChart>
-      <S.TitleBar>Overview Visitas - {formattedDate}</S.TitleBar>
-      <BarChart
-        data={barChartData}
-        width={chartWidth}
-        height={chartHeight}
-        yAxisLabel=""
-        yAxisSuffix=""
-        chartConfig={barChartConfig}
-        showValuesOnTopOfBars={false}
-        showBarTops={false}
-        fromZero
-        flatColor
-        fromNumber={5}
-        withInnerLines={false}
-        withCustomBarColorFromData
-      />
-    </S.ContainerChart>
-  );
-};
-
-const FinishedSection = ({
-  setStoreName,
-  setIndexScreen,
+const FinishedSection: React.FC<FinishedProps> = ({
   finishedVisit,
   array,
   loading,
   selectedSeller,
-  dateVisited,
-  visitToDay,
+  visitToDay = {} as Visit,
 }) => {
-  const [overView, setOverView] = useState(false);
-  const [plainActionCreated, setPlainActionCreated] = useState(false);
-
-  const handlePress = () => {
-    setIndexScreen(1);
-    selectedSeller(null);
-    setStoreName('');
-  };
-
-  const handleOverView = () => {
-    setOverView((prevState) => !prevState);
-  };
-
-  const handleCancelPlainAction = () => {
-    setPlainActionCreated(false);
-  };
-
   return (
     <S.ContainerButton>
-      <S.ContainerOverView>
-        <S.BtnOverView onPress={handleOverView}>
-          <FontAwesome
-            name={overView ? 'eye' : 'eye-slash'}
-            size={18}
-            color="#3451b2"
-          />
-          <S.TitleOverView>
-            {`Overview do Dia ${selectedSeller?.name || 'Vendedor'}`}
-          </S.TitleOverView>
-        </S.BtnOverView>
-      </S.ContainerOverView>
-
-      {overView && (
-        <OverView sellerId={selectedSeller?.id} dateVisit={dateVisited} />
-      )}
-
       <S.ContainerPlain>
-        <S.ButtonPlain
-          onPress={() => setPlainActionCreated(!plainActionCreated)}
-        >
-          <S.TextBtnPlain>Criar Plano de Ação</S.TextBtnPlain>
-        </S.ButtonPlain>
-
-        {plainActionCreated && (
-          <PlainAction
-            seller={selectedSeller}
-            dateVisited={visitToDay}
-            onCancel={handleCancelPlainAction}
-          />
-        )}
+        <PlainAction
+          seller={selectedSeller as ISeller}
+          dateVisited={visitToDay}
+        />
       </S.ContainerPlain>
 
       <S.BtnFinished
@@ -483,15 +377,19 @@ const FinishedSection = ({
           <S.TextBtn>Finalizar dia com esse vendedor</S.TextBtn>
         )}
       </S.BtnFinished>
-
-      <S.Outline onPress={handlePress}>
-        <S.TextBtnNova>Iniciar nova visita</S.TextBtnNova>
-      </S.Outline>
     </S.ContainerButton>
   );
 };
 
-const SellerSelection = ({
+interface SellerSelectionProps {
+  sellers: ISeller[];
+  onSelectSeller: (seller: ISeller) => void;
+  onAdvance: () => void;
+  storeName: string;
+  onStoreNameChange: (text: string) => void;
+}
+
+const SellerSelection: React.FC<SellerSelectionProps> = ({
   sellers,
   onSelectSeller,
   onAdvance,

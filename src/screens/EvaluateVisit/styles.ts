@@ -163,27 +163,6 @@ export const TextBtnNova = styled(Text)`
   font-size: 16px;
 `;
 
-export const ContainerChart = styled(View)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  width: 90%;
-
-  gap: 16px;
-`;
-
-export const TitleBar = styled(Text)`
-  font-family: Poppins;
-  font-size: 16px;
-  font-weight: bold;
-
-  text-transform: capitalize;
-
-  margin: 16px 24px;
-  align-self: flex-start;
-`;
-
 export const ContainerButton = styled(View)`
   display: flex;
   justify-content: space-evenly;
@@ -195,52 +174,6 @@ export const ContainerButton = styled(View)`
   gap: 16px;
 
   padding: 16px 0;
-`;
-
-export const ContainerOverView = styled(View)`
-  width: auto;
-  height: auto;
-
-  margin: 0 20px;
-
-  align-self: flex-start;
-
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-
-  flex-direction: row;
-
-  padding: 16px 0;
-`;
-
-export const TitleOverView = styled(Text)`
-  font-family: Poppins;
-  font-size: 14px;
-  font-weight: bold;
-
-  margin: 0 8px;
-
-  text-transform: capitalize;
-`;
-
-export const BtnOverView = styled(TouchableOpacity)`
-  padding: 8px 16px;
-  width: auto;
-  height: auto;
-
-  border-width: 0.5px;
-  border-color: #3451b2;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  flex-direction: row;
-
-  border-radius: 8px;
-
-  margin: 0px auto;
 `;
 
 export const BtnFinished = styled(TouchableOpacity)`
