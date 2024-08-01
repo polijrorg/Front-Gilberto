@@ -22,6 +22,7 @@ import Visit from '@interfaces/Visit/Visit';
 import PlainAction from '@components/PlainVisit';
 
 import OverView from '@components/Overview';
+import { useNavigation } from '@react-navigation/native';
 
 interface VisitGrade {
   questionId: string;
@@ -43,6 +44,8 @@ const EvaluateVisit = () => {
   const [loading, setLoading] = useState(false);
   const [fetchedVisitGrade, setFetchedVisitGrade] = useState<VisitGrade[]>([]);
   const toast = useToast();
+
+  const router = useNavigation();
 
   const dateVisited = new Date().toISOString();
 
@@ -172,6 +175,7 @@ const EvaluateVisit = () => {
       setLoading(false);
       showToast('Visita avaliada com sucesso', 'success');
       setFetchedVisitGrade([]);
+      router.navigate('Home' as never);
     }
   };
 
