@@ -18,6 +18,10 @@ export default class CompanyServices {
       (company) => company.id === idCompany
     );
 
+    if (company === undefined) {
+      throw new Error('Company not found');
+    }
+
     return company;
   }
 }

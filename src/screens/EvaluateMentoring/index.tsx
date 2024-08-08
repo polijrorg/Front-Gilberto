@@ -63,7 +63,7 @@ const EvaluateMentoring = () => {
 
   return (
     <>
-      <StatusBar />
+      <StatusBar backgroundColor={'#3E63DD'} />
       <S.Wrapper>
         <HeaderPages title="Avaliar Mentoreado" />
         <S.Container>
@@ -80,14 +80,27 @@ const EvaluateMentoring = () => {
   );
 };
 
-const SellerSelection = ({ sellers, onSelectSeller }) => (
+interface SellerSelectionProps {
+  sellers: ISeller[];
+  onSelectSeller: (seller: ISeller) => void;
+}
+
+const SellerSelection: React.FC<SellerSelectionProps> = ({
+  sellers,
+  onSelectSeller,
+}) => (
   <S.DivContainerSeller>
     <S.NameField>Nome do Vendedor</S.NameField>
     <Dropdown sellers={sellers} onSelectSeller={onSelectSeller} />
   </S.DivContainerSeller>
 );
 
-const ModuleList = ({ loading, modules }) => (
+interface ModuleListProps {
+  loading: boolean;
+  modules: IModule[];
+}
+
+const ModuleList: React.FC<ModuleListProps> = ({ loading, modules }) => (
   <S.DivContainerSeller>
     <S.NameField>Veja quais módulos estão disponíveis</S.NameField>
     <S.ContainerButton>
@@ -106,7 +119,15 @@ const ModuleList = ({ loading, modules }) => (
   </S.DivContainerSeller>
 );
 
-const EvaluationButton = ({ onPress, disabled }) => (
+interface EvaluationButtonProps {
+  onPress: () => void;
+  disabled: boolean;
+}
+
+const EvaluationButton: React.FC<EvaluationButtonProps> = ({
+  onPress,
+  disabled,
+}) => (
   <S.BtnAvaliar onPress={onPress} disabled={disabled}>
     <S.TextBtnAvaliar>Avaliar</S.TextBtnAvaliar>
   </S.BtnAvaliar>

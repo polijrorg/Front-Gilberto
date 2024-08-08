@@ -129,7 +129,14 @@ const PlainActionTemplate = () => {
   );
 };
 
-const PlanList = ({
+interface PlanListProps {
+  title: string;
+  plains: IPlains[];
+  handleToggleVisibility: (idPlain: string) => void;
+  handleMarkDone: (idPlain: string) => void;
+}
+
+const PlanList: React.FC<PlanListProps> = ({
   title,
   plains,
   handleToggleVisibility,
@@ -156,7 +163,15 @@ const PlanList = ({
   );
 };
 
-const CompletedPlanList = ({
+interface CompletedPlanListProps {
+  title: string;
+  completedPlains: IPlains[];
+  handleToggleVisibility: (idPlain: string) => void;
+  handleMarkDone: (idPlain: string) => void;
+  complete: boolean;
+}
+
+const CompletedPlanList: React.FC<CompletedPlanListProps> = ({
   title,
   completedPlains,
   handleToggleVisibility,

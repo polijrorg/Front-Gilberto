@@ -81,7 +81,7 @@ const SellerAdded: React.FC = () => {
   const handleCreate = async () => {
     try {
       setLoading(true);
-      const supervisorId = selectedSupervisor?.id || null;
+      const supervisorId = selectedSupervisor?.id || undefined;
       const companyId = user.companyId;
 
       const seller: ISeller = await SellerService.createSeller({

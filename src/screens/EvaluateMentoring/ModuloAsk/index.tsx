@@ -95,12 +95,12 @@ const ModuloAsk: React.FC<Props> = ({ route }) => {
     navigation.navigate('CompleteMentoring', {
       Seller: seller,
       ModulesEvaluate: editedModules,
-    });
+    } as never);
   };
 
   return (
     <>
-      <StatusBar />
+      <StatusBar backgroundColor={'#3E63DD'} />
       <S.Wrapper>
         <HeaderPages title="Avaliar Mentorado" />
         <SellerInfo seller={seller} />

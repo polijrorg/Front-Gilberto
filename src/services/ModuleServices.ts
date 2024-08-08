@@ -15,7 +15,9 @@ export default class ModulesServices {
   static async getModuleById(idModule: string): Promise<IModule> {
     const moduleResponse: AxiosResponse<IModule[]> =
       await api.get('/module/getAll');
-    const module = moduleResponse.data.find((module) => module.id === idModule);
+    const module = moduleResponse.data.find(
+      (module) => module.id === idModule
+    ) as IModule;
 
     return module;
   }

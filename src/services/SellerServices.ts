@@ -28,7 +28,7 @@ export default class SellerService {
   static async getSupervisorByIdCompany(
     companyId: string,
     sellerId: string
-  ): Promise<ISeller> {
+  ): Promise<ISeller | undefined> {
     const responseCompany = await this.getAllSellerFromCompany(companyId);
     const seller = responseCompany.find((seller) => seller.id === sellerId);
     return seller;

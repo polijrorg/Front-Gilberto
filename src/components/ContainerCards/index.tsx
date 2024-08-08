@@ -7,7 +7,7 @@ import ISupervisor from '@interfaces/Supervisor';
 
 const Container: React.FC<{
   search?: string;
-  data: Array<ISeller | ISupervisor>;
+  data: Array<ISeller | ISupervisor> | null;
   loading: boolean;
   title: string;
   media?: { [key: string]: number };
@@ -21,7 +21,7 @@ const Container: React.FC<{
       <S.Cards>
         {loading ? (
           <LoadingIndicator />
-        ) : filteredData.length > 0 ? (
+        ) : (filteredData ?? []).length > 0 ? (
           userType === 'Supervisor' ? (
             <>
               <S.DivVisita>
@@ -34,9 +34,12 @@ const Container: React.FC<{
               </S.DivMentoria>
             </>
           ) : (
-            filteredData.map((item, index) => (
-              <CardItem key={index} item={item} media={media} />
-            ))
+            filteredData?.map(
+              (
+                item: ISeller | ISupervisor,
+                index: string | number | null | undefined
+              ) => <CardItem key={index} item={item} media={media} />
+            )
           )
         ) : (
           <NoDataMessage title={userType === 'Supervisor' ? '' : 'Dados'} />
@@ -46,31 +49,43 @@ const Container: React.FC<{
   );
 };
 
-const filterData = (data, search, userType) => {
+const filterData = (
+  data: any[] | null,
+  search: string | undefined,
+  userType: string | undefined
+) => {
   if (userType === 'Supervisor') return data;
 
   const removeAccents = (str: string) =>
     str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   const searchTerm = search ? removeAccents(search.toLowerCase()) : '';
 
-  return data.filter((item) => {
+  return data?.filter((item) => {
     const itemName = removeAccents(item.name.toLowerCase());
     return !search || itemName.includes(searchTerm);
   });
 };
 
-const renderFilteredData = (data, stage, media) => {
-  const filtered = data.filter(
-    (item): item is ISeller => 'stage' in item && item.stage === stage
+const renderFilteredData = (
+  data: any[] | null | undefined,
+  stage: string,
+  media: { [x: string]: number }
+) => {
+  const filtered = data?.filter(
+    (item: { stage: any }): item is ISeller =>
+      'stage' in item && item.stage === stage
   );
 
-  if (filtered.length === 0) {
+  if (filtered?.length === 0) {
     return <NoDataMessage key="no-data" title={stage} />;
   }
 
-  return filtered.map((item, index) => (
-    <CardItem key={index} item={item} media={media} />
-  ));
+  return filtered?.map(
+    (
+      item: ISeller | ISupervisor,
+      index: string | number | null | undefined
+    ) => <CardItem key={index} item={item} media={media} />
+  );
 };
 
 const LoadingIndicator: React.FC = () => (

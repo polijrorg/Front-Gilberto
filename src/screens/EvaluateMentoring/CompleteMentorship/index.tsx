@@ -133,7 +133,7 @@ const CompleteMentorship: React.FC = () => {
 
   return (
     <>
-      <StatusBar />
+      <StatusBar backgroundColor={'#3E63DD'} />
       <S.Wrapper>
         <HeaderPages title="Avaliar Mentorado" />
         <SellerInfo seller={Seller} handleBackHome={handleBackHome} />
@@ -188,7 +188,7 @@ const ModuleEvaluation: React.FC<ModuleEvaluationProps> = ({ moduleData }) => {
     const fetchData = async () => {
       try {
         const fetchedModule = await ModulesServices.getModuleById(
-          moduleData?.idModule
+          moduleData?.idModule ?? ''
         );
         setModule(fetchedModule);
       } catch (error) {

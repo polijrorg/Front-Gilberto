@@ -36,7 +36,7 @@ export default class SupervisorServices {
   static async getSupervisorByIdCompany(
     companyId: string,
     supervisorId: string
-  ): Promise<ISupervisor> {
+  ): Promise<ISupervisor | undefined> {
     const responseCompany = await this.getAllSupervisorFromCompany(companyId);
     const supervisor = responseCompany.find(
       (supervisor) => supervisor.id === supervisorId

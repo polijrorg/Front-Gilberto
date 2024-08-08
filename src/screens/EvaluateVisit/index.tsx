@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as S from './styles';
-import { ActivityIndicator, Dimensions } from 'react-native';
+import { ActivityIndicator, Dimensions, StatusBar } from 'react-native';
 import Breadcrumb from '@components/Breadcrumb';
 import Dropdown from '@components/Dropdown';
 import HeaderPages from '@components/HeaderPages';
@@ -261,6 +261,7 @@ const EvaluateVisit = () => {
   return (
     <>
       <S.WrapperView>
+        <StatusBar backgroundColor={'#3E63DD'} />
         <HeaderPages title="Visita" />
         <S.ContainerFields>
           <Breadcrumb

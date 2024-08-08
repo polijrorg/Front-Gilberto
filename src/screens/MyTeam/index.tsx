@@ -3,7 +3,6 @@ import { StatusBar } from 'expo-status-bar';
 import DivGradient from '@components/DivGradient';
 import * as S from './styles';
 import { useNavigation } from '@react-navigation/native';
-import Seller from '@interfaces/Seller';
 import Container from '@components/ContainerCards';
 import useAuth from '@hooks/useAuth';
 import SellerServices from '@services/SellerServices';
@@ -18,10 +17,10 @@ const MyTeam = () => {
   const { user } = useAuth();
   const { data } = useDataContext();
   const [loading, setLoading] = useState(true);
-  const [sellers, setSellers] = useState<ISeller[]>([]);
+  const [sellers, setSellers] = useState<ISeller[] | null>(null);
   const [supervisors, setSupervisors] = useState<ISupervisor[]>([]);
   const [search, setSearch] = useState('');
-  const [media, setMedia] = useState({});
+  const [media, setMedia] = useState<{ [key: string]: number }>({});
   const navigation = useNavigation();
 
   const handlePressAddedSeller = () => {
@@ -33,18 +32,18 @@ const MyTeam = () => {
       setLoading(true);
       try {
         if (user.job === 'Supervisor') {
-          const [sellersData] = await Promise.all([
-            SellerServices.getAllSellerFromSupervisor(user.id),
-          ]);
-          const mediaData = await fetchMediaData(sellersData);
-          setSellers(sellersData);
+          const sellersData = await SellerServices.getAllSellerFromSupervisor(
+            user.id
+          );
+          const mediaData = await fetchMediaData(sellersData as ISeller[]);
+          setSellers(sellersData || []);
           setMedia(mediaData);
         } else if (user.job === 'Gerente') {
           const [sellersData, supervisorsData] = await Promise.all([
             SellerServices.getAllSellerFromManager(user.id),
             SupervisorServices.getAllSupervisorsFromManager(user.id),
           ]);
-          const mediaData = await fetchMediaData(sellersData);
+          const mediaData = await fetchMediaData(sellersData as ISeller[]);
           setSellers(sellersData);
           setSupervisors(supervisorsData);
           setMedia(mediaData);
@@ -58,8 +57,8 @@ const MyTeam = () => {
     fetchData();
   }, [user.id, user.job, data]);
 
-  const fetchMediaData = async (sellersData: Seller[]) => {
-    const mediaData = {};
+  const fetchMediaData = async (sellersData: ISeller[]) => {
+    const mediaData: { [key: string]: number } = {};
     for (const seller of sellersData) {
       const moduleGrades = await ModulesServices.getModuleGradesByIdSeller(
         seller.id
@@ -82,8 +81,8 @@ const MyTeam = () => {
         <HeaderPages title="Minha Equipe" />
         <S.DivContainerInput>
           <S.InputVendedor
-            placeholder={'Pesquisar'}
-            keyboardType={'default'}
+            placeholder="Pesquisar"
+            keyboardType="default"
             value={search}
             onChangeText={(text) => setSearch(text)}
           />
@@ -100,7 +99,6 @@ const MyTeam = () => {
             userType={user.job}
           />
         )}
-
         <Container
           media={media}
           title="Vendedores"

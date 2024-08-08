@@ -6,7 +6,7 @@ import React from 'react';
 const Login = () => {
   return (
     <S.Wrapper>
-      <StatusBar />
+      <StatusBar backgroundColor={'#3E63DD'} />
       <S.Header>
         <S.TitleHeader>Faça seu login</S.TitleHeader>
         <S.ImageHeader source={require('@assets/img/login/mao.png')} />

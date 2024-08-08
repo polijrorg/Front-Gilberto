@@ -8,6 +8,7 @@ import VisitService from '@services/VisitService';
 import ICategories from '@interfaces/Visit/Categories';
 import ITemplateVisit from '@interfaces/Visit/TemplateVisit';
 import Select from '@components/Select';
+import { StatusBar } from 'react-native';
 
 interface VisitGrade {
   questionId: string;
@@ -186,6 +187,8 @@ const EvaluateVisitManager = () => {
 
   return (
     <S.WrapperView>
+      <StatusBar backgroundColor={'#3E63DD'} />
+
       <HeaderPages title="Visita" />
       <S.ContainerFields>
         <S.ContainerVisit>

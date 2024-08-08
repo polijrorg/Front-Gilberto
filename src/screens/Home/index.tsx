@@ -10,18 +10,19 @@ import SupervisorServices from '@services/SupervisorServices';
 import SellerServices from '@services/SellerServices';
 import ModulesServices from '@services/ModuleServices';
 import Seller from '@interfaces/Seller';
+import Supervisor from '@interfaces/Supervisor';
 import { useDataContext } from '../../context/DataContext';
 
 const Home = () => {
   const { user } = useAuth();
   const { data } = useDataContext();
   const [loading, setLoading] = useState(true);
-  const [sellers, setSellers] = useState([]);
-  const [supervisors, setSupervisors] = useState([]);
+  const [sellers, setSellers] = useState<Seller[]>([]);
+  const [supervisors, setSupervisors] = useState<Supervisor[]>([]);
   const [media, setMedia] = useState({});
 
   const fetchMediaData = async (sellersData: Seller[]) => {
-    const mediaData = {};
+    const mediaData: { [key: string]: number } = {};
     for (const seller of sellersData) {
       const moduleGrades = await ModulesServices.getModuleGradesByIdSeller(
         seller.id
