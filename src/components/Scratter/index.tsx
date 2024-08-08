@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import * as S from './styles';
-import { Dimensions, TouchableOpacity } from 'react-native';
+import { Dimensions } from 'react-native';
 import Svg, { Circle, Line, Text } from 'react-native-svg';
 import SellerService from '@services/SellerServices';
 import { FontAwesome } from '@expo/vector-icons';
@@ -37,7 +37,7 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
   const padding = 40;
   const chartWidth = Dimensions.get('window').width - 20;
   const chartHeight = 290;
-  const circleRadius = 6;
+  const circleRadius = 7;
   const labelOffset = 12;
   const axisLabelOffset = 20;
   const middleLineColor = '#C6D4F9';
@@ -46,31 +46,30 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
 
   // Função para lidar com o clique no ponto
   const handleCirclePress = async (
-    event: any,
+    supervisorName: string,
     sellerId: string,
+    sellerName: string,
     averageImplementation: number,
     averageKnowledge: number,
     x: number,
     y: number
   ) => {
-    const seller = await SellerService.findSellerById(sellerId);
-    const supervisor = await SupervisorServices.findByID(seller.supervisorId);
-
     // Se o tooltip já estiver visível e nas mesmas coordenadas, esconda-o
     if (tooltip && tooltip.visible && tooltip.x === x && tooltip.y === y) {
       setTooltip(null);
       setSelectedSellerId(null); // Resetar seleção ao fechar o tooltip
     } else {
+      setSelectedSellerId(sellerId); // Selecionar o ponto
+
       setTooltip({
         visible: true,
         x,
         y,
-        name: seller.name,
-        supervisorName: supervisor.name,
+        name: sellerName,
+        supervisorName: supervisorName,
         averageImplementation,
         averageKnowledge,
       });
-      setSelectedSellerId(sellerId); // Selecionar o ponto
     }
   };
 
@@ -178,26 +177,29 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
   );
 
   // Circulos
-  const circles = moduleAverages.map((item, index) => {
+  const circles = moduleAverages?.map(async (item, index) => {
     const x =
       padding + ((chartWidth - 2 * padding) * item.averageKnowledge) / 5;
     const y =
       chartHeight -
       padding -
       ((chartHeight - 2 * padding) * item.averageImplementation) / 5;
+    const seller = await SellerService.findSellerById(item.sellerId);
+    const supervisor = await SupervisorServices.findByID(seller.supervisorId);
     return (
       <Circle
-        key={index}
+        key={x}
         cx={x}
         cy={y}
         r={circleRadius}
         fill={
           selectedSellerId === item.sellerId ? selectedCircleColor : '#3E63DD'
         } // Cor do ponto selecionado
-        onPress={(event) =>
+        onPressIn={() =>
           handleCirclePress(
-            event,
+            supervisor.name,
             item.sellerId,
+            seller.name,
             item.averageImplementation,
             item.averageKnowledge,
             x,
@@ -239,15 +241,17 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
   return (
     <S.Container>
       <Svg width={chartWidth} height={chartHeight}>
-        {xAxis}
-        {xAxisLabels}
-        {yAxis}
-        {yAxisLabels}
-        {circles}
-        {knowledgeLine}
-        {knowledgeLabel}
-        {implementationLine}
-        {implementationLabel}
+        <>
+          {xAxis}
+          {xAxisLabels}
+          {yAxis}
+          {yAxisLabels}
+          {circles}
+          {knowledgeLine}
+          {knowledgeLabel}
+          {implementationLine}
+          {implementationLabel}
+        </>
       </Svg>
       {tooltip?.visible && (
         <S.Tooltip
