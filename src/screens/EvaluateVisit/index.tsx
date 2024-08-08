@@ -248,10 +248,14 @@ const EvaluateVisit = () => {
   };
 
   const initialNewVisit = () => {
-    setIndexScreen(1);
+    setIndexScreen(0);
     setSelectedSeller(null);
     setStoreName('');
     setCategories([]);
+    setTemplate([]);
+    setFetchedVisitGrade([]);
+    setEvaluationStarted(false);
+    setVisitToDay(undefined);
   };
 
   return (
