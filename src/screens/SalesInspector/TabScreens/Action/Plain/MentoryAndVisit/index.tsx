@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import * as S from './styles';
 import Select from '@components/Select';
-
 import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
@@ -10,7 +9,6 @@ import { useToast } from 'react-native-toast-notifications';
 import ISeller from '@interfaces/Seller';
 import IModules from '@interfaces/Module';
 import IVisits from '@interfaces/Visit/Visit';
-
 import PlainService from '@services/PlainService';
 
 interface PlainActionProps {
@@ -50,20 +48,29 @@ const PlainMentory: React.FC<PlainActionProps> = ({
 
   const handleCompletePlainAction = async () => {
     try {
+      // Formate a data no formato "dia/mês/ano"
+      const formattedDate = date.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
+
       const newPlain = await PlainService.createPlain({
         title: titleAction,
         comments: comment,
-        prize: date.toLocaleDateString(),
+        prize: formattedDate, // Envia a data formatada
         sellerId: seller.id,
         supervisorId: seller.supervisorId,
         moduleId: seller.stage === 'Mentoria' ? selectedValue : selectedValue,
       });
+
+      console.log(newPlain);
       addNewPlain(newPlain);
       setState();
       showToast('Plano de ação efetivado com sucesso', 'success');
     } catch (error) {
       setState();
-      showToast('Modulo Já disponhem de um plano de ação', 'warning');
+      showToast('Módulo já dispõe de um plano de ação', 'warning');
     }
   };
 
@@ -109,7 +116,7 @@ const PlainMentory: React.FC<PlainActionProps> = ({
         />
 
         <S.BtnCriarAction onPress={handleCompletePlainAction}>
-          <S.TextBtn>criar plano de ação</S.TextBtn>
+          <S.TextBtn>Criar plano de ação</S.TextBtn>
         </S.BtnCriarAction>
         <S.Outline onPress={returnPage}>
           <S.TextBtnNova>Voltar</S.TextBtnNova>
@@ -140,7 +147,7 @@ const ActionSpecificFields: React.FC<ActionSpecificFieldsProps> = ({
     <>
       {stage === 'Visita' && (
         <>
-          <S.TextForms>Vísita de Avaliação</S.TextForms>
+          <S.TextForms>Visita de Avaliação</S.TextForms>
           <Select
             placeholder="Selecione"
             options={visits?.map(({ id, storeVisited }) => ({
@@ -196,7 +203,13 @@ export const DateTimePickerComponent: React.FC<
       <S.TextForms>Data</S.TextForms>
       <S.BtnData onPress={showDatePickerModal}>
         <S.TextBtnData>
-          {date ? date.toLocaleDateString() : 'Selecione a Data'}
+          {date
+            ? date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              })
+            : 'Selecione a Data'}
         </S.TextBtnData>
       </S.BtnData>
       {showDatePicker && (

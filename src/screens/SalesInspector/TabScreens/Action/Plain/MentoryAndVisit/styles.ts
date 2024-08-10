@@ -15,10 +15,10 @@ export const Wrapper = styled(ScrollView)`
 `;
 
 export const WrapperView = styled(View)`
-  width: 90%;
+  width: 100%;
   max-height: 100%;
   flex: 1;
-  padding: 12px;
+  padding: 8px;
   gap: 8px;
   margin: 0 auto;
 `;

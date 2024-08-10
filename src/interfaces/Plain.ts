@@ -1,4 +1,5 @@
 import Seller from './Seller';
+import Supervisor from './Supervisor';
 
 export default interface Plains {
   id: string;
@@ -8,7 +9,8 @@ export default interface Plains {
   sellerId: string;
   done: boolean;
   supervisorId: string;
-  visitId: string;
-  moduleId: string;
+  visitId: string | null;
+  moduleId: string | null;
   seller: Seller;
+  supervisivor: Supervisor;
 }
