@@ -2,7 +2,7 @@ import { Text, View } from 'react-native';
 import styled from 'styled-components/native';
 
 export const StyledWrapper = styled(View)`
-  width: 95%;
+  width: 90%;
   height: auto;
   background-color: #f1f3f3;
   border-width: 1px;
@@ -17,15 +17,18 @@ export const StyledWrapper = styled(View)`
 `;
 
 export const DivText = styled(View)`
-  padding: 0px 7px;
+  padding: 4px 8px;
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
+  max-width: 30%;
 `;
 
 export const Title = styled(Text)`
   font-size: 12px;
   font-family: Poppins;
-  word-wrap: break-word; /* Adiciona essa propriedade */
+  width: 100%;
+  padding: 0 4px;
 `;
 
 export const Nota = styled(Text)`

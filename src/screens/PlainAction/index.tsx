@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  StatusBar,
-  ActivityIndicator,
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
+import { StatusBar, ActivityIndicator, ScrollView } from 'react-native';
 import * as S from './styles';
 
 import Header from '@components/HeaderPages';
@@ -14,9 +7,7 @@ import useAuth from '@hooks/useAuth';
 import CardsMentory from '@components/CardsMentory';
 
 import PlainService from '@services/PlainService';
-
 import IPlains from '@interfaces/Plain';
-
 import { useDataContext } from '../../context/DataContext';
 
 const PlainActionTemplate = () => {
@@ -35,12 +26,10 @@ const PlainActionTemplate = () => {
           const plainsData = await PlainService.getPlainActionByIdSupervisor(
             user.id
           );
-
           setPlains(plainsData.filter((plain) => !plain.done));
           setCompletedPlains(plainsData.filter((plain) => plain.done));
         } else if (user.job === 'Manager') {
           const plainsData = await PlainService.getAll();
-
           setPlains(plainsData.filter((plain) => !plain.done));
           setCompletedPlains(plainsData.filter((plain) => plain.done));
         }
@@ -83,12 +72,12 @@ const PlainActionTemplate = () => {
         <Header title="Planos de Ação" />
         <S.ViewWrapper>
           {loading ? (
-            <View style={styles.loadingContainer}>
+            <S.LoadingContainer>
               <ActivityIndicator size="large" color="#3E63DD" />
-            </View>
+            </S.LoadingContainer>
           ) : !isVisible ? (
             <ScrollView>
-              <View style={styles.sectionContainer}>
+              <S.SectionContainer>
                 <PlanList
                   title="Planos Pendentes"
                   plains={plains}
@@ -96,14 +85,12 @@ const PlainActionTemplate = () => {
                   handleMarkDone={handleMarkDone}
                 />
                 {plains.length === 0 && (
-                  <View style={styles.emptyContainer}>
-                    <Text style={styles.emptyText}>
-                      Você não tem planos pendentes
-                    </Text>
-                  </View>
+                  <S.EmptyContainer>
+                    <S.EmptyText>Você não tem planos pendentes</S.EmptyText>
+                  </S.EmptyContainer>
                 )}
-              </View>
-              <View style={styles.sectionContainer}>
+              </S.SectionContainer>
+              <S.SectionContainer>
                 <CompletedPlanList
                   title="Planos Concluídos"
                   completedPlains={completedPlains}
@@ -112,13 +99,11 @@ const PlainActionTemplate = () => {
                   complete
                 />
                 {completedPlains.length === 0 && (
-                  <View style={styles.emptyContainer}>
-                    <Text style={styles.emptyText}>
-                      Você não tem planos concluídos
-                    </Text>
-                  </View>
+                  <S.EmptyContainer>
+                    <S.EmptyText>Você não tem planos concluídos</S.EmptyText>
+                  </S.EmptyContainer>
                 )}
-              </View>
+              </S.SectionContainer>
             </ScrollView>
           ) : (
             <></>
@@ -143,23 +128,21 @@ const PlanList: React.FC<PlanListProps> = ({
   handleMarkDone,
 }) => {
   return (
-    <View>
-      <Text style={styles.sectionHeader}>{title}</Text>
-      {plains.map((plain: IPlains) => {
-        return (
-          <CardsMentory
-            key={plain.id}
-            title={plain.title}
-            seller={plain.seller}
-            prize={plain.prize}
-            isVisible={plain.done}
-            complete={false}
-            onToggleVisibility={() => handleToggleVisibility(plain.id)}
-            onMarkDone={() => handleMarkDone(plain.id)}
-          />
-        );
-      })}
-    </View>
+    <S.Section>
+      <S.SectionHeader>{title}</S.SectionHeader>
+      {plains.map((plain: IPlains) => (
+        <CardsMentory
+          key={plain.id}
+          title={plain.title}
+          seller={plain.seller}
+          prize={plain.prize}
+          isVisible={plain.done}
+          complete={false}
+          onToggleVisibility={() => handleToggleVisibility(plain.id)}
+          onMarkDone={() => handleMarkDone(plain.id)}
+        />
+      ))}
+    </S.Section>
   );
 };
 
@@ -179,8 +162,8 @@ const CompletedPlanList: React.FC<CompletedPlanListProps> = ({
   complete,
 }) => {
   return (
-    <View>
-      <Text style={styles.sectionHeader}>{title}</Text>
+    <S.Section>
+      <S.SectionHeader>{title}</S.SectionHeader>
       {completedPlains.map((plain) => (
         <CardsMentory
           key={plain.id}
@@ -193,37 +176,8 @@ const CompletedPlanList: React.FC<CompletedPlanListProps> = ({
           onMarkDone={() => handleMarkDone(plain.id)}
         />
       ))}
-    </View>
+    </S.Section>
   );
 };
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sectionContainer: {
-    flex: 1,
-    marginBottom: 20,
-  },
-  emptyContainer: {
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  sectionHeader: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginVertical: 16,
-    paddingHorizontal: 16,
-  },
-});
 
 export default PlainActionTemplate;
