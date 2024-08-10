@@ -56,14 +56,14 @@ const PlainMentory: React.FC<PlainActionProps> = ({
         prize: date.toLocaleDateString(),
         sellerId: seller.id,
         supervisorId: seller.supervisorId,
-        moduleId: seller.stage === 'Mentoria' ? selectedValue : null,
+        moduleId: seller.stage === 'Mentoria' ? selectedValue : selectedValue,
       });
       addNewPlain(newPlain);
       setState();
       showToast('Plano de ação efetivado com sucesso', 'success');
     } catch (error) {
       setState();
-      showToast('Não foi possível criar plano de ação', 'warning');
+      showToast('Modulo Já disponhem de um plano de ação', 'warning');
     }
   };
 
