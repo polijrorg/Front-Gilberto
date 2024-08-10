@@ -18,7 +18,7 @@ const Action = ({ route }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [plains, setPlains] = useState<IPlains[]>([]);
   const [completedPlains, setCompletedPlains] = useState<IPlains[]>([]);
-  const [seller, setSeller] = useState<ISeller | null>(null);
+  const [seller, setSeller] = useState<ISeller | undefined>(undefined);
   const [modules, setModules] = useState<IModules[] | null>(null);
   const [visits, setVisits] = useState<IVisits[] | null>(null);
 
@@ -31,11 +31,11 @@ const Action = ({ route }) => {
             idEmployee
           );
           const visits = await VisitService.getVisitByIdSeller(
-            responseSeller.id
+            responseSeller?.id ?? ''
           );
           const modulesData = await ModuleServices.getAllModules();
           const plainsData = await PlainService.getByIdSellerPlain(
-            responseSeller.id
+            responseSeller?.id ?? ''
           );
           setPlains(plainsData.filter((plain) => !plain.done));
           setVisits(visits);
@@ -53,8 +53,11 @@ const Action = ({ route }) => {
     fetchData();
   }, [cargo, companyId, idEmployee]);
 
-  const addNewPlain = (newPlain: IPlains) => {
-    setPlains((prevPlains) => [...prevPlains, newPlain]);
+  const addNewPlain = async () => {
+    const updatedPlains = await PlainService.getByIdSellerPlain(
+      seller?.id ?? ''
+    );
+    setPlains(updatedPlains);
   };
 
   const handleToggleVisibility = (idPlain: string) => {
@@ -126,15 +129,21 @@ const Action = ({ route }) => {
           setState={handleNavigator}
           seller={seller}
           modules={modules}
-          addNewPlain={addNewPlain}
           visits={visits}
+          addNewPlain={addNewPlain}
         />
       )}
     </S.ViewWrapper>
   );
 };
 
-const PlanList = ({
+interface IPlanListProps {
+  title: string;
+  plains: IPlains[];
+  handleToggleVisibility: (idPlain: string) => void;
+  handleMarkDone: (idPlain: string) => void;
+}
+const PlanList: React.FC<IPlanListProps> = ({
   title,
   plains,
   handleToggleVisibility,
@@ -160,7 +169,15 @@ const PlanList = ({
   );
 };
 
-const CompletedPlanList = ({
+interface ICompletedPlanListProps {
+  title: string;
+  completedPlains: IPlains[];
+  handleToggleVisibility: (idPlain: string) => void;
+  handleMarkDone: (idPlain: string) => void;
+  complete: boolean;
+}
+
+const CompletedPlanList: React.FC<ICompletedPlanListProps> = ({
   title,
   completedPlains,
   handleToggleVisibility,

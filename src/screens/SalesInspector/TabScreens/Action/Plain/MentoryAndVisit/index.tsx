@@ -16,7 +16,7 @@ interface PlainActionProps {
   seller: ISeller;
   modules: IModules[];
   visits: IVisits[];
-  addNewPlain: (newPlain: any) => void;
+  addNewPlain: () => void;
 }
 
 const PlainMentory: React.FC<PlainActionProps> = ({
@@ -48,29 +48,26 @@ const PlainMentory: React.FC<PlainActionProps> = ({
 
   const handleCompletePlainAction = async () => {
     try {
-      // Formate a data no formato "dia/mês/ano"
       const formattedDate = date.toLocaleDateString('pt-BR', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
       });
 
-      const newPlain = await PlainService.createPlain({
+      await PlainService.createPlain({
         title: titleAction,
         comments: comment,
         prize: formattedDate, // Envia a data formatada
-        sellerId: seller.id,
+        sellerId: seller?.id,
         supervisorId: seller.supervisorId,
         moduleId: seller.stage === 'Mentoria' ? selectedValue : selectedValue,
       });
 
-      console.log(newPlain);
-      addNewPlain(newPlain);
+      addNewPlain();
       setState();
       showToast('Plano de ação efetivado com sucesso', 'success');
     } catch (error) {
-      setState();
-      showToast('Módulo já dispõe de um plano de ação', 'warning');
+      showToast('Não foi possível criar plano para este módulo', 'warning');
     }
   };
 

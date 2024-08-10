@@ -43,7 +43,10 @@ export default class PlainService {
   }
 
   static async createPlain(newPlain: Partial<IPlain>): Promise<IPlain> {
-    const plainResponse = await api.post('/actionPlans/create', newPlain);
+    const plainResponse: AxiosResponse<IPlain> = await api.post(
+      '/actionPlans/create',
+      newPlain
+    );
     return plainResponse.data;
   }
 
