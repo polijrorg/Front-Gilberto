@@ -16,12 +16,10 @@ const MatrizSlider: React.FC = () => {
     BarChartProps['questionsBar']
   >([]);
   const [moduleAll, setModuleAll] = useState<ScatterPlotProps[]>([]);
-
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const { user } = useAuth();
-
   const data = ['modulo', 'matriz'];
 
   const fetchModuleGradesAverages = useCallback(async () => {
@@ -30,7 +28,14 @@ const MatrizSlider: React.FC = () => {
         user.id
       );
       setModuleAll(moduleInfoAll);
-      const jobToServiceMap = {
+
+      const jobToServiceMap: {
+        [key: string]: (
+          id: string
+        ) => Promise<
+          { questionId: string; questionName: string; averageGrade: number }[]
+        >;
+      } = {
         Supervisor: VisitGradeService.getAverageGradesSupervisor,
         Gerente: VisitGradeService.getAverageGradesManager,
       };
@@ -43,32 +48,34 @@ const MatrizSlider: React.FC = () => {
 
       const averageGrades = await fetchAverageGrades(user.id);
       setQuestionsBar(averageGrades);
-      return averageGrades;
     } catch (error) {
       console.error('Erro ao buscar médias dos módulos:', error);
-      throw error;
     } finally {
       setIsLoading(false);
     }
   }, [user.id, user.job]);
 
-  const handleScroll = (event: {
-    nativeEvent: { contentOffset: { x: any } };
-  }) => {
-    const offsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.round(offsetX / windowWidth);
-    setCurrentIndex(index);
-  };
+  const handleScroll = useCallback(
+    (event: { nativeEvent: { contentOffset: { x: any } } }) => {
+      const offsetX = event.nativeEvent.contentOffset.x;
+      const index = Math.round(offsetX / windowWidth);
+      setCurrentIndex(index);
+    },
+    [windowWidth]
+  );
 
-  const scrollToIndex = (index: number) => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({
-        animated: true,
-        x: index * windowWidth,
-        y: 0,
-      });
-    }
-  };
+  const scrollToIndex = useCallback(
+    (index: number) => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTo({
+          animated: true,
+          x: index * windowWidth,
+          y: 0,
+        });
+      }
+    },
+    [windowWidth]
+  );
 
   const handleReload = async () => {
     setIsLoading(true);
@@ -77,8 +84,7 @@ const MatrizSlider: React.FC = () => {
     } catch (error) {
       console.error('Erro ao recarregar os dados:', error);
     } finally {
-      setIsLoading(false);
-      scrollToIndex(currentIndex); // Após recarregar, volta para o índice atual do slider
+      scrollToIndex(currentIndex); // Garante que o índice atual seja preservado
     }
   };
 
