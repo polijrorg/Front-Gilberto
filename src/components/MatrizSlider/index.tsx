@@ -28,6 +28,7 @@ const MatrizSlider: React.FC = () => {
         user.id
       );
       setModuleAll(moduleInfoAll);
+      console.log(moduleInfoAll);
 
       const jobToServiceMap: {
         [key: string]: (

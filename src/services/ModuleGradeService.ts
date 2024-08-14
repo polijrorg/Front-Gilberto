@@ -65,6 +65,8 @@ export default class ModuleGradeServices {
   ): Promise<ScatterPlotProps[]> {
     const moduleGradeSellerResponse: AxiosResponse<ScatterPlotProps[]> =
       await api.get(`/module/getAllModuleInfo/${supervisorID}`);
+    console.log(moduleGradeSellerResponse.data);
+
     return moduleGradeSellerResponse.data;
   }
 
