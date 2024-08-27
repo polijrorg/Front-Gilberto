@@ -135,16 +135,14 @@ const OverView: React.FC<OverViewProps> = ({
           return dateB - dateA; // Ordena do mais recente para o mais antigo
         });
 
-        const visitsWithoutMostRecent = sortedVisits.slice(1); // Remove a visita mais recente
-
-        setVisits(visitsWithoutMostRecent);
+        setVisits(sortedVisits);
 
         const fetchedCategories: { [key: string]: ICategories[] } = {};
         const fetchedQuestions: { [key: string]: IQuestions[] } = {};
         const fetchedQuestionGrades: { [key: string]: IQuestionGrade[] } = {};
 
         await Promise.all(
-          visitsWithoutMostRecent.map(async (visit) => {
+          sortedVisits.map(async (visit) => {
             fetchedCategories[visit.id] = [];
             fetchedQuestions[visit.id] = [];
             fetchedQuestionGrades[visit.id] = [];

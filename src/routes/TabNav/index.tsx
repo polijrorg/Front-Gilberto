@@ -10,6 +10,7 @@ import Card from '@components/Cards';
 import SellerServices from '@services/SellerServices';
 import ISeller from '@interfaces/Seller';
 import Action from '@screens/SalesInspector/TabScreens/Action';
+import useAuth from '@hooks/useAuth';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -17,6 +18,8 @@ const TabNav: React.FC = ({ route }) => {
   const { idEmployee, cargo, companyId, stage } = route.params;
   const [sellers, setSellers] = useState<ISeller[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,7 +84,7 @@ const TabNav: React.FC = ({ route }) => {
             />
           )}
 
-          {cargo === 'Supervisor' && (
+          {cargo === 'Supervisor' && user.job === 'Gerente' && (
             <Tab.Screen
               name="Vendedores"
               options={getScreenOptions('Vendedores')}

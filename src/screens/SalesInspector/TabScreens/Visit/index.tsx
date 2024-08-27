@@ -46,6 +46,15 @@ const VisitComponent = ({ route }) => {
       }
     }
 
+    if (user.job === 'Gerente') {
+      const directorTemplates = await VisitService.getTemplateByManagerId(
+        user.id
+      );
+      if (directorTemplates) {
+        templates = [...templates, ...directorTemplates];
+      }
+    }
+
     if (user.companyId) {
       const companyTemplates = await VisitService.getTemplateByCompanyId(
         user.companyId

@@ -11,6 +11,7 @@ import IPlains from '@interfaces/Plain';
 import ISeller from '@interfaces/Seller';
 import IModules from '@interfaces/Module';
 import IVisits from '@interfaces/Visit/Visit';
+import useAuth from '@hooks/useAuth';
 
 const Action = ({ route }) => {
   const { idEmployee, cargo, companyId } = route.params;
@@ -21,6 +22,7 @@ const Action = ({ route }) => {
   const [seller, setSeller] = useState<ISeller | undefined>(undefined);
   const [modules, setModules] = useState<IModules[] | null>(null);
   const [visits, setVisits] = useState<IVisits[] | null>(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -120,9 +122,11 @@ const Action = ({ route }) => {
               </S.EmptyContainer>
             )}
           </S.SectionContainer>
-          <S.BtnCriarAction onPress={handleNavigator}>
-            <S.TextBtn>criar plano de ação</S.TextBtn>
-          </S.BtnCriarAction>
+          {user.job !== 'Gerente' && (
+            <S.BtnCriarAction onPress={handleNavigator}>
+              <S.TextBtn>criar plano de ação</S.TextBtn>
+            </S.BtnCriarAction>
+          )}
         </ScrollView>
       ) : (
         <PlainMentory

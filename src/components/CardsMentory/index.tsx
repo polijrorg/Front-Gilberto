@@ -3,6 +3,7 @@ import { TouchableOpacity, View, StyleSheet } from 'react-native';
 import { StyledWrapper, DivText, Title, Nota, DivNota } from './styles';
 import { MaterialIcons } from '@expo/vector-icons';
 import Seller from '@interfaces/Seller';
+import useAuth from '@hooks/useAuth';
 
 interface CardMentoryProps {
   title: string;
@@ -22,8 +23,10 @@ const CardsMentory: React.FC<CardMentoryProps> = ({
   onMarkDone,
   complete,
 }) => {
+  const { user } = useAuth();
+
   const handleToggleVisibility = () => {
-    if (!complete) {
+    if (!complete && user.job !== 'Gerente') {
       onMarkDone();
       onToggleVisibility();
     }
@@ -31,20 +34,20 @@ const CardsMentory: React.FC<CardMentoryProps> = ({
 
   return (
     <StyledWrapper>
-      <TouchableOpacity
-        onPress={handleToggleVisibility}
-        activeOpacity={complete ? 1 : 0}
-        disabled={complete}
+      <View
+        style={{
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          paddingHorizontal: 16,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}
       >
-        <View
-          style={{
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            paddingHorizontal: 16,
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-          }}
+        <TouchableOpacity
+          onPress={handleToggleVisibility}
+          activeOpacity={complete ? 1 : 0}
+          disabled={complete}
         >
           {complete ? (
             <MaterialIcons name="check-box" size={20} color="#08660b" />
@@ -55,20 +58,20 @@ const CardsMentory: React.FC<CardMentoryProps> = ({
               color="#8c8c8c"
             />
           )}
+        </TouchableOpacity>
+        <DivText>
+          <Title>{title}</Title>
+        </DivText>
+        {seller && (
           <DivText>
-            <Title>{title}</Title>
+            <Title>{seller?.name}</Title>
+            <Title>{seller?.stage}</Title>
           </DivText>
-          {seller && (
-            <DivText>
-              <Title>{seller?.name}</Title>
-              <Title>{seller?.stage}</Title>
-            </DivText>
-          )}
-          <DivNota>
-            <Nota>{prize}</Nota>
-          </DivNota>
-        </View>
-      </TouchableOpacity>
+        )}
+        <DivNota>
+          <Nota>{prize}</Nota>
+        </DivNota>
+      </View>
     </StyledWrapper>
   );
 };

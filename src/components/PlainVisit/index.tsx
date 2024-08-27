@@ -42,7 +42,6 @@ const PlainAction: React.FC<PlainActionProps> = ({ seller, dateVisited }) => {
         supervisorId: seller.supervisorId,
         visitId: dateVisited.id,
       });
-      console.log(plains);
       showToast('Plano de ação criado com sucesso!', 'success');
     } catch (error) {
       console.log(error);

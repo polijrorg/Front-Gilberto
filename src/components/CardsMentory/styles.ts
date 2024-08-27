@@ -21,7 +21,7 @@ export const DivText = styled(View)`
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  max-width: 30%;
+  width: 35%;
 `;
 
 export const Title = styled(Text)`

@@ -71,14 +71,19 @@ const ContainerActions: React.FC = () => {
           text={getButtonText('visita')}
           duty={handleEnviarEvaluateVisit}
         />
-        <ButtonWhite
-          text={getButtonText('mentorado')}
-          duty={handleEnviarEvaluateMentoring}
-        />
-        <ButtonWhite
-          text={'Ver Planos de Ação'}
-          duty={handleEnviarPlainAction}
-        />
+        {user.job !== 'Gerente' && (
+          <>
+            <ButtonWhite
+              text={getButtonText('mentorado')}
+              duty={handleEnviarEvaluateMentoring}
+            />
+            <ButtonWhite
+              text={'Ver Planos de Ação'}
+              duty={handleEnviarPlainAction}
+            />
+          </>
+        )}
+
         <ButtonWhite text="Visualizar Equipe" duty={handleEnviarMyTeam} />
       </S.DivActions>
     </S.ContainerActions>

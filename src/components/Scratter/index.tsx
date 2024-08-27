@@ -217,22 +217,29 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
 
   // Função para ajustar a posição do tooltip
   const adjustTooltipPosition = (tooltipX: number, tooltipY: number) => {
-    const { width: windowWidth, height: windowHeight } =
-      Dimensions.get('window');
-    const tooltipWidth = 200; // Ajuste conforme necessário
-    const tooltipHeight = 100; // Ajuste conforme necessário
+    const tooltipWidth = 200;
+    const tooltipHeight = 100;
+    const margin = 10;
 
     let adjustedX = tooltipX;
-    let adjustedY = tooltipY + circleRadius + 10; // Mantenha o tooltip abaixo da bolinha
+    let adjustedY = tooltipY + circleRadius + 10;
 
-    // Ajuste horizontal
-    if (adjustedX + tooltipWidth > windowWidth) {
-      adjustedX = windowWidth - tooltipWidth - 10; // 10px de margem
+    if (adjustedX + tooltipWidth > chartWidth - margin) {
+      adjustedX = chartWidth - tooltipWidth - margin;
+    } else if (adjustedX < margin) {
+      adjustedX = margin;
     }
 
-    // Ajuste vertical
-    if (adjustedY + tooltipHeight > windowHeight) {
-      adjustedY = windowHeight - tooltipHeight - 10; // 10px de margem
+    if (adjustedY + tooltipHeight > chartHeight - margin) {
+      if (tooltipY - tooltipHeight - 10 >= margin) {
+        adjustedY = tooltipY - tooltipHeight - 10;
+      } else {
+        adjustedY = chartHeight - tooltipHeight - margin;
+      }
+    }
+
+    if (adjustedY < margin) {
+      adjustedY = margin;
     }
 
     return { x: adjustedX, y: adjustedY };
@@ -256,6 +263,7 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
       {tooltip?.visible && (
         <S.Tooltip
           style={{
+            position: 'absolute', // Garante que o tooltip fique acima do gráfico
             left: adjustTooltipPosition(tooltip.x, tooltip.y).x,
             top: adjustTooltipPosition(tooltip.x, tooltip.y).y,
           }}

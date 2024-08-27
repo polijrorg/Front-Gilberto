@@ -175,7 +175,6 @@ const EvaluateVisit = () => {
       setLoading(false);
       showToast('Visita avaliada com sucesso', 'success');
       setFetchedVisitGrade([]);
-      router.navigate('Home' as never);
     }
   };
 
@@ -248,6 +247,7 @@ const EvaluateVisit = () => {
   };
 
   const initialNewVisit = () => {
+    finishedVisit();
     setIndexScreen(0);
     setSelectedSeller(null);
     setStoreName('');
@@ -256,6 +256,11 @@ const EvaluateVisit = () => {
     setFetchedVisitGrade([]);
     setEvaluationStarted(false);
     setVisitToDay(undefined);
+  };
+
+  const overView = async () => {
+    await finishedVisit();
+    setIndexScreen(indexScreen + 1);
   };
 
   return (
@@ -315,9 +320,7 @@ const EvaluateVisit = () => {
           {indexScreen === categories.length && categories.length !== 0 && (
             <>
               <S.ContainerButton>
-                <S.ButtonIniciar
-                  onPress={() => setIndexScreen(indexScreen + 1)}
-                >
+                <S.ButtonIniciar onPress={overView}>
                   <S.TextBtn>Ver Resumo do dia de visita</S.TextBtn>
                 </S.ButtonIniciar>
                 <S.Outline onPress={initialNewVisit}>
@@ -343,7 +346,9 @@ const EvaluateVisit = () => {
             <>
               <FinishedSection
                 selectedSeller={selectedSeller}
-                finishedVisit={finishedVisit}
+                finishedVisit={() => {
+                  router.navigate('Home' as never);
+                }}
                 array={fetchedVisitGrade}
                 loading={loading}
                 visitToDay={visitToDay}
@@ -380,11 +385,7 @@ const FinishedSection: React.FC<FinishedProps> = ({
         />
       </S.ContainerPlain>
 
-      <S.BtnFinished
-        onPress={finishedVisit}
-        disabled={loading || array.length === 0}
-        style={{ opacity: array.length === 0 ? 0.7 : 1 }}
-      >
+      <S.BtnFinished onPress={finishedVisit} disabled={loading}>
         {loading ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (
