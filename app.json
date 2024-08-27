@@ -3,7 +3,7 @@
     "name": "Sell Out Expert",
     "slug": "sell-out-expert",
     "icon": "./public/assets/AppIcon.jpeg",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -14,10 +14,11 @@
     },
     "android": {
       "package": "com.selloutexpert.app",
-      "versionCode": 4
+      "versionCode": 5
     },
     "ios": {
-      "bundleIdentifier": "com.selloutexpert.app"
+      "bundleIdentifier": "com.selloutexpert.app",
+      "buildNumber": "5"
     }
   }
 }
