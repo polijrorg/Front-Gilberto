@@ -14,10 +14,19 @@ import IQuestionGrade from '@interfaces/Visit/QuestionGrade';
 import SellerService from '@services/SellerServices';
 import Visit from '@interfaces/Visit/Visit';
 
-const VisitComponent = ({ route }) => {
+interface RouteParams {
+  params: {
+    idEmployee: string;
+    cargo: string;
+    companyId: string;
+  };
+}
+
+const VisitComponent = ({ route }: { route: RouteParams }) => {
   const { idEmployee, cargo, companyId } = route.params;
   const [loading, setLoading] = useState(false);
   const [seller, setSeller] = useState<ISeller | null>(null);
+  const [comments, setComments] = useState<string[]>([]);
   const [visits, setVisits] = useState<Visit[]>([]);
   const [categories, setCategories] = useState<{
     [key: string]: ICategories[];
@@ -158,26 +167,59 @@ const VisitComponent = ({ route }) => {
       (total, grade) => total + grade.grade,
       0
     );
+
     return relevantGrades.length > 0 ? totalGrades / relevantGrades.length : 0;
   };
 
-  const generateQuestionsWithGrades = (
+  // const generateQuestionsWithGrades = (
+  //   visitId: string,
+  //   categoryId: string,
+  //   questions: { [key: string]: IQuestions[] },
+  //   questionGrades: { [key: string]: IQuestionGrade[] }
+  // ) => {
+  //   const relevantQuestions =
+  //     questions[visitId]?.filter(
+  //       (question) => question.categoriesId === categoryId
+  //     ) || [];
+  //   return relevantQuestions.map((question) => {
+  //     const grade = questionGrades[visitId]?.find(
+  //       (grade) => grade.questionsId === question.id && grade.grade !== 0
+  //     );
+  //     return {
+  //       question: question.question,
+  //       grade: grade ? grade.grade.toString() : 'X,X',
+  //       comments: grade?.comments,
+  //       categories: question.categoriesId,
+  //     };
+  //   });
+  // };
+
+  const generateQuestionsWithGradesByCategory = (
     visitId: string,
-    categoryId: string,
+    categories: ICategories[],
     questions: { [key: string]: IQuestions[] },
     questionGrades: { [key: string]: IQuestionGrade[] }
   ) => {
-    const relevantQuestions =
-      questions[visitId]?.filter(
-        (question) => question.categoriesId === categoryId
-      ) || [];
-    return relevantQuestions.map((question) => {
-      const grade = questionGrades[visitId]?.find(
-        (grade) => grade.questionsId === question.id && grade.grade !== 0
-      );
+    return categories.map((category) => {
+      const relevantQuestions =
+        questions[visitId]?.filter(
+          (question) => question.categoriesId === category.id
+        ) || [];
+
+      const questionsWithGrades = relevantQuestions.map((question) => {
+        const grade = questionGrades[visitId]?.find(
+          (grade) => grade.questionsId === question.id && grade.grade !== 0
+        );
+        return {
+          question: question.question,
+          grade: grade ? grade.grade.toString() : 'X,X',
+          comments: grade?.comments,
+        };
+      });
+
       return {
-        question: question.question,
-        grade: grade ? grade.grade.toString() : 'X,X',
+        categoryName: category.name,
+        questions: questionsWithGrades,
       };
     });
   };
@@ -188,21 +230,22 @@ const VisitComponent = ({ route }) => {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <S.WrapperView>
           {visits.length > 0 ? (
-            visits.map((visit) => (
-              <AccordionVisit
-                key={visit.id}
-                title={`${visit.storeVisited} - ${visit.dateVisited}`}
-                media={calculateMedia(visit.id, questions, questionGrades)}
-                questions={categories[visit.id]?.flatMap((category) =>
-                  generateQuestionsWithGrades(
+            visits.map((visit) => {
+              return (
+                <AccordionVisit
+                  key={visit.id}
+                  title={`${visit.storeVisited} - ${visit.dateVisited}`}
+                  media={calculateMedia(visit.id, questions, questionGrades)}
+                  categories={generateQuestionsWithGradesByCategory(
                     visit.id,
-                    category.id,
+                    categories[visit.id] || [],
                     questions,
                     questionGrades
-                  )
-                )}
-              />
-            ))
+                  )}
+                  visitId={visit.id}
+                />
+              );
+            })
           ) : (
             <S.NoVisitsContainer>
               <Text>Nenhuma visita registrada para o dia selecionado.</Text>

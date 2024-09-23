@@ -9,6 +9,7 @@ interface QuestionsGradeCreate {
   sellerId: string;
   questionsId: string;
   visitId: string;
+  comments?: string;
 }
 
 export default class VisitGradeService {
@@ -20,6 +21,14 @@ export default class VisitGradeService {
     );
 
     return questionsResponse.data;
+  }
+
+  static async getCommentsByVisitId(idVisit: string): Promise<string[]> {
+    const commentsResponse: AxiosResponse<string[]> = await api.get(
+      `questionsGrades/getCommentsFromVisit/${idVisit}`
+    );
+
+    return commentsResponse.data;
   }
 
   static async getAverageGradesSupervisor(
@@ -53,12 +62,14 @@ export default class VisitGradeService {
     sellerId,
     questionsId,
     visitId,
+    comments,
   }: QuestionsGradeCreate): Promise<IQuestionGrade> {
     const gradeResponse = await api.post(`/questionsGrades/create`, {
       grade,
       sellerId,
       questionsId,
       visitId,
+      comments,
     });
     return gradeResponse.data;
   }

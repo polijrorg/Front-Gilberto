@@ -28,7 +28,7 @@ interface Props {
   sellerId: string;
   onUpdateAnswers: (answers: any[]) => void;
   onCategoryUpdate?: (updatedCategory: ICategories) => void;
-  onDeleteCategory?: (categoryId: string) => void; // Novo prop para deletar categoria
+  onDeleteCategory?: (categoryId: string) => void;
 }
 
 const QuestionSection: React.FC<Props> = ({
@@ -47,7 +47,8 @@ const QuestionSection: React.FC<Props> = ({
   const [editedQuestions, setEditedQuestions] = useState<IQuestions[]>([]);
   const [newQuestionText, setNewQuestionText] = useState('');
   const [showAddQuestionInput, setShowAddQuestionInput] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false); // Novo estado de carregamento
+  const [comments, setComments] = useState<{ [key: string]: string }>({});
+  const [isDeleting, setIsDeleting] = useState(false);
   const { user } = useAuth();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
@@ -79,28 +80,32 @@ const QuestionSection: React.FC<Props> = ({
       (answer) =>
         answer.questionId === questionId && answer.sellerId === sellerId
     );
+    console.log(comments[category.id]);
+
+    const updatedAnswers =
+      existingAnswerIndex !== -1
+        ? [...answers]
+        : [
+            ...answers,
+            {
+              name: question,
+              questionId,
+              sellerId,
+              value,
+              comments: comments[category.id] || '',
+            },
+          ];
 
     if (existingAnswerIndex !== -1) {
-      const updatedAnswers = [...answers];
       updatedAnswers[existingAnswerIndex] = {
         ...updatedAnswers[existingAnswerIndex],
-        value: value,
+        value,
+        comments: comments[category.id] || '',
       };
-      setAnswers(updatedAnswers);
-      onUpdateAnswers(updatedAnswers);
-    } else {
-      const updatedAnswers = [
-        ...answers,
-        {
-          name: question,
-          questionId: questionId,
-          sellerId: sellerId,
-          value: value,
-        },
-      ];
-      setAnswers(updatedAnswers);
-      onUpdateAnswers(updatedAnswers);
     }
+
+    setAnswers(updatedAnswers);
+    onUpdateAnswers(updatedAnswers);
   };
 
   const handleEditQuestion = () => {
@@ -148,7 +153,7 @@ const QuestionSection: React.FC<Props> = ({
 
   const showToast = (message: string, type: string) => {
     toast.show(message, {
-      type: type,
+      type,
       placement: 'bottom',
       duration: 3500,
       animationType: 'zoom-in',
@@ -218,6 +223,10 @@ const QuestionSection: React.FC<Props> = ({
     );
   }
 
+  const handleCommentChange = (value: string) => {
+    setComments({ [category.id]: value });
+  };
+
   return selectedIndex === index ? (
     <ScrollView
       style={{
@@ -275,8 +284,8 @@ const QuestionSection: React.FC<Props> = ({
             <View style={styles.questionContainer}>
               <TextInput
                 style={styles.questionInput}
-                value={newQuestionText} // Mostra o texto digitado
-                onChangeText={(text) => setNewQuestionText(text)} // Atualiza o texto da nova pergunta
+                value={newQuestionText}
+                onChangeText={(text) => setNewQuestionText(text)}
                 placeholder="Nova Pergunta"
                 placeholderTextColor="#666"
               />
@@ -309,7 +318,7 @@ const QuestionSection: React.FC<Props> = ({
             <S.TextBtn>Salvar Alterações</S.TextBtn>
           </S.ButtonFirst>
           <TouchableOpacity
-            onPress={handleDeleteCategory} // Adicionando a função para deletar a categoria
+            onPress={handleDeleteCategory}
             style={styles.deleteButton}
           >
             <Text style={styles.deleteButtonText}>Deletar Categoria</Text>
@@ -321,16 +330,27 @@ const QuestionSection: React.FC<Props> = ({
           {loading ? (
             <ActivityIndicator size="large" color="#3E63DD" />
           ) : (
-            categoryQuestions.map((question, index) => (
-              <S.Wrapper key={question.id}>
-                <InputRange
-                  onChangeValue={(id: string, value: number) =>
-                    handleInputChange(question.id!, value, question.question)
-                  }
-                  textAsk={question.question}
+            <S.Wrapper>
+              {categoryQuestions.map((question) => (
+                <View key={question.id}>
+                  <InputRange
+                    onChangeValue={(id: string, value: number) =>
+                      handleInputChange(question.id!, value, question.question)
+                    }
+                    textAsk={question.question}
+                  />
+                </View>
+              ))}
+              {user.job !== 'Gerente' && (
+                <S.TextArea
+                  placeholder="Digite aqui..."
+                  multiline={true}
+                  numberOfLines={5}
+                  value={comments[category.id] || ''}
+                  onChangeText={handleCommentChange} // Apenas um campo de texto para comentários
                 />
-              </S.Wrapper>
-            ))
+              )}
+            </S.Wrapper>
           )}
         </>
       )}

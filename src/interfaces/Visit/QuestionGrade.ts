@@ -4,4 +4,5 @@ export default interface QuestionsGrade {
   sellerId: string;
   questionsId: string;
   visitId: string;
+  comments?: string;
 }

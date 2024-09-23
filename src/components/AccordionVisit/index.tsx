@@ -1,12 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import VisitGradesService from '@services/VisitGradesService';
+
+// type AccordionProps = {
+//   title?: string;
+//   media?: number | string;
+//   questions?: { question: string; grade: string; comments?: string }[];
+//   questionGrades?: number[];
+//   categories?: string[];
+// };
 
 type AccordionProps = {
   title?: string;
   media?: number | string;
-  questions?: { question: string; grade: string }[];
-  questionGrades?: number[];
+  categories?: {
+    categoryName: string;
+    questions: { question: string; grade: string; comments?: string }[];
+  }[];
+  visitId: string;
 };
 
 const formatNumber = (number: number | string) => {
@@ -40,15 +52,42 @@ const AccordionHeader: React.FC<{
   </TouchableWithoutFeedback>
 );
 
+// type AccordionContentProps = {
+//   isExpanded: boolean;
+//   questions?: { question: string; grade: string; comments?: string }[] | null;
+// };
+
 type AccordionContentProps = {
   isExpanded: boolean;
-  questions?: { question: string; grade: string }[] | null;
+  categories?:
+    | {
+        categoryName: string;
+        questions: { question: string; grade: string; comments?: string }[];
+      }[]
+    | null;
+  visitId: string;
 };
 
 const AccordionContent: React.FC<AccordionContentProps> = ({
   isExpanded,
-  questions,
+  categories,
+  visitId,
 }) => {
+  const [comments, setComments] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const comments = await VisitGradesService.getCommentsByVisitId(visitId);
+      // Filtra apenas os comentários que têm texto
+      const filteredComments = comments.filter(
+        (comment) => comment.trim() !== ''
+      );
+      setComments(filteredComments);
+    };
+
+    fetchData();
+  }, [visitId]);
+
   const formatNumber = (number: string) => {
     const isNumeric = /^\d*\.?\d*$/.test(number);
 
@@ -59,35 +98,73 @@ const AccordionContent: React.FC<AccordionContentProps> = ({
     return '';
   };
 
+  if (!isExpanded) {
+    return null;
+  }
+
   return (
-    isExpanded && (
-      <View style={styles.content}>
-        {questions?.map((item, index) => (
-          <View
-            key={index}
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              paddingHorizontal: 4,
-            }}
-          >
-            <Text style={styles.questionText}>{item.question}</Text>
-            <Text style={styles.gradeText}>
-              {formatNumber(item.grade) || 'N.A'}
-            </Text>
-          </View>
-        ))}
-      </View>
-    )
+    <View style={styles.content}>
+      {categories?.map((category, index) => (
+        <View key={index} style={styles.categoryContainer}>
+          <Text style={styles.categoryTitle}>{category.categoryName}</Text>
+          {category.questions.map((item, i) => (
+            <View key={i}>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  paddingHorizontal: 4,
+                }}
+              >
+                <Text style={styles.questionText}>{item.question}</Text>
+                <Text style={styles.gradeText}>
+                  {formatNumber(item.grade) || 'N.A'}
+                </Text>
+              </View>
+            </View>
+          ))}
+        </View>
+      ))}
+      {/* Mostrar o comentário da categoria apenas uma vez no final */}
+      {comments.length > 0 && (
+        <Text style={styles.commentText}>
+          {'Comentários:\n' + comments.join('\n')}
+        </Text>
+      )}
+    </View>
   );
+
+  // return (
+  //   <View style={styles.content}>
+  //     {questions?.map((item, index) => (
+  //       <>
+  //         <View
+  //           key={index}
+  //           style={{
+  //             display: 'flex',
+  //             flexDirection: 'row',
+  //             justifyContent: 'space-between',
+  //             paddingHorizontal: 4,
+  //           }}
+  //         >
+  //           <Text style={styles.questionText}>{item.question}</Text>
+  //           <Text style={styles.gradeText}>
+  //             {formatNumber(item.grade) || 'N.A'}
+  //           </Text>
+  //         </View>
+  //         <Text style={styles.questionText}>{item.comments}</Text>
+  //       </>
+  //     ))}
+  //   </View>
+  // );
 };
 
 const AccordionVisit: React.FC<AccordionProps> = ({
-  title,
-  media,
-  questions,
-  questionGrades,
+  title = '',
+  media = 0,
+  categories = null,
+  visitId,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -96,19 +173,64 @@ const AccordionVisit: React.FC<AccordionProps> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.accordion}>
       <AccordionHeader
         title={title}
         media={media}
         isExpanded={isExpanded}
         toggleExpand={toggleExpand}
       />
-      <AccordionContent isExpanded={isExpanded} questions={questions} />
+      <AccordionContent
+        isExpanded={isExpanded}
+        categories={categories}
+        visitId={visitId}
+      />
     </View>
   );
 };
 
+// const AccordionVisit: React.FC<AccordionProps> = ({
+//   title,
+//   media,
+//   questions,
+//   questionGrades,
+// }) => {
+//   const [isExpanded, setIsExpanded] = useState(false);
+
+//   const toggleExpand = () => {
+//     setIsExpanded(!isExpanded);
+//   };
+
+//   return (
+//     <View style={styles.container}>
+//       <AccordionHeader
+//         title={title || 'Default Title'}
+//         media={media ?? 0}
+//         isExpanded={isExpanded}
+//         toggleExpand={toggleExpand}
+//       />
+//       <AccordionContent isExpanded={isExpanded} categories={categories} />
+//     </View>
+//   );
+// };
+
 const styles = StyleSheet.create({
+  categoryContainer: {
+    marginBottom: 10,
+  },
+  commentText: {
+    fontStyle: 'italic',
+    color: '#666',
+    marginLeft: 10,
+  },
+  categoryTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  accordion: {
+    marginBottom: 10,
+  },
   container: {
     marginTop: 16,
     borderRadius: 8,
@@ -148,6 +270,7 @@ const styles = StyleSheet.create({
   questionText: {
     fontFamily: 'Poppins',
     color: '#687076',
+    width: '90%',
   },
   gradeText: {
     fontFamily: 'Poppins',
