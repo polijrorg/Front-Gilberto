@@ -1,6 +1,6 @@
 import React from 'react';
 import * as S from './styles';
-import { Dimensions } from 'react-native';
+import { Dimensions, Text } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 import ScatterPlotComponent, { ScatterPlotProps } from '@components/Scratter';
 
@@ -16,26 +16,30 @@ export interface BarChartProps {
 
 const BarChartComponent: React.FC<BarChartProps> = ({
   type,
-  questionsBar,
+  questionsBar = [],
   moduleAverages,
 }) => {
   const chartWidth = Dimensions.get('window').width - 50;
   const chartHeight = 200;
-  const barChartData = {
-    labels: questionsBar?.map((_item, index) => `${index + 1}`),
-    datasets: [
-      {
-        data: questionsBar?.map((item) =>
-          Math.min(Math.max(item.averageGrade, 0), 5)
-        ),
-        colors: questionsBar?.map(
-          () =>
-            (_opacity = 1) =>
-              '#3E63DD'
-        ),
-      },
-    ],
-  };
+  const hasBarChartData = questionsBar && questionsBar.length > 0;
+
+  const barChartData = hasBarChartData
+    ? {
+        labels: questionsBar.map((_item, index) => `${index + 1}`),
+        datasets: [
+          {
+            data: questionsBar.map((item) =>
+              Math.min(Math.max(item.averageGrade, 0), 5)
+            ),
+            colors: questionsBar.map(
+              () =>
+                (_opacity = 1) =>
+                  '#3E63DD'
+            ),
+          },
+        ],
+      }
+    : null;
 
   const barChartConfig = {
     backgroundGradientFrom: '#F8F9FA',
@@ -56,21 +60,23 @@ const BarChartComponent: React.FC<BarChartProps> = ({
       {type === 'modulo' && (
         <>
           <S.TitleSlider>Médias por módulo</S.TitleSlider>
-          <BarChart
-            data={barChartData}
-            width={chartWidth}
-            height={chartHeight}
-            yAxisLabel=""
-            yAxisSuffix=""
-            chartConfig={barChartConfig}
-            showValuesOnTopOfBars={false}
-            showBarTops={false}
-            fromZero
-            flatColor
-            fromNumber={5}
-            withInnerLines={false}
-            withCustomBarColorFromData
-          />
+          {hasBarChartData && barChartData && (
+            <BarChart
+              data={barChartData}
+              width={chartWidth}
+              height={chartHeight}
+              yAxisLabel=""
+              yAxisSuffix=""
+              chartConfig={barChartConfig}
+              showValuesOnTopOfBars={false}
+              showBarTops={false}
+              fromZero
+              flatColor
+              fromNumber={5}
+              withInnerLines={false}
+              withCustomBarColorFromData
+            />
+          )}
         </>
       )}
       {type === 'matriz' && (
