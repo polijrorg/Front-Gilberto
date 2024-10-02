@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "Sell Out Expert",
+    "name": "Sell Outer",
     "slug": "sell-out-expert",
-    "icon": "./public/assets/AppIcon.jpeg",
-    "version": "1.0.6",
+    "icon": "./public/assets/icon.jpg",
+    "version": "1.0.7",
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -14,11 +14,11 @@
     },
     "android": {
       "package": "com.selloutexpert.app",
-      "versionCode": 6
+      "versionCode": 7
     },
     "ios": {
       "bundleIdentifier": "com.selloutexpert.app",
-      "buildNumber": "6"
+      "buildNumber": "7"
     }
   }
 }
