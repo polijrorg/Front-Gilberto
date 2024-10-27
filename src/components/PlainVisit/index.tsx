@@ -33,7 +33,6 @@ const PlainAction: React.FC<PlainActionProps> = ({ seller, dateVisited }) => {
         });
         return;
       }
-      console.log('passou', seller, dateVisited, titleAction, comment, date);
       const plains = await PlainService.createPlain({
         title: titleAction,
         comments: comment,
@@ -44,7 +43,6 @@ const PlainAction: React.FC<PlainActionProps> = ({ seller, dateVisited }) => {
       });
       showToast('Plano de ação criado com sucesso!', 'success');
     } catch (error) {
-      console.log(error);
       showToast('Problema de para criar o plano', 'warning');
     }
   };

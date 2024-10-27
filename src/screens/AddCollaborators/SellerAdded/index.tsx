@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
 import { theme } from '@styles/default.theme';
@@ -8,11 +7,14 @@ import useAuth from '@hooks/useAuth';
 import ISupervisor from '@interfaces/Supervisor';
 import SellerService from '@services/SellerServices';
 import { useToast } from 'react-native-toast-notifications';
-import HeaderPages from '@components/HeaderPages';
 import DropdownData from '@components/Dropdown';
-import { useDataContext } from '../../context/DataContext';
+import { useDataContext } from '../../../context/DataContext';
 import ISeller from '@interfaces/Seller';
-import { ActivityIndicator } from 'react-native';
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import StateSelect from '@components/Select';
 
 interface SupervisorState {
@@ -125,10 +127,11 @@ const SellerAdded: React.FC = () => {
   const isCreateDisabled = !name || !selectedValue || !selectedSupervisor;
 
   return (
-    <>
-      <StatusBar backgroundColor="#3E63DD" style="light" />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
+    >
       <S.Wrapper>
-        <HeaderPages title="Adicionar Vendedor" />
         <S.Main>
           <S.DivFileds>
             <S.NameField>Nome</S.NameField>
@@ -189,8 +192,8 @@ const SellerAdded: React.FC = () => {
           </S.ContentModal>
         </Modal>
       </S.Wrapper>
-    </>
+    </KeyboardAvoidingView>
   );
 };
 
-export { SellerAdded };
+export default SellerAdded;

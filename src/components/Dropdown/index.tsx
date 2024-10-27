@@ -4,15 +4,23 @@ import * as S from './styles';
 import { FontAwesome } from '@expo/vector-icons';
 import ISupervisor from '@interfaces/Supervisor';
 import ISeller from '@interfaces/Seller';
+import Manager from '@interfaces/Manager';
 
 interface SupervisorState {
   single: ISupervisor | null;
   list: ISupervisor[];
 }
 
+interface ManagerState {
+  single: Manager | null;
+  list: Manager[];
+}
+
 type IDropdownProps = {
   supervisors?: SupervisorState;
+  managers?: ManagerState;
   onSelectSupervisor?: (supervisor: ISupervisor) => void;
+  onSelectManager?: (manager: Manager) => void;
   sellers?: ISeller[];
   onSelectSeller?: (seller: ISeller) => void;
 };
@@ -22,15 +30,25 @@ const Dropdown: React.FC<IDropdownProps> = ({
   onSelectSupervisor,
   sellers,
   onSelectSeller,
+  managers,
+  onSelectManager,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedSupervisor, setSelectedSupervisor] =
     useState<ISupervisor | null>(null);
   const [selectedSeller, setSelectedSeller] = useState<ISeller | null>(null);
 
+  const [selectedManager, setSelectedManager] = useState<Manager | null>(null);
+
   const handleSelectSupervisor = (supervisor: ISupervisor) => {
     setSelectedSupervisor(supervisor);
     onSelectSupervisor && onSelectSupervisor(supervisor);
+    setIsOpen(false);
+  };
+
+  const handleSelectManager = (manager: Manager) => {
+    setSelectedManager(manager);
+    onSelectManager && onSelectManager(manager);
     setIsOpen(false);
   };
 
@@ -41,9 +59,9 @@ const Dropdown: React.FC<IDropdownProps> = ({
   };
 
   // Verifica se há supervisores ou vendedores disponíveis
-  const hasSupervisors = supervisors?.list.length > 0;
+  const hasSupervisors = (supervisors?.list?.length ?? 0) > 0;
   const hasSingleSupervisor = !!supervisors?.single;
-  const hasSellers = sellers?.length > 0;
+  const hasSellers = (sellers?.length ?? 0) > 0;
 
   return (
     <View>
@@ -51,7 +69,8 @@ const Dropdown: React.FC<IDropdownProps> = ({
         <S.CustomDropdown isOpen={isOpen} setIsOpen={setIsOpen}>
           <S.DropDownButton onPress={() => setIsOpen(!isOpen)}>
             <S.Selected>
-              {selectedSupervisor?.name ||
+              {selectedManager?.name ||
+                selectedSupervisor?.name ||
                 selectedSeller?.name ||
                 'Selecione o responsável'}
             </S.Selected>
@@ -62,11 +81,18 @@ const Dropdown: React.FC<IDropdownProps> = ({
             />
           </S.DropDownButton>
           {isOpen && (
-            <S.DropdownList
-              maxHeight={hasSupervisors || hasSellers ? 300 : null}
-            >
-              {hasSupervisors ? (
-                supervisors.list.map((supervisor) => (
+            <S.DropdownList maxHeight={300}>
+              {managers?.list && managers.list.length > 0 ? (
+                managers.list.map((manager) => (
+                  <S.DropdownItem
+                    key={manager.id}
+                    onPress={() => handleSelectManager(manager)}
+                  >
+                    <S.Selected>{manager.name}</S.Selected>
+                  </S.DropdownItem>
+                ))
+              ) : hasSupervisors ? (
+                supervisors?.list?.map((supervisor) => (
                   <S.DropdownItem
                     key={supervisor.id}
                     onPress={() => handleSelectSupervisor(supervisor)}
@@ -76,12 +102,19 @@ const Dropdown: React.FC<IDropdownProps> = ({
                 ))
               ) : hasSingleSupervisor ? (
                 <S.DropdownItem
-                  onPress={() => handleSelectSupervisor(supervisors.single!)}
+                  onPress={() =>
+                    supervisors?.single &&
+                    handleSelectSupervisor(supervisors.single)
+                  }
                 >
-                  <S.Selected>{supervisors.single!.name}</S.Selected>
+                  <S.Selected>
+                    {supervisors?.single
+                      ? supervisors.single.name
+                      : 'Nome não disponível'}
+                  </S.Selected>
                 </S.DropdownItem>
               ) : hasSellers ? (
-                sellers.map((seller) => (
+                sellers?.map((seller) => (
                   <S.DropdownItem
                     key={seller.id}
                     onPress={() => handleSelectSeller(seller)}

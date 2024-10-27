@@ -12,6 +12,18 @@ export const Wrapper = styled(View)`
   justify-content: center;
 `;
 
+export const MassageContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const Title = styled.Text`
+  color: black;
+  font-size: 14px;
+  font-weight: bold;
+`;
+
 export const LoadingContainer = styled.View`
   flex: 1;
   justify-content: center;

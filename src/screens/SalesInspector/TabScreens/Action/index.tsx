@@ -46,7 +46,7 @@ const Action = ({ route }) => {
           setSeller(responseSeller);
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       } finally {
         setLoading(false);
       }

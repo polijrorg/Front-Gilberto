@@ -43,14 +43,10 @@ const CompleteMentorship: React.FC = () => {
         seller: Seller,
       });
       setLoading(false);
-      console.log('Módulos avaliados com sucesso');
       showToast('Módulos avaliados com sucesso', 'success');
 
       const allModulesEvaluated = await checkAllModulesEvaluated();
       if (allModulesEvaluated) {
-        console.log(
-          'Todos os módulos foram avaliados. Atualizando estágio para "Visita"...'
-        );
         showToast('Todos os módulos avaliados', 'success');
         showToast('Alterando Estado para Visita', 'success');
         await SellerServices.updateSeller({ ...Seller, stage: 'Visita' });

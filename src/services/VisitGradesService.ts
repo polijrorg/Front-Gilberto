@@ -32,27 +32,29 @@ export default class VisitGradeService {
   }
 
   static async getAverageGradesSupervisor(
-    idSupervisor: string
+    idSupervisor: string,
+    idTemplate: string
   ): Promise<
-    { questionId: string; questionName: string; averageGrade: number }[]
+    { categoryId: string; categoryName: string; averageGrade: number }[]
   > {
     const response: AxiosResponse<
-      { questionId: string; questionName: string; averageGrade: number }[]
+      { categoryId: string; categoryName: string; averageGrade: number }[]
     > = await api.get(
-      `/questionsGrades/averageGradeByQuestions/supervisor/${idSupervisor}`
+      `/questionsGrades/averageGradeByQuestions/supervisor/${idSupervisor}/${idTemplate}`
     );
     return response.data;
   }
 
   static async getAverageGradesManager(
-    idManager: string
+    idManager: string,
+    idTemplate: string
   ): Promise<
-    { questionId: string; questionName: string; averageGrade: number }[]
+    { categoryId: string; categoryName: string; averageGrade: number }[]
   > {
     const response: AxiosResponse<
-      { questionId: string; questionName: string; averageGrade: number }[]
+      { categoryId: string; categoryName: string; averageGrade: number }[]
     > = await api.get(
-      `/questionsGrades/averageGradeByQuestions/manager/${idManager}`
+      `/questionsGrades/averageGradeByQuestions/manager/${idManager}/${idTemplate}`
     );
     return response.data;
   }

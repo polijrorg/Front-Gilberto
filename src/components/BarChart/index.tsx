@@ -7,8 +7,8 @@ import ScatterPlotComponent, { ScatterPlotProps } from '@components/Scratter';
 export interface BarChartProps {
   type: 'modulo' | 'matriz' | string;
   questionsBar?: {
-    questionId: string;
-    questionName: string;
+    categoryId: string;
+    categoryName: string;
     averageGrade: number;
   }[];
   moduleAverages?: ScatterPlotProps[];

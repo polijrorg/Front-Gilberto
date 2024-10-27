@@ -63,7 +63,7 @@ const QuestionSection: React.FC<Props> = ({
         setCategoryQuestions(questions);
         setEditedQuestions(questions);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -80,7 +80,6 @@ const QuestionSection: React.FC<Props> = ({
       (answer) =>
         answer.questionId === questionId && answer.sellerId === sellerId
     );
-    console.log(comments[category.id]);
 
     const updatedAnswers =
       existingAnswerIndex !== -1
@@ -134,7 +133,7 @@ const QuestionSection: React.FC<Props> = ({
       setCategoryQuestions(updatedQuestions);
       setEditedQuestions(updatedQuestions);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -170,7 +169,6 @@ const QuestionSection: React.FC<Props> = ({
       showToast('Pergunta deletada com sucesso', 'success');
     } catch (error) {
       showToast('Não foi possível deletar a pergunta', 'danger');
-      console.log(error);
     }
   };
 
@@ -182,7 +180,6 @@ const QuestionSection: React.FC<Props> = ({
       showToast('Categoria deletada com sucesso', 'success');
     } catch (error) {
       showToast('Não foi possível deletar a categoria', 'danger');
-      console.log(error);
     } finally {
       setIsDeleting(false);
     }
@@ -206,7 +203,6 @@ const QuestionSection: React.FC<Props> = ({
       setShowAddQuestionInput(false);
     } catch (error) {
       showToast('Não foi possível adicionar a pergunta', 'danger');
-      console.log(error);
     }
   };
 

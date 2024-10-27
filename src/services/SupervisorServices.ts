@@ -2,7 +2,15 @@ import api from './api';
 import ISupervisor from '@interfaces/Supervisor';
 
 export default class SupervisorServices {
-  // Pega um supervisor pelo ID do Manager
+  static async create(
+    newSupervisor: Partial<ISupervisor>
+  ): Promise<ISupervisor> {
+    const supervisorResponse = await api.post(
+      '/supervisor/create',
+      newSupervisor
+    );
+    return supervisorResponse.data;
+  }
   static async getSupervisorById(
     supervisorId: string,
     managerId: string

@@ -7,6 +7,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import VisitGradeService from '@services/VisitGradesService';
 import useAuth from '@hooks/useAuth';
 import { ScatterPlotProps } from '@components/Scratter';
+import ITemplateVisit from '@interfaces/Visit/TemplateVisit';
+import VisitService from '@services/VisitService';
 
 const MatrizSlider: React.FC = () => {
   const scrollRef = useRef<ScrollView>(null);
@@ -18,12 +20,34 @@ const MatrizSlider: React.FC = () => {
   const [moduleAll, setModuleAll] = useState<ScatterPlotProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [message, setMessage] = useState('');
+  const [template, setTemplate] = useState<ITemplateVisit[]>([]);
 
   const { user } = useAuth();
   const data = ['modulo', 'matriz'];
 
   const fetchModuleGradesAverages = useCallback(async () => {
     try {
+      setMessage('');
+
+      let templates: ITemplateVisit[] = [];
+
+      if (user.job === 'Supervisor') {
+        templates = await VisitService.getTemplateByManagerId(user.managerId);
+      } else if (user.job === 'Gerente') {
+        templates = await VisitService.getTemplateByManagerId(user.id);
+      }
+      if (templates.length === 0 && user.companyId) {
+        templates = await VisitService.getTemplateByCompanyId(user.companyId);
+      }
+
+      if (templates.length > 0) {
+        const template = templates[0];
+        setTemplate([template]);
+      } else {
+        setTemplate([]);
+      }
+
       const moduleInfoAll = await ModuleGradeServices.getAllModulesInfo(
         user.id
       );
@@ -31,9 +55,10 @@ const MatrizSlider: React.FC = () => {
 
       const jobToServiceMap: {
         [key: string]: (
-          id: string
+          id: string,
+          templateId: string
         ) => Promise<
-          { questionId: string; questionName: string; averageGrade: number }[]
+          { categoryId: string; categoryName: string; averageGrade: number }[]
         >;
       } = {
         Supervisor: VisitGradeService.getAverageGradesSupervisor,
@@ -46,14 +71,15 @@ const MatrizSlider: React.FC = () => {
         throw new Error(`Invalid job type: ${user.job}`);
       }
 
-      const averageGrades = await fetchAverageGrades(user.id);
+      const averageGrades = await fetchAverageGrades(user.id, template[0].id);
+
       setQuestionsBar(averageGrades);
     } catch (error) {
-      console.error('Erro ao buscar médias dos módulos:', error);
+      setMessage(error.response.data.message);
     } finally {
       setIsLoading(false);
     }
-  }, [user.id, user.job]);
+  }, [template, user.companyId, user.id, user.job, user.managerId]);
 
   const handleScroll = useCallback(
     (event: { nativeEvent: { contentOffset: { x: any } } }) => {
@@ -121,6 +147,7 @@ const MatrizSlider: React.FC = () => {
               currentIndex={currentIndex}
               sectionIndex={index}
               modulesInfoAll={moduleAll}
+              message={message}
             />
           ))}
         </ScrollView>
@@ -137,6 +164,7 @@ interface BarChartSectionProps {
   currentIndex: number;
   sectionIndex: number;
   modulesInfoAll: ScatterPlotProps[];
+  message?: string;
 }
 
 const BarChartSection: React.FC<BarChartSectionProps> = ({
@@ -147,17 +175,24 @@ const BarChartSection: React.FC<BarChartSectionProps> = ({
   currentIndex,
   sectionIndex,
   modulesInfoAll,
+  message,
 }) => {
   const isVisible = currentIndex === sectionIndex;
 
   return (
     <S.SectionWrapper windowWidth={windowWidth}>
-      {isVisible && (
-        <BarChartComponent
-          type={type}
-          moduleAverages={modulesInfoAll}
-          questionsBar={questionsBar}
-        />
+      {message ? (
+        <S.MassageContainer>
+          <S.Title>Nenhuma nota para vendedores</S.Title>
+        </S.MassageContainer>
+      ) : (
+        isVisible && (
+          <BarChartComponent
+            type={type}
+            moduleAverages={modulesInfoAll}
+            questionsBar={questionsBar}
+          />
+        )
       )}
       <ReloadButton onPress={onReload} />
     </S.SectionWrapper>

@@ -8,7 +8,7 @@ import { Text } from 'react-native';
 import { TextInput, View } from 'react-native';
 import styled from 'styled-components/native';
 
-export const WrapperView = styled(View)`
+export const WrapperView = styled(ScrollView)`
   width: 100%;
   height: 100vh;
   margin-top: ${RNStatusBar.currentHeight || 0}px;

@@ -24,7 +24,7 @@ const MyTeam = () => {
   const navigation = useNavigation();
 
   const handlePressAddedSeller = () => {
-    navigation.navigate('SellerAdded' as never);
+    navigation.navigate('AddCollaborators' as never);
   };
 
   useEffect(() => {

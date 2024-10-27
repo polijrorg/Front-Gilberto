@@ -3,7 +3,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from '@screens/Home';
 import MyTeam from '@screens/MyTeam';
-import { SellerAdded } from '@screens/SellerAdded';
+import AddCollaborators from '@screens/AddCollaborators';
 import Login from '@screens/Login';
 import TabNav from '@routes/TabNav';
 import EvaluateMentoring from '@screens/EvaluateMentoring';
@@ -42,8 +42,8 @@ const AppRoutes: React.FC = () => {
         options={{ header: () => <></> }}
       />
       <AppStack.Screen
-        name="SellerAdded"
-        component={SellerAdded}
+        name="AddCollaborators"
+        component={AddCollaborators}
         options={{ header: () => <></> }}
       />
       <AppStack.Screen
@@ -58,7 +58,7 @@ const AppRoutes: React.FC = () => {
       />
       <AppStack.Screen
         name="AskEvaluateMentoring"
-        component={ModuloAsk}
+        component={(props: any) => <ModuloAsk {...props} />}
         options={{ header: () => <></> }}
       />
 

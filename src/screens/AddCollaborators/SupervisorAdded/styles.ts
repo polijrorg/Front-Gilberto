@@ -11,16 +11,16 @@ import { theme } from '@styles/default.theme';
 
 export const Wrapper = styled(View)`
   width: 100%;
-  height: 100%;
+  height: 80%;
   align-items: center;
-  margin-top: ${RNStatusBar.currentHeight || 0}px;
   overflow: hidden;
   background-color: ${theme.colors.primary.main};
 `;
 
 export const Main = styled(View)`
   width: 80%;
-  margin: 10px auto;
+  height: 100%;
+  margin: 0 auto;
 `;
 
 export const DivFileds = styled(View)`

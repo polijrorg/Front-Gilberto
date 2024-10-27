@@ -10,6 +10,7 @@ import ISeller from '@interfaces/Seller';
 import IModules from '@interfaces/Module';
 import IVisits from '@interfaces/Visit/Visit';
 import PlainService from '@services/PlainService';
+import { AxiosError } from 'axios';
 
 interface PlainActionProps {
   setState: () => void;
@@ -57,17 +58,22 @@ const PlainMentory: React.FC<PlainActionProps> = ({
       await PlainService.createPlain({
         title: titleAction,
         comments: comment,
-        prize: formattedDate, // Envia a data formatada
+        prize: formattedDate,
         sellerId: seller?.id,
         supervisorId: seller.supervisorId,
-        moduleId: seller.stage === 'Mentoria' ? selectedValue : selectedValue,
+        moduleId: seller.stage === 'Mentoria' ? selectedValue : undefined,
+        visitId: seller.stage === 'Visita' ? selectedValue : undefined,
       });
 
       addNewPlain();
       setState();
       showToast('Plano de ação efetivado com sucesso', 'success');
     } catch (error) {
-      showToast('Não foi possível criar plano para este módulo', 'warning');
+      showToast(
+        'Este Módulo/Vísita já disponhe de um plano de ação',
+        'warning'
+      );
+      console.error(error);
     }
   };
 

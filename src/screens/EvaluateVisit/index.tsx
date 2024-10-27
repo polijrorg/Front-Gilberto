@@ -219,14 +219,6 @@ const EvaluateVisit = () => {
         visitId: visitToDay?.id || '',
         comments: answer.comments,
       });
-
-      console.log({
-        grade: answer.grade,
-        sellerId: answer.sellerId,
-        questionsId: answer.questionId,
-        visitId: visitToDay?.id || '',
-        comments: answer.comments,
-      });
     } catch (error) {
       console.error('Erro ao criar as notas:', error);
     }
@@ -234,7 +226,6 @@ const EvaluateVisit = () => {
 
   const handleUpdateAnswers = (updatedAnswers: any[]) => {
     const updatedGrades = [...fetchedVisitGrade];
-    console.log(updatedAnswers);
 
     updatedAnswers.forEach((answer) => {
       const existingIndex = updatedGrades.findIndex(
@@ -273,7 +264,7 @@ const EvaluateVisit = () => {
 
   const overView = async () => {
     await finishedVisit();
-    // setIndexScreen(indexScreen + 1);
+    setIndexScreen(indexScreen + 1);
   };
 
   return (
