@@ -29,6 +29,7 @@ const SupervisorAdded: React.FC = () => {
   const { data, setData } = useDataContext();
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,7 +37,6 @@ const SupervisorAdded: React.FC = () => {
   const [selectedManager, setSelectedManager] = useState<Manager | null>(null);
   const [isButtonEnabled, setIsButtonEnabled] = useState<boolean>(false);
   const toast = useToast();
-  const [selectedValue, setSelectedValue] = useState<string>('');
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const options = [
@@ -70,14 +70,10 @@ const SupervisorAdded: React.FC = () => {
     setIsModalVisible(!isModalVisible);
   };
 
-  const handleSelectChange = (value: string) => {
-    setSelectedValue(value);
-  };
-
   const handleCreate = async () => {
     try {
       setLoading(true);
-      const managerId = selectedManager?.id || undefined;
+      const managerId = selectedManager?.id || '';
       const companyId = user.companyId;
 
       const supervisor: Supervisor = await SupervisorServices.create({
@@ -111,6 +107,7 @@ const SupervisorAdded: React.FC = () => {
         duration: 3000,
         animationType: 'zoom-in',
       });
+      console.log('Erro ao criar supervisor:', error);
     } finally {
       setLoading(false);
       setIsModalVisible(false);
@@ -118,7 +115,11 @@ const SupervisorAdded: React.FC = () => {
     }
   };
 
-  const isCreateDisabled = !name || !selectedValue || !selectedManager;
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const isCreateDisabled = !name || !selectedManager;
 
   return (
     <KeyboardAvoidingView
@@ -147,13 +148,25 @@ const SupervisorAdded: React.FC = () => {
 
           <S.DivFileds>
             <S.NameField>Senha</S.NameField>
-            <S.InputField
-              placeholder="Senha do Supervisor"
-              value={password}
-              keyboardType="default"
-              secureTextEntry={true}
-              onChangeText={(text) => setPassword(text)}
-            />
+            <S.DivViewTextInput>
+              <S.InputField
+                placeholder={'Senha'}
+                keyboardType="default"
+                autoCapitalize="none"
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={(text) => setPassword(text)}
+              />
+              <S.BtnIconPass onPress={toggleShowPassword}>
+                <S.Icon
+                  source={
+                    showPassword
+                      ? require('@assets/img/olho_aberto.png')
+                      : require('@assets/img/olho_fechado.png')
+                  }
+                />
+              </S.BtnIconPass>
+            </S.DivViewTextInput>
           </S.DivFileds>
           <S.DivFileds>
             <S.NameField>Responsável</S.NameField>
@@ -177,7 +190,7 @@ const SupervisorAdded: React.FC = () => {
                 source={require('@assets/img/Triangle_Warning.png')}
               />
               <S.TextModal>
-                Tem certeza que deseja adicionar esse vendedor?
+                Tem certeza que deseja adicionar esse Supervisor?
               </S.TextModal>
             </S.WrapperConteudo>
             <S.BtnYes onPress={handleCreate}>

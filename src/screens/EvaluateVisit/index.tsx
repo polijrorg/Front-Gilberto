@@ -324,8 +324,12 @@ const EvaluateVisit = () => {
           {indexScreen === categories.length && categories.length !== 0 && (
             <>
               <S.ContainerButton>
-                <S.ButtonIniciar onPress={overView}>
-                  <S.TextBtn>Ver Resumo do dia de visita</S.TextBtn>
+                <S.ButtonIniciar onPress={overView} disabled={loading}>
+                  {loading ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <S.TextBtn>Ver Resumo do dia de visita</S.TextBtn>
+                  )}
                 </S.ButtonIniciar>
                 <S.Outline onPress={initialNewVisit}>
                   <S.TextBtnNova>Iniciar nova visita</S.TextBtnNova>

@@ -1,14 +1,31 @@
 import api from './api';
 import ISupervisor from '@interfaces/Supervisor';
 
+interface ICreateSupervisorResponse {
+  email: string;
+  image: string;
+  password: string;
+  name: string;
+  companyId: string;
+  managerId: string;
+}
 export default class SupervisorServices {
-  static async create(
-    newSupervisor: Partial<ISupervisor>
-  ): Promise<ISupervisor> {
-    const supervisorResponse = await api.post(
-      '/supervisor/create',
-      newSupervisor
-    );
+  static async create({
+    email,
+    companyId,
+    image,
+    managerId,
+    name,
+    password,
+  }: ICreateSupervisorResponse): Promise<ISupervisor> {
+    const supervisorResponse = await api.post('/supervisor/create', {
+      email,
+      companyId,
+      image,
+      managerId,
+      name,
+      password,
+    });
     return supervisorResponse.data;
   }
   static async getSupervisorById(

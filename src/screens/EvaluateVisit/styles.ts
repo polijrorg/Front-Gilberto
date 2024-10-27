@@ -124,7 +124,12 @@ export const ButtonFirst = styled(TouchableOpacity)`
   margin-top: 80%;
 `;
 
-export const ButtonIniciar = styled(TouchableOpacity)`
+export const ButtonIniciar = styled(TouchableOpacity)<{ disabled: boolean }>`
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+  background-color: ${({ disabled }) => (disabled ? '#B0B0B0' : '#3e63dd')};
+
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+
   padding: 8px 24px;
   background-color: #3e63dd;
   width: 90%;

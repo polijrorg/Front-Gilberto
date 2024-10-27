@@ -11,7 +11,7 @@ import { theme } from '@styles/default.theme';
 
 export const Wrapper = styled(View)`
   width: 100%;
-  height: 80%;
+  height: 630px;
   align-items: center;
   overflow: hidden;
   background-color: ${theme.colors.primary.main};
@@ -38,10 +38,29 @@ export const NameField = styled(Text)`
   letter-spacing: 0.5px;
 `;
 
+export const DivViewTextInput = styled(View)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const BtnIconPass = styled(TouchableOpacity)`
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  right: 10px;
+`;
+
+export const Icon = styled(Image)`
+  width: 16px;
+  height: 16px;
+`;
+
 export const InputField = styled(TextInput)`
   ::placeholder {
     color: #687076;
   }
+  width: 100%;
   border-width: 1px;
   border-color: #d7dbdf;
   background-color: #f1f3f5;
