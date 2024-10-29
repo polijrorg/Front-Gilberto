@@ -91,7 +91,7 @@ const OverView: React.FC<OverViewProps> = ({
   setIndexScreen,
 }) => {
   const [questionsBar, setQuestionsBar] = useState<
-    | { questionId: string; questionName: string; averageGrade: number }[]
+    | { categoryId: string; categoryName: string; averageGrade: number }[]
     | undefined
   >([]);
   const [visits, setVisits] = useState<Visit[]>([]);
@@ -117,22 +117,28 @@ const OverView: React.FC<OverViewProps> = ({
         setLoading(true);
         const result =
           await ModuleGradeServices.getModulesAvailabreGradesBySellerID(
-            sellerId
+            sellerId,
+            templates[0].id
           );
-        const processedData = result.map((item: any) => ({
-          questionId: item.questionId,
-          questionName: item.questionName,
-          averageGrade: item.averageGrade,
-        }));
+        const processedData = result.map(
+          (item: {
+            categoryId: string;
+            categoryName: string;
+            averageGrade: number;
+          }) => ({
+            categoryId: item.categoryId,
+            categoryName: item.categoryName,
+            averageGrade: item.averageGrade,
+          })
+        );
         setQuestionsBar(processedData);
 
         const visitsData = await VisitService.getVisitByIdSeller(sellerId);
 
-        // Remove a visita mais recente
         const sortedVisits = visitsData.sort((a, b) => {
           const dateA = new Date(a.created_at).getTime();
           const dateB = new Date(b.created_at).getTime();
-          return dateB - dateA; // Ordena do mais recente para o mais antigo
+          return dateB - dateA;
         });
 
         setVisits(sortedVisits);
@@ -202,6 +208,36 @@ const OverView: React.FC<OverViewProps> = ({
       </S.LoadingContainer>
     );
   }
+
+  const generateQuestionsWithGradesByCategory = (
+    visitId: string,
+    categories: ICategories[],
+    questions: { [key: string]: IQuestions[] },
+    questionGrades: { [key: string]: IQuestionGrade[] }
+  ) => {
+    return categories.map((category) => {
+      const relevantQuestions =
+        questions[visitId]?.filter(
+          (question) => question.categoriesId === category.id
+        ) || [];
+
+      const questionsWithGrades = relevantQuestions.map((question) => {
+        const grade = questionGrades[visitId]?.find(
+          (grade) => grade.questionsId === question.id && grade.grade !== 0
+        );
+        return {
+          question: question.question,
+          grade: grade ? grade.grade.toString() : 'X,X',
+          comments: grade?.comments,
+        };
+      });
+
+      return {
+        categoryName: category.name,
+        questions: questionsWithGrades,
+      };
+    });
+  };
   return (
     <S.ContainerChart>
       <Suspense fallback={<ActivityIndicator size="large" color="#3E63DD" />}>
@@ -218,14 +254,13 @@ const OverView: React.FC<OverViewProps> = ({
               <AccordionVisit
                 title={`${visit.storeVisited} - ${visit.dateVisited}`}
                 media={calculateMedia(visit.id, questions, questionGrades)}
-                questions={categories[visit.id]?.flatMap((category) =>
-                  generateQuestionsWithGrades(
-                    visit.id,
-                    category.id,
-                    questions,
-                    questionGrades
-                  )
+                categories={generateQuestionsWithGradesByCategory(
+                  visit.id,
+                  categories[visit.id] || [],
+                  questions,
+                  questionGrades
                 )}
+                visitId={visit.id}
               />
             </Suspense>
           ))
@@ -246,11 +281,7 @@ const OverView: React.FC<OverViewProps> = ({
 
 interface BarCharProps {
   questionsBar:
-    | {
-        questionId: string;
-        questionName: string;
-        averageGrade: number;
-      }[]
+    | { categoryId: string; categoryName: string; averageGrade: number }[]
     | undefined;
   dateVisit: string;
 }
