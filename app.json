@@ -19,6 +19,9 @@
     "ios": {
       "bundleIdentifier": "com.selloutexpert.app",
       "buildNumber": "8"
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
