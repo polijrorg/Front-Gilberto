@@ -3,7 +3,7 @@
     "name": "Sell Outer",
     "slug": "sell-out-expert",
     "icon": "./public/assets/icon.jpg",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -14,11 +14,11 @@
     },
     "android": {
       "package": "com.selloutexpert.app",
-      "versionCode": 8
+      "versionCode": 9
     },
     "ios": {
       "bundleIdentifier": "com.selloutexpert.app",
-      "buildNumber": "8"
+      "buildNumber": "9"
     },
     "plugins": [
       "expo-font"
