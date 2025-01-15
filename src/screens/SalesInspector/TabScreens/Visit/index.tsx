@@ -42,11 +42,11 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
 
   const fetchTemplates = useCallback(async () => {
     let templates: any[] = [];
-    if (user.managerId) {
+    if (user?.managerId) {
       templates = await VisitService.getTemplateByManagerId(user.managerId);
     }
 
-    if (user.job === 'Diretor') {
+    if (user?.job === 'Diretor') {
       const directorTemplates = await VisitService.getTemplateByDirectorId(
         user.id
       );
@@ -55,7 +55,7 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
       }
     }
 
-    if (user.job === 'Gerente') {
+    if (user?.job === 'Gerente') {
       const directorTemplates = await VisitService.getTemplateByManagerId(
         user.id
       );
@@ -64,7 +64,7 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
       }
     }
 
-    if (user.companyId) {
+    if (user?.companyId) {
       const companyTemplates = await VisitService.getTemplateByCompanyId(
         user.companyId
       );
@@ -74,7 +74,7 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
     }
 
     return templates;
-  }, [user.managerId, user.job, user.id, user.companyId]);
+  }, [user?.managerId, user?.job, user?.id, user?.companyId]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -150,7 +150,7 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
   if (loading) {
     return (
       <S.LoadingContainer>
-        <ActivityIndicator size="large" color="#3E63DD" />
+        <ActivityIndicator color="#3E63DD" />
       </S.LoadingContainer>
     );
   }

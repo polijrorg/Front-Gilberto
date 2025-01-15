@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import { View, Text, TouchableWithoutFeedback } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import * as S from './styles';
 import VisitGradesService from '@services/VisitGradesService';
-
-// type AccordionProps = {
-//   title?: string;
-//   media?: number | string;
-//   questions?: { question: string; grade: string; comments?: string }[];
-//   questionGrades?: number[];
-//   categories?: string[];
-// };
 
 type AccordionProps = {
   title?: string;
@@ -38,24 +31,19 @@ const AccordionHeader: React.FC<{
   toggleExpand: () => void;
 }> = ({ title, media, isExpanded, toggleExpand }) => (
   <TouchableWithoutFeedback onPress={toggleExpand}>
-    <View style={styles.header}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.media}>
+    <S.Header>
+      <S.Title>{title}</S.Title>
+      <S.Media>
         {media !== 0 ? formatNumber(media) : 'N.A'}
-      </Text>
+      </S.Media>
       <FontAwesome
         name={isExpanded ? 'angle-up' : 'angle-down'}
         size={24}
         color="black"
       />
-    </View>
+    </S.Header>
   </TouchableWithoutFeedback>
 );
-
-// type AccordionContentProps = {
-//   isExpanded: boolean;
-//   questions?: { question: string; grade: string; comments?: string }[] | null;
-// };
 
 type AccordionContentProps = {
   isExpanded: boolean;
@@ -103,10 +91,10 @@ const AccordionContent: React.FC<AccordionContentProps> = ({
   }
 
   return (
-    <View style={styles.content}>
+    <S.Content>
       {categories?.map((category, index) => (
-        <View key={index} style={styles.categoryContainer}>
-          <Text style={styles.categoryTitle}>{category.categoryName}</Text>
+        <S.CategoryContainer key={index}>
+          <S.CategoryTitle>{category.categoryName}</S.CategoryTitle>
           {category.questions.map((item, i) => (
             <View key={i}>
               <View
@@ -117,47 +105,23 @@ const AccordionContent: React.FC<AccordionContentProps> = ({
                   paddingHorizontal: 4,
                 }}
               >
-                <Text style={styles.questionText}>{item.question}</Text>
-                <Text style={styles.gradeText}>
+                <S.QuestionText>{item.question}</S.QuestionText>
+                <S.GradeText>
                   {formatNumber(item.grade) || 'N.A'}
-                </Text>
+                </S.GradeText>
               </View>
             </View>
           ))}
-        </View>
+        </S.CategoryContainer>
       ))}
       {/* Mostrar o comentário da categoria apenas uma vez no final */}
       {comments.length > 0 && (
-        <Text style={styles.commentText}>
+        <S.CommentText>
           {'Comentários:\n' + comments.join('\n')}
-        </Text>
+        </S.CommentText>
       )}
-    </View>
+    </S.Content>
   );
-
-  // return (
-  //   <View style={styles.content}>
-  //     {questions?.map((item, index) => (
-  //       <>
-  //         <View
-  //           key={index}
-  //           style={{
-  //             display: 'flex',
-  //             flexDirection: 'row',
-  //             justifyContent: 'space-between',
-  //             paddingHorizontal: 4,
-  //           }}
-  //         >
-  //           <Text style={styles.questionText}>{item.question}</Text>
-  //           <Text style={styles.gradeText}>
-  //             {formatNumber(item.grade) || 'N.A'}
-  //           </Text>
-  //         </View>
-  //         <Text style={styles.questionText}>{item.comments}</Text>
-  //       </>
-  //     ))}
-  //   </View>
-  // );
 };
 
 const AccordionVisit: React.FC<AccordionProps> = ({
@@ -173,7 +137,7 @@ const AccordionVisit: React.FC<AccordionProps> = ({
   };
 
   return (
-    <View style={styles.accordion}>
+    <S.Accordion>
       <AccordionHeader
         title={title}
         media={media}
@@ -185,97 +149,8 @@ const AccordionVisit: React.FC<AccordionProps> = ({
         categories={categories}
         visitId={visitId}
       />
-    </View>
+    </S.Accordion>
   );
 };
-
-// const AccordionVisit: React.FC<AccordionProps> = ({
-//   title,
-//   media,
-//   questions,
-//   questionGrades,
-// }) => {
-//   const [isExpanded, setIsExpanded] = useState(false);
-
-//   const toggleExpand = () => {
-//     setIsExpanded(!isExpanded);
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <AccordionHeader
-//         title={title || 'Default Title'}
-//         media={media ?? 0}
-//         isExpanded={isExpanded}
-//         toggleExpand={toggleExpand}
-//       />
-//       <AccordionContent isExpanded={isExpanded} categories={categories} />
-//     </View>
-//   );
-// };
-
-const styles = StyleSheet.create({
-  categoryContainer: {
-    marginBottom: 10,
-  },
-  commentText: {
-    fontStyle: 'italic',
-    color: '#666',
-    marginLeft: 10,
-  },
-  categoryTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  accordion: {
-    marginBottom: 10,
-  },
-  container: {
-    marginTop: 16,
-    borderRadius: 8,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#F1F3F5',
-    padding: 10,
-    borderRadius: 8,
-  },
-  title: {
-    flex: 0.9,
-    fontFamily: 'Poppins',
-  },
-  media: {
-    marginRight: 0,
-    fontFamily: 'PoppinsBold',
-    backgroundColor: '#E6E8EB',
-    color: '#687076',
-    borderRadius: 2,
-    fontSize: 12,
-    padding: 2,
-  },
-  content: {
-    backgroundColor: '#F1F3F5',
-    padding: 10,
-    borderBottomLeftRadius: 8,
-    borderBottomRightRadius: 8,
-  },
-  questionRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  questionText: {
-    fontFamily: 'Poppins',
-    color: '#687076',
-    width: '90%',
-  },
-  gradeText: {
-    fontFamily: 'Poppins',
-    color: '#687076',
-  },
-});
 
 export default AccordionVisit;

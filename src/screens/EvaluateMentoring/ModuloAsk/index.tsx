@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar, ActivityIndicator, View, StyleSheet } from 'react-native';
-import DivGradient from '@components/DivGradient';
 import InputRange from '@components/InputRage';
 import HeaderPages from '@components/HeaderPages';
 import ModulesServices from '@services/ModuleServices';
@@ -83,7 +82,7 @@ const ModuloAsk: React.FC<Props> = ({ route }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#3E63DD" />
+        <ActivityIndicator color="#3E63DD" />
       </View>
     );
   }
@@ -95,7 +94,7 @@ const ModuloAsk: React.FC<Props> = ({ route }) => {
     navigation.navigate('CompleteMentoring', {
       Seller: seller,
       ModulesEvaluate: editedModules,
-    } as never);
+    });
   };
 
   return (
@@ -116,7 +115,6 @@ const ModuloAsk: React.FC<Props> = ({ route }) => {
         ))}
         <CompleteButton onPress={handleSetComplete} />
       </S.Wrapper>
-      <DivGradient />
     </>
   );
 };

@@ -9,6 +9,7 @@ import ICategories from '@interfaces/Visit/Categories';
 import ITemplateVisit from '@interfaces/Visit/TemplateVisit';
 import Select from '@components/Select';
 import { StatusBar } from 'react-native';
+import User from '@interfaces/User';
 
 interface VisitGrade {
   questionId: string;
@@ -16,8 +17,11 @@ interface VisitGrade {
   grade: number;
 }
 
-const EvaluateVisitManager = () => {
-  const { user } = useAuth();
+interface EvaluateVisitManagerProps {
+  user:User
+}
+
+const EvaluateVisitManager:React.FC<EvaluateVisitManagerProps> = ({user}) => {
   const [categories, setCategories] = useState<ICategories[]>([]);
   const [indexScreen, setIndexScreen] = useState(1);
   const [templates, setTemplates] = useState<ITemplateVisit[]>([]);
@@ -200,7 +204,7 @@ const EvaluateVisitManager = () => {
           />
         </S.ContainerVisit>
         {loading ? (
-          <S.Loading size="large" color="#0000ff" />
+          <S.Loading color="#0000ff" />
         ) : templates.length === 0 ? (
           <>
             <S.NoCategoriesContainer>
@@ -292,6 +296,7 @@ const EvaluateVisitManager = () => {
             {categories.map((category, idx) => (
               <S.CategoryContainer key={category.id}>
                 <QuestionSection
+                  user={user}
                   key={category.id}
                   sellerId=""
                   category={category}

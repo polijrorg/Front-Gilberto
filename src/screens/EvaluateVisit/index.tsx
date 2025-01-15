@@ -7,7 +7,6 @@ import HeaderPages from '@components/HeaderPages';
 import QuestionSection from '@components/QuestionSection';
 import { useToast } from 'react-native-toast-notifications';
 
-import useAuth from '@hooks/useAuth';
 
 import SellerService from '@services/SellerServices';
 import VisitService from '@services/VisitService';
@@ -23,6 +22,7 @@ import PlainAction from '@components/PlainVisit';
 
 import OverView from '@components/Overview';
 import { useNavigation } from '@react-navigation/native';
+import User from '@interfaces/User';
 
 interface VisitGrade {
   questionId: string;
@@ -32,8 +32,11 @@ interface VisitGrade {
   comments?: string;
 }
 
-const EvaluateVisit = () => {
-  const { user } = useAuth();
+interface EvaluateVisitVisitProps {
+  user:User
+}
+
+const EvaluateVisit:React.FC<EvaluateVisitVisitProps> = ({user}) => {
   const [sellers, setSellers] = useState<ISeller[]>([]);
   const [visitToDay, setVisitToDay] = useState<Visit>();
   const [indexScreen, setIndexScreen] = useState(0);
@@ -305,6 +308,7 @@ const EvaluateVisit = () => {
 
           {indexScreen > 0 && indexScreen <= categories.length && (
             <QuestionSection
+              user={user}
               sellerId={selectedSeller?.id || ''}
               category={categories[indexScreen - 1]} // Ajustado para usar a categoria correta
               index={indexScreen}

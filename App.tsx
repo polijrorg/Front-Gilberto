@@ -1,11 +1,11 @@
 import AppProvider from '@hooks/index';
-import { NavigationContainer } from '@react-navigation/native';
 import Routes from '@routes/index';
 import { useFonts } from 'expo-font';
 import { ToastProvider } from 'react-native-toast-notifications';
 import { DataProvider } from 'src/context/DataContext';
 
 import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -21,10 +21,10 @@ export default function App() {
       <ToastProvider>
         <DataProvider>
           <AppProvider>
-            <Routes />
+            <Routes  />
           </AppProvider>
         </DataProvider>
       </ToastProvider>
-    </NavigationContainer>
+      </NavigationContainer>
   );
 }

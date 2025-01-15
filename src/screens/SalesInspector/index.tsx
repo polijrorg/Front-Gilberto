@@ -30,19 +30,23 @@ const SalesInspector = ({ route }) => {
               companyId,
               idEmployee
             );
-          setSupervisors(responseSupervisor);
+          if (responseSupervisor) {
+            setSupervisors(responseSupervisor);
+          }
         } else if (cargo === 'Vendedor') {
           const responseSeller = await SellerServices.getSupervisorByIdCompany(
             companyId,
             idEmployee
           );
-          setSeller(responseSeller);
+          if (responseSeller) {
+            setSeller(responseSeller);
+          }
         }
       } catch (error) {}
     };
 
     fetchData();
-  }, [cargo, companyId, idEmployee, user.companyId, user.id]);
+  }, [cargo, companyId, idEmployee, user?.companyId, user?.id]);
 
   const handleGoBack = () => {
     navigation.goBack();

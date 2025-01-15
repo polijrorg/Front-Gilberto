@@ -4,7 +4,6 @@ import { theme } from '@styles/default.theme';
 import * as S from './styles';
 import SupervisorServices from '@services/SupervisorServices';
 import ManagerService from '@services/ManagerService';
-import useAuth from '@hooks/useAuth';
 import Manager from '@interfaces/Manager';
 import { useToast } from 'react-native-toast-notifications';
 import DropdownData from '@components/Dropdown';
@@ -14,6 +13,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import User from '@interfaces/User';
 import Supervisor from '@interfaces/Supervisor';
 
 interface ManagerState {
@@ -21,14 +21,17 @@ interface ManagerState {
   list: Manager[];
 }
 
-const SupervisorAdded: React.FC = () => {
+interface SupervisorAdded {
+  user: User
+}
+
+const SupervisorAdded: React.FC<SupervisorAdded> = ({ user }) => {
   const [managerState, setManagerState] = useState<ManagerState>({
     single: null,
     list: [],
   });
   const { data, setData } = useDataContext();
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');

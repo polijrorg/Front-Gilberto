@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import { View, Switch, ScrollView, Text } from 'react-native';
-import useAuth from '@hooks/useAuth';
+import { View, Switch, Text } from 'react-native';
 import SellerAdded from './SellerAdded';
 import SupervisorAdded from './SupervisorAdded';
 import HeaderPages from '@components/HeaderPages';
 import { StatusBar as RNStatusBar } from 'react-native';
 import { theme } from '@styles/default.theme';
+import User from '@interfaces/User';
 
-const AddCollaborator: React.FC = () => {
-  const { user } = useAuth();
+interface AddCollaboratorsProps{
+  user: User
+}
+
+const AddCollaborator: React.FC<AddCollaboratorsProps> = ({user}) => {
   const [isSeller, setIsSeller] = useState(true);
   const [value, setValue] = useState('Vendedor');
 

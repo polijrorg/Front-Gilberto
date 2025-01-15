@@ -1,34 +1,30 @@
 import { Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
 import styled, { css } from 'styled-components/native';
 import { theme } from '@styles/default.theme';
-import { LinearGradient } from 'expo-linear-gradient';
 
 export const Wrapper = styled(View)`
   width: 100%;
-  height: 105%;
+  display: flex;
+  flex-grow: 1;
+  flex: 1;
   border-top-right-radius: 32px;
   border-top-left-radius: 32px;
-  background-color: ${theme.colors.primary.main};
+  background-color: #fff;
 `;
 
 export const Forms = styled(View)`
-  margin: 30px auto;
+  margin: 0px auto;
   width: 90%;
-  height: 40%;
   padding: 30px;
   display: flex;
-  background-color: transparent;
   justify-content: space-between;
   align-items: flex-start;
-`;
-
-export const Div = styled(View)`
-  width: 100%;
-  gap: 24px;
+  flex: 1;
 `;
 
 export const DivFields = styled(View)`
-  gap: 8px;
+  gap: 24px;
+  margin: 16px auto;
 `;
 
 export const LabelEmail = styled(Text)`
@@ -48,14 +44,15 @@ export const Input = styled(TextInput)`
   border: none;
   width: 100%;
   border: 1px solid #d7dbdf;
-  padding: 4px 8px;
+  padding: 12px 8px; /* Aumentei o padding para maior conforto */
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 14px; /* Aumentei o tamanho da fonte */
   background-color: #f1f3f5;
   font-family: Poppins;
   position: relative;
   ::placeholder {
     color: #687076;
+    font-size: 14px; /* Tamanho do placeholder */
   }
 `;
 
@@ -104,17 +101,7 @@ export const TitleBtn = styled(Text)`
   color: #fff;
   align-self: center;
   font-family: Poppins;
-  font-size: 12px;
+  font-size: 14px; /* Tamanho da fonte maior para melhor visibilidade */
   text-transform: uppercase;
   font-weight: 700;
-`;
-
-export const DivGradiente = styled(LinearGradient).attrs({
-  colors: ['#3EDDAD', '#3E63DD'],
-  start: { x: 0, y: 0 },
-  end: { x: 1, y: 0 },
-})`
-  height: 8px;
-  position: relative;
-  bottom: -36px;
 `;

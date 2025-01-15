@@ -204,7 +204,7 @@ const OverView: React.FC<OverViewProps> = ({
   if (loading) {
     return (
       <S.LoadingContainer>
-        <ActivityIndicator size="large" color="#3E63DD" />
+        <ActivityIndicator  color="#3E63DD" />
       </S.LoadingContainer>
     );
   }
@@ -240,7 +240,7 @@ const OverView: React.FC<OverViewProps> = ({
   };
   return (
     <S.ContainerChart>
-      <Suspense fallback={<ActivityIndicator size="large" color="#3E63DD" />}>
+      <Suspense fallback={<ActivityIndicator  color="#3E63DD" />}>
         <BarChar dateVisit={dateVisit} questionsBar={questionsBar} />
       </Suspense>
 
@@ -249,7 +249,7 @@ const OverView: React.FC<OverViewProps> = ({
           visits.map((visit) => (
             <Suspense
               key={visit.id}
-              fallback={<ActivityIndicator size="large" color="#3E63DD" />}
+              fallback={<ActivityIndicator color="#3E63DD" />}
             >
               <AccordionVisit
                 title={`${visit.storeVisited} - ${visit.dateVisited}`}

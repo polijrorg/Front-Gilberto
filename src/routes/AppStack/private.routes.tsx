@@ -4,85 +4,83 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from '@screens/Home';
 import MyTeam from '@screens/MyTeam';
 import AddCollaborators from '@screens/AddCollaborators';
-import Login from '@screens/Login';
 import TabNav from '@routes/TabNav';
 import EvaluateMentoring from '@screens/EvaluateMentoring';
 import CompleteMentorship from '@screens/EvaluateMentoring/CompleteMentorship';
 import EvaluateVisit from '@screens/EvaluateVisit';
 import EvaluateVisitManager from '@screens/EvaluateVisit/EvaluateVisitManager';
-import useAuth from '@hooks/useAuth';
 import ModuloAsk from '@screens/EvaluateMentoring/ModuloAsk';
 import PlainActionTemplate from '@screens/PlainAction';
+import User from '@interfaces/User';
 
-const AppStack = createNativeStackNavigator();
+const PrivateStack = createNativeStackNavigator();
 
-const AppRoutes: React.FC = () => {
-  const { user } = useAuth();
+interface IRoutes {
+  user: User
+}
+
+const PrivateRoutes: React.FC<IRoutes> = ({ user }) => {
 
   return (
-    <AppStack.Navigator>
-      <AppStack.Screen
-        name="Login"
-        component={Login}
-        options={{ header: () => <></> }}
-      />
-      <AppStack.Screen
+    <PrivateStack.Navigator>
+      
+      <PrivateStack.Screen
         name="Home"
-        component={Home}
+        component={() => <Home user={user} />}
         options={{ header: () => <></> }}
       />
-      <AppStack.Screen
+      <PrivateStack.Screen
         name="MyTeam"
-        component={MyTeam}
+        component={() => <MyTeam user={user} />}
         options={{ header: () => <></> }}
       />
-      <AppStack.Screen
+      <PrivateStack.Screen
         name="SalesInspector"
-        component={TabNav}
+        component={({ route }: { route: any }) => <TabNav user={user} route={{ ...route, params: { idEmployee: '', cargo: '', companyId: '', stage: '' } }} />}
         options={{ header: () => <></> }}
       />
-      <AppStack.Screen
+      <PrivateStack.Screen
         name="AddCollaborators"
-        component={AddCollaborators}
+        component={() => <AddCollaborators user={user} />}
         options={{ header: () => <></> }}
       />
-      <AppStack.Screen
+      <PrivateStack.Screen
         name="EvaluateVisit"
-        component={EvaluateVisit}
+        component={() => <EvaluateVisit user={user} />}
         options={{ header: () => <></> }}
       />
-      <AppStack.Screen
+      <PrivateStack.Screen
         name="EvaluateVisitManager"
-        component={EvaluateVisitManager}
+        component={() => <EvaluateVisitManager user={user} />}
         options={{ header: () => <></> }}
       />
-      <AppStack.Screen
+      <PrivateStack.Screen
         name="AskEvaluateMentoring"
         component={(props: any) => <ModuloAsk {...props} />}
         options={{ header: () => <></> }}
       />
 
-      <AppStack.Screen
+      <PrivateStack.Screen
         name="CompleteMentoring"
-        component={CompleteMentorship}
+        component={() => <CompleteMentorship />}
         options={{ header: () => <></> }}
       />
 
-      <AppStack.Screen
+      <PrivateStack.Screen
         name="PlainAction"
-        component={PlainActionTemplate}
+        component={() => <PlainActionTemplate user={user} />}
         options={{ header: () => <></> }}
       />
 
       {user && user.job === 'Supervisor' && (
-        <AppStack.Screen
+        <PrivateStack.Screen
           name="EvaluateMentoring"
-          component={EvaluateMentoring}
+          component={() => <EvaluateMentoring user={user} />}
           options={{ header: () => <></> }}
         />
       )}
-    </AppStack.Navigator>
+    </PrivateStack.Navigator>
   );
 };
 
-export default AppRoutes;
+export default PrivateRoutes;

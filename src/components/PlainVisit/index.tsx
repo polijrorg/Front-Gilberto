@@ -3,7 +3,6 @@ import * as S from './styles';
 import { useToast } from 'react-native-toast-notifications';
 import { DateTimePickerComponent } from '@screens/SalesInspector/TabScreens/Action/Plain/MentoryAndVisit';
 import ISeller from '@interfaces/Seller';
-import IModules from '@interfaces/Module';
 import PlainService from '../../services/PlainService';
 import Visit from '@interfaces/Visit/Visit';
 

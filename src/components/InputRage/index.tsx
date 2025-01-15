@@ -5,7 +5,7 @@ import Slider from '@react-native-community/slider';
 
 interface askProps {
   textAsk?: string;
-  id?: string;
+  id: string;
   onChangeValue?: (id: string, newValue: number) => void;
   initialValue?: number;
 }
@@ -33,12 +33,12 @@ const InputRange: React.FC<askProps> = ({
           value={value}
           onValueChange={(newValue) => {
             setValue(newValue);
-            onChangeValue(id, newValue);
+            onChangeValue && onChangeValue(id, newValue);
           }}
         />
-        <Text style={styles.sliderValue}>
+        <S.SliderValue>
           {value.toFixed(1).replace('.', ',')}
-        </Text>
+        </S.SliderValue>
       </S.SliderContainer>
     </S.Container>
   );
@@ -48,9 +48,6 @@ const styles = StyleSheet.create({
   slider: {
     minWidth: '70%',
     height: 40,
-  },
-  sliderValue: {
-    marginLeft: 10,
   },
 });
 

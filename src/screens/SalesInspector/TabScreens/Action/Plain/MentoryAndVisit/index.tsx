@@ -10,7 +10,6 @@ import ISeller from '@interfaces/Seller';
 import IModules from '@interfaces/Module';
 import IVisits from '@interfaces/Visit/Visit';
 import PlainService from '@services/PlainService';
-import { AxiosError } from 'axios';
 
 interface PlainActionProps {
   setState: () => void;

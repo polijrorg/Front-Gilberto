@@ -2,15 +2,25 @@ import * as S from './styles';
 import React from 'react';
 import ButtonWhite from '@components/ButtonWhite';
 import { useNavigation } from '@react-navigation/native';
-import useAuth from '@hooks/useAuth';
 import { useToast } from 'react-native-toast-notifications';
+import User from '@interfaces/User';
 
-const ContainerActions: React.FC = () => {
-  const { user } = useAuth();
+interface ContanerActionsProps {
+  user: User;
+}
+
+const ContainerActions: React.FC<ContanerActionsProps> = ({user}) => {
   const navigation = useNavigation();
   const toast = useToast();
 
-  const buttonConfig = {
+  type ButtonConfig = {
+    [key: string]: {
+      mentorado: string;
+      visita: string;
+    };
+  };
+
+  const buttonConfig: ButtonConfig = {
     Gerente: {
       mentorado: 'Avaliar um Mentoreado',
       visita: 'Editar Visita',
@@ -52,13 +62,13 @@ const ContainerActions: React.FC = () => {
 
   const handleEnviarPlainAction = () => {
     if (user.job === 'Supervisor') {
-      navigation.navigate('PlainAction' as never);
+    const userTypeConfig = buttonConfig[user.job as keyof ButtonConfig] || buttonConfig.default;
     } else {
       showToast('Funcionalidade apenas para Supervisores', '');
     }
   };
 
-  const getButtonText = (buttonType: string) => {
+  const getButtonText = (buttonType: 'mentorado' | 'visita') => {
     const userTypeConfig = buttonConfig[user.job] || buttonConfig.default;
     return userTypeConfig[buttonType];
   };

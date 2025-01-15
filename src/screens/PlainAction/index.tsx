@@ -3,15 +3,18 @@ import { StatusBar, ActivityIndicator, ScrollView } from 'react-native';
 import * as S from './styles';
 
 import Header from '@components/HeaderPages';
-import useAuth from '@hooks/useAuth';
 import CardsMentory from '@components/CardsMentory';
 
 import PlainService from '@services/PlainService';
 import IPlains from '@interfaces/Plain';
 import { useDataContext } from '../../context/DataContext';
+import User from '@interfaces/User';
 
-const PlainActionTemplate = () => {
-  const { user } = useAuth();
+interface PlainActionTemplateProps {
+  user: User
+}
+
+const PlainActionTemplate:React.FC<PlainActionTemplateProps> = ({user}) => {
   const { data } = useDataContext();
 
   const [loading, setLoading] = useState(true);
@@ -73,12 +76,13 @@ const PlainActionTemplate = () => {
         <S.ViewWrapper>
           {loading ? (
             <S.LoadingContainer>
-              <ActivityIndicator size="large" color="#3E63DD" />
+              <ActivityIndicator  color="#3E63DD" />
             </S.LoadingContainer>
           ) : !isVisible ? (
             <ScrollView>
               <S.SectionContainer>
                 <PlanList
+                  user={user}
                   title="Planos Pendentes"
                   plains={plains}
                   handleToggleVisibility={handleToggleVisibility}
@@ -92,6 +96,7 @@ const PlainActionTemplate = () => {
               </S.SectionContainer>
               <S.SectionContainer>
                 <CompletedPlanList
+                  user={user}
                   title="Planos Concluídos"
                   completedPlains={completedPlains}
                   handleToggleVisibility={handleToggleVisibility}
@@ -119,6 +124,7 @@ interface PlanListProps {
   plains: IPlains[];
   handleToggleVisibility: (idPlain: string) => void;
   handleMarkDone: (idPlain: string) => void;
+  user: User;
 }
 
 const PlanList: React.FC<PlanListProps> = ({
@@ -126,12 +132,14 @@ const PlanList: React.FC<PlanListProps> = ({
   plains,
   handleToggleVisibility,
   handleMarkDone,
+  user
 }) => {
   return (
     <S.Section>
       <S.SectionHeader>{title}</S.SectionHeader>
       {plains.map((plain: IPlains) => (
         <CardsMentory
+        user={user}
           key={plain.id}
           title={plain.title}
           seller={plain.seller}
@@ -152,6 +160,7 @@ interface CompletedPlanListProps {
   handleToggleVisibility: (idPlain: string) => void;
   handleMarkDone: (idPlain: string) => void;
   complete: boolean;
+  user: User
 }
 
 const CompletedPlanList: React.FC<CompletedPlanListProps> = ({
@@ -160,12 +169,14 @@ const CompletedPlanList: React.FC<CompletedPlanListProps> = ({
   handleToggleVisibility,
   handleMarkDone,
   complete,
+  user
 }) => {
   return (
     <S.Section>
       <S.SectionHeader>{title}</S.SectionHeader>
       {completedPlains.map((plain) => (
         <CardsMentory
+        user={user}
           key={plain.id}
           title={plain.title}
           prize={plain.prize}

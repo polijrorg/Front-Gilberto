@@ -5,16 +5,19 @@ import Header from '@components/HeaderMenu';
 import ContainerActions from '@components/ContainerActions';
 import MatrizSlider from '@components/MatrizSlider';
 import Container from '@components/ContainerCards';
-import useAuth from '@hooks/useAuth';
 import SupervisorServices from '@services/SupervisorServices';
 import SellerServices from '@services/SellerServices';
 import ModulesServices from '@services/ModuleServices';
 import Seller from '@interfaces/Seller';
 import Supervisor from '@interfaces/Supervisor';
 import { useDataContext } from '../../context/DataContext';
+import User from '@interfaces/User';
 
-const Home = () => {
-  const { user } = useAuth();
+interface HomeProps {
+  user: User;
+}
+
+const Home: React.FC<HomeProps> = ({ user }) => {
   const { data } = useDataContext();
   const [loading, setLoading] = useState(true);
   const [sellers, setSellers] = useState<Seller[]>([]);
@@ -66,17 +69,18 @@ const Home = () => {
 
   return (
     <>
-      <StatusBar backgroundColor="#3E63DD" style="light" />
       <S.Wrapper>
-        <Header />
-        <ContainerActions />
-        <MatrizSlider />
+        <StatusBar backgroundColor={'#3E63DD'} />
+        <Header user={user} />
+        <ContainerActions user={user} />
+        <MatrizSlider user={user} />
         <Container
           title={user.job === 'Gerente' ? 'Supervisores' : 'Vendedores'}
           loading={loading}
           data={user.job === 'Gerente' ? supervisors : sellers}
           media={media}
           userType={user.job}
+          userLogged={user}
         />
       </S.Wrapper>
     </>

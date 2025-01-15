@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import DivGradient from '@components/DivGradient';
 import * as S from './styles';
 import { useNavigation } from '@react-navigation/native';
 import Container from '@components/ContainerCards';
-import useAuth from '@hooks/useAuth';
 import SellerServices from '@services/SellerServices';
 import SupervisorServices from '@services/SupervisorServices';
 import ModulesServices from '@services/ModuleServices';
@@ -12,9 +10,13 @@ import HeaderPages from '@components/HeaderPages';
 import ISupervisor from '@interfaces/Supervisor';
 import ISeller from '@interfaces/Seller';
 import { useDataContext } from '../../context/DataContext';
+import User from '@interfaces/User';
 
-const MyTeam = () => {
-  const { user } = useAuth();
+
+interface MyTeamProps {
+  user: User;
+}
+const MyTeam:React.FC<MyTeamProps> = ({user}) => {
   const { data } = useDataContext();
   const [loading, setLoading] = useState(true);
   const [sellers, setSellers] = useState<ISeller[] | null>(null);
@@ -97,6 +99,7 @@ const MyTeam = () => {
             data={supervisors}
             search={search}
             userType={user.job}
+            userLogged={user}
           />
         )}
         <Container
@@ -105,12 +108,12 @@ const MyTeam = () => {
           loading={loading}
           data={sellers}
           search={search}
+          userLogged={user}
         />
       </S.Wrapper>
       <S.BtnAddColaborador onPress={handlePressAddedSeller}>
         <S.TextBtn>Adicionar COLABORADORES</S.TextBtn>
       </S.BtnAddColaborador>
-      <DivGradient />
     </S.WrapperTela>
   );
 };

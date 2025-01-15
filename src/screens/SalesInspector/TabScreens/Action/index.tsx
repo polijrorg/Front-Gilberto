@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ActivityIndicator, View, Text, ScrollView } from 'react-native';
+import { ActivityIndicator, ScrollView } from 'react-native';
 import * as S from './styles';
 import CardsMentory from '@components/CardsMentory';
 import PlainMentory from './Plain/MentoryAndVisit';
@@ -11,9 +11,13 @@ import IPlains from '@interfaces/Plain';
 import ISeller from '@interfaces/Seller';
 import IModules from '@interfaces/Module';
 import IVisits from '@interfaces/Visit/Visit';
-import useAuth from '@hooks/useAuth';
+import User from '@interfaces/User';
 
-const Action = ({ route }) => {
+interface IActionProps {
+  user: User
+}
+
+const Action:React.FC<IActionProps> = ({ route, user }) => {
   const { idEmployee, cargo, companyId } = route.params;
   const [loading, setLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
@@ -22,7 +26,6 @@ const Action = ({ route }) => {
   const [seller, setSeller] = useState<ISeller | undefined>(undefined);
   const [modules, setModules] = useState<IModules[] | null>(null);
   const [visits, setVisits] = useState<IVisits[] | null>(null);
-  const { user } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,12 +94,13 @@ const Action = ({ route }) => {
     <S.ViewWrapper>
       {loading ? (
         <S.LoadingContainer>
-          <ActivityIndicator size="large" color="#3E63DD" />
+          <ActivityIndicator  color="#3E63DD" />
         </S.LoadingContainer>
       ) : !isVisible ? (
         <ScrollView>
           <S.SectionContainer>
             <PlanList
+              user={user}
               title="Planos Pendentes"
               plains={plains}
               handleToggleVisibility={handleToggleVisibility}
@@ -110,6 +114,7 @@ const Action = ({ route }) => {
           </S.SectionContainer>
           <S.SectionContainer>
             <CompletedPlanList
+              user={user}
               title="Planos Concluídos"
               completedPlains={completedPlains}
               handleToggleVisibility={handleToggleVisibility}
@@ -129,13 +134,15 @@ const Action = ({ route }) => {
           )}
         </ScrollView>
       ) : (
-        <PlainMentory
-          setState={handleNavigator}
-          seller={seller}
-          modules={modules}
-          visits={visits}
-          addNewPlain={addNewPlain}
-        />
+        seller && (
+          <PlainMentory
+            setState={handleNavigator}
+            seller={seller}
+            modules={modules || []}
+            visits={visits || []}
+            addNewPlain={addNewPlain}
+          />
+        )
       )}
     </S.ViewWrapper>
   );
@@ -146,12 +153,14 @@ interface IPlanListProps {
   plains: IPlains[];
   handleToggleVisibility: (idPlain: string) => void;
   handleMarkDone: (idPlain: string) => void;
+  user: User;
 }
 const PlanList: React.FC<IPlanListProps> = ({
   title,
   plains,
   handleToggleVisibility,
   handleMarkDone,
+  user
 }) => {
   return (
     <S.ListWrapper>
@@ -159,6 +168,7 @@ const PlanList: React.FC<IPlanListProps> = ({
       {plains.map((plain: IPlains) => {
         return (
           <CardsMentory
+            user={user}
             key={plain.id}
             title={plain.title}
             prize={plain.prize}
@@ -179,6 +189,7 @@ interface ICompletedPlanListProps {
   handleToggleVisibility: (idPlain: string) => void;
   handleMarkDone: (idPlain: string) => void;
   complete: boolean;
+  user: User
 }
 
 const CompletedPlanList: React.FC<ICompletedPlanListProps> = ({
@@ -187,12 +198,14 @@ const CompletedPlanList: React.FC<ICompletedPlanListProps> = ({
   handleToggleVisibility,
   handleMarkDone,
   complete,
+  user
 }) => {
   return (
     <S.ListWrapper>
       <S.SectionHeader>{title}</S.SectionHeader>
       {completedPlains.map((plain) => (
         <CardsMentory
+          user={user}
           key={plain.id}
           title={plain.title}
           prize={plain.prize}

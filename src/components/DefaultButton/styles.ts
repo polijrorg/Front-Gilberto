@@ -10,7 +10,14 @@ export const StyledHeading = styled(Text)`
 
 export const StyleButton = styled(TouchableOpacity)<{ isPressed: boolean }>`
   background-color: ${theme.colors.secundary.main};
-  padding: 8px 16px;
+  padding: 16px 24px;
   border-radius: 8px;
   opacity: ${(props) => (props.isPressed ? 0.8 : 1)};
+
+  display: flex;
+  align-self: center;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
 `;

@@ -6,6 +6,7 @@ import SellerService from '@services/SellerServices';
 import { FontAwesome } from '@expo/vector-icons';
 import SupervisorServices from '@services/SupervisorServices';
 import useAuth from '@hooks/useAuth';
+import User from '@interfaces/User';
 
 export interface ScatterPlotProps {
   moduleAverages:
@@ -15,10 +16,12 @@ export interface ScatterPlotProps {
         sellerId: string;
       }[]
     | null;
+  user:User;
 }
 
 const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
   moduleAverages,
+  user,
 }) => {
   const [tooltip, setTooltip] = useState<{
     visible: boolean;
@@ -32,7 +35,6 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
 
   const [selectedSellerId, setSelectedSellerId] = useState<string | null>(null);
 
-  const { user } = useAuth();
 
   const padding = 40;
   const chartWidth = Dimensions.get('window').width - 20;

@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { Alert, ActivityIndicator } from 'react-native';
+import { Alert, Platform, KeyboardAvoidingView, ScrollView, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as S from './styles';
 
-import DivGradient from '@components/DivGradient';
 import useAuth from '@hooks/useAuth';
 import { useToast } from 'react-native-toast-notifications';
 import { useState } from 'react';
+import Input from '../../components/Input';
+import DefaultButton from '@components/DefaultButton';
 
 const FormsLogin: React.FC = () => {
   const [email, setEmail] = React.useState('');
@@ -22,97 +23,77 @@ const FormsLogin: React.FC = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleEnviarPress = async () => {
+  const handleLogin = async () => {
+    setLoading(true);
+
     try {
-      setLoading(true);
       const token = await login({ email, password });
 
-      if (token !== undefined) {
-        toast.show('Seja Bem-Vindo(a)', {
+      if (token) {
+        toast.show('Login realizado com sucesso!', {
           type: 'success',
           placement: 'bottom',
           duration: 3000,
-          animationType: 'zoom-in',
         });
-        navigation.navigate('Home' as never);
       } else {
-        navigation.navigate('Login' as never);
-        toast.show('Credênciais não encontradas', {
+        toast.show('Credenciais inválidas. Tente novamente.', {
           type: 'danger',
           placement: 'bottom',
           duration: 3000,
-          animationType: 'zoom-in',
         });
       }
     } catch (error) {
-      Alert.alert('Erro ao Logar');
+      Alert.alert('Erro', 'Ocorreu um erro ao tentar fazer login. Tente novamente.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Verifica se ambos os campos estão preenchidos para habilitar o botão de enviar
   const isEnviarDisabled = !email || !password;
 
-  // Define a opacidade do botão com base no conteúdo dos campos de e-mail e senha
-  const buttonOpacity = email && password ? 1 : 0.8;
-
   return (
-    <>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
       <S.Wrapper>
-        <S.Forms>
-          <S.Div>
-            <S.DivFields>
-              <S.LabelEmail>{'Digite seu E-mail'}</S.LabelEmail>
-              <S.Input
-                placeholder={'email@example.com'}
-                keyboardType={'email-address'}
-                autoCapitalize="none"
-                value={email}
-                onChangeText={(text) => setEmail(text)}
-              />
-            </S.DivFields>
-
-            <S.DivFields>
-              <S.LabelEmail>{'Digite sua senha'}</S.LabelEmail>
-              <S.DivViewTextInput>
-                <S.Input
-                  placeholder={'Senha'}
-                  keyboardType="default"
-                  autoCapitalize="none"
-                  secureTextEntry={!showPassword}
-                  value={password}
-                  onChangeText={(text) => setPassword(text)}
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+          }}
+          keyboardShouldPersistTaps="handled"
+        >
+            <S.Forms>
+              <S.DivFields>
+                <Input
+                  label="Digite seu E-mail"
+                  placeholder="email@example.com"
+                  type="email"
+                  onChangeValue={(text) => setEmail(text)}
+                  value={email}
                 />
-                <S.BtnIconPass onPress={toggleShowPassword}>
-                  <S.Icon
-                    source={
-                      showPassword
-                        ? require('@assets/img/olho_aberto.png')
-                        : require('@assets/img/olho_fechado.png')
-                    }
-                  />
-                </S.BtnIconPass>
-              </S.DivViewTextInput>
-            </S.DivFields>
-          </S.Div>
-          <S.ButtonEnviar
-            onPress={
-              loading || isEnviarDisabled ? undefined : handleEnviarPress
-            }
-            disabled={loading || isEnviarDisabled}
-            style={{ opacity: buttonOpacity }}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <S.TitleBtn>Entrar</S.TitleBtn>
-            )}
-          </S.ButtonEnviar>
-        </S.Forms>
-        <DivGradient />
+                <Input
+                  label="Digite sua Senha"
+                  placeholder="Senha"
+                  type="password"
+                  showPasswordToggle={true}
+                  secureTextEntry={true}
+                  onChangeValue={(text) => setPassword(text)}
+                  value={password}
+                  onTogglePassword={toggleShowPassword}
+                />
+              </S.DivFields>
+
+              <DefaultButton
+                textButton="Enviar"
+                loading={loading}
+                isEnviarDisabled={isEnviarDisabled}
+                onPress={handleLogin}
+                />
+            </S.Forms>
+        </ScrollView>
       </S.Wrapper>
-    </>
+    </KeyboardAvoidingView>
   );
 };
 

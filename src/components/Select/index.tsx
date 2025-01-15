@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
 import * as S from './styles';
 import { FontAwesome } from '@expo/vector-icons';
 
@@ -43,7 +42,7 @@ const Select: React.FC<SelectProps> = ({
             />
           </S.DropDownButton>
           {isOpen && (
-            <S.DropdownList maxHeight={options.length > 1 ? 300 : null}>
+            <S.DropdownList maxHeight={options.length > 1 ? 300 : undefined}>
               {options.length > 0 ? (
                 options.map((option, index) => (
                   <S.DropdownItem

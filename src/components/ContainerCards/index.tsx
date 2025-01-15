@@ -4,6 +4,7 @@ import Card from '@components/Cards';
 import * as S from './styles';
 import ISeller from '@interfaces/Seller';
 import ISupervisor from '@interfaces/Supervisor';
+import User from '@interfaces/User';
 
 const Container: React.FC<{
   search?: string;
@@ -12,7 +13,8 @@ const Container: React.FC<{
   title: string;
   media?: { [key: string]: number };
   userType?: string;
-}> = ({ search, data, loading, title, media = {}, userType }) => {
+  userLogged: User
+}> = ({ search, data, loading, title, media = {}, userType, userLogged }) => {
   const filteredData = filterData(data, search, userType);
 
   return (
@@ -26,11 +28,11 @@ const Container: React.FC<{
             <>
               <S.DivVisita>
                 <S.TitleSection>Visita</S.TitleSection>
-                {renderFilteredData(filteredData, 'Visita', media)}
+                {renderFilteredData(filteredData, 'Visita', media, userLogged)}
               </S.DivVisita>
               <S.DivMentoria>
                 <S.TitleSection>Mentoria</S.TitleSection>
-                {renderFilteredData(filteredData, 'Mentoria', media)}
+                {renderFilteredData(filteredData, 'Mentoria', media, userLogged)}
               </S.DivMentoria>
             </>
           ) : (
@@ -38,7 +40,7 @@ const Container: React.FC<{
               (
                 item: ISeller | ISupervisor,
                 index: string | number | null | undefined
-              ) => <CardItem key={index} item={item} media={media} />
+              ) => <CardItem key={index} item={item} media={media} userLogged={userLogged} />
             )
           )
         ) : (
@@ -69,7 +71,8 @@ const filterData = (
 const renderFilteredData = (
   data: any[] | null | undefined,
   stage: string,
-  media: { [x: string]: number }
+  media: { [x: string]: number },
+  userLogged: User
 ) => {
   const filtered = data?.filter(
     (item: { stage: any }): item is ISeller =>
@@ -84,13 +87,13 @@ const renderFilteredData = (
     (
       item: ISeller | ISupervisor,
       index: string | number | null | undefined
-    ) => <CardItem key={index} item={item} media={media} />
+    ) => <CardItem key={index} item={item} media={media} userLogged={userLogged} />
   );
 };
 
 const LoadingIndicator: React.FC = () => (
   <S.CenteredView>
-    <ActivityIndicator size="large" color="#0000ff" />
+    <ActivityIndicator color="#0000ff" />
   </S.CenteredView>
 );
 
@@ -105,7 +108,8 @@ const NoDataMessage: React.FC<{ title: string }> = ({ title }) => (
 const CardItem: React.FC<{
   item: ISeller | ISupervisor;
   media: { [key: string]: number };
-}> = ({ item, media }) => {
+  userLogged: User;
+}> = ({ item, media, userLogged }) => {
   const fullName = item.name || 'Usuário';
   const nameParts = fullName.split(' ');
   const displayName =
@@ -123,6 +127,7 @@ const CardItem: React.FC<{
       cargo={item.job}
       companyId={item.companyId}
       nota={sellerMedia}
+      userLogged={userLogged}
     />
   );
 };

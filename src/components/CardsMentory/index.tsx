@@ -1,9 +1,9 @@
 import React from 'react';
-import { TouchableOpacity, View, StyleSheet } from 'react-native';
-import { StyledWrapper, DivText, Title, Nota, DivNota } from './styles';
+import { TouchableOpacity, View } from 'react-native';
+import { StyledWrapper, DivText, Title, Nota, DivNota, Container } from './styles';
 import { MaterialIcons } from '@expo/vector-icons';
 import Seller from '@interfaces/Seller';
-import useAuth from '@hooks/useAuth';
+import User from '@interfaces/User';
 
 interface CardMentoryProps {
   title: string;
@@ -13,6 +13,7 @@ interface CardMentoryProps {
   onMarkDone: () => void;
   complete?: boolean;
   seller?: Seller;
+  user: User
 }
 
 const CardsMentory: React.FC<CardMentoryProps> = ({
@@ -22,8 +23,8 @@ const CardsMentory: React.FC<CardMentoryProps> = ({
   onToggleVisibility,
   onMarkDone,
   complete,
+  user
 }) => {
-  const { user } = useAuth();
 
   const handleToggleVisibility = () => {
     if (!complete && user.job !== 'Gerente') {
@@ -34,16 +35,7 @@ const CardsMentory: React.FC<CardMentoryProps> = ({
 
   return (
     <StyledWrapper>
-      <View
-        style={{
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          paddingHorizontal: 16,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}
-      >
+      <Container>
         <TouchableOpacity
           onPress={handleToggleVisibility}
           activeOpacity={complete ? 1 : 0}
@@ -71,7 +63,7 @@ const CardsMentory: React.FC<CardMentoryProps> = ({
         <DivNota>
           <Nota>{prize}</Nota>
         </DivNota>
-      </View>
+      </Container>
     </StyledWrapper>
   );
 };

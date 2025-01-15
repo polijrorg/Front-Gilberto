@@ -2,6 +2,7 @@
   "expo": {
     "name": "Sell Outer",
     "slug": "sell-out-expert",
+    "newArchEnabled": true,
     "icon": "./public/assets/icon.jpg",
     "version": "1.0.9",
     "assetBundlePatterns": [

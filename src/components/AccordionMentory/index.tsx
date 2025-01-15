@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableWithoutFeedback, TextInput } from 'react-native';
+import { View, TouchableWithoutFeedback, TextInput, Text as RNCText } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import * as S from './styles';
+import Text from '@components/Text';
 
 type AccordionProps = {
   title: string;
@@ -30,22 +32,14 @@ const AccordionMentory: React.FC<AccordionProps> = ({
   };
 
   return (
-    <View style={{ marginTop: 16, borderRadius: 8 }}>
+    <S.Wrapper>
       <TouchableWithoutFeedback onPress={toggleExpand}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            backgroundColor: '#F1F3F5',
-            padding: 10,
-            borderRadius: 8,
-          }}
-        >
-          <Text style={{ flex: 0.9, fontFamily: 'Poppins' }}>{title}</Text>
+        <S.ViewWrapper>
+          
+          <Text label={title} size='medium' />
           {showText && (
             <>
-              <Text
+              <RNCText
                 style={{
                   marginRight: 8,
                   fontFamily: 'PoppinsBold',
@@ -57,8 +51,8 @@ const AccordionMentory: React.FC<AccordionProps> = ({
                 }}
               >
                 I: {formatNumber(implementation)}
-              </Text>
-              <Text
+              </RNCText>
+              <RNCText
                 style={{
                   marginRight: 8,
                   fontFamily: 'PoppinsBold',
@@ -70,7 +64,7 @@ const AccordionMentory: React.FC<AccordionProps> = ({
                 }}
               >
                 C: {formatNumber(knowledge)}
-              </Text>
+              </RNCText>
             </>
           )}
           <FontAwesome
@@ -78,7 +72,7 @@ const AccordionMentory: React.FC<AccordionProps> = ({
             size={24}
             color="black"
           />
-        </View>
+        </S.ViewWrapper>
       </TouchableWithoutFeedback>
 
       {isExpanded && (
@@ -98,12 +92,12 @@ const AccordionMentory: React.FC<AccordionProps> = ({
               justifyContent: 'space-around',
             }}
           >
-            <Text style={{ fontFamily: 'Poppins', color: '#687076' }}>
+            <RNCText style={{ fontFamily: 'Poppins', color: '#687076' }}>
               Implementação: {formatNumber(implementation)}
-            </Text>
-            <Text style={{ fontFamily: 'Poppins', color: '#687076' }}>
+            </RNCText>
+            <RNCText style={{ fontFamily: 'Poppins', color: '#687076' }}>
               Conhecimento: {formatNumber(knowledge)}
-            </Text>
+            </RNCText>
           </View>
           <TextInput
             placeholder="Comentários"
@@ -123,7 +117,7 @@ const AccordionMentory: React.FC<AccordionProps> = ({
           />
         </View>
       )}
-    </View>
+    </S.Wrapper>
   );
 };
 

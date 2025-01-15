@@ -16,20 +16,24 @@ import {
   Platform,
 } from 'react-native';
 import StateSelect from '@components/Select';
+import User from '../../../interfaces/User';
 
 interface SupervisorState {
   single: ISupervisor | null;
   list: ISupervisor[];
 }
 
-const SellerAdded: React.FC = () => {
+interface SellerAddedProps {
+  user: User;
+}
+
+const SellerAdded: React.FC<SellerAddedProps> = ({user}) => {
   const [supervisorState, setSupervisorState] = useState<SupervisorState>({
     single: null,
     list: [],
   });
   const { data, setData } = useDataContext();
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [image, setImage] = useState('');

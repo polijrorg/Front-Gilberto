@@ -19,6 +19,10 @@ export const SliderContainer = styled(View)`
   gap: 8px;
 `;
 
+export const SliderValue = styled(Text)`
+  margin-left: 10px;
+`;
+
 export const TextLimt = styled(Text)`
   font-family: Poppins;
   font-size: 12px;

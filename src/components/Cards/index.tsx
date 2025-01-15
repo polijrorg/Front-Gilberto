@@ -1,11 +1,11 @@
 import * as S from './styles';
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import useAuth from '@hooks/useAuth';
 import SupervisorServices from '@services/SupervisorServices';
 import ISupervisor from '@interfaces/Supervisor';
+import User from '@interfaces/User';
 
-type IVendedor = {
+interface IVendedor {
   nome: string;
   cargo: string;
   nota?: number;
@@ -14,6 +14,7 @@ type IVendedor = {
   companyId: string;
   stage: string;
   blocked?: boolean;
+  userLogged: User;
 };
 
 const Cards: React.FC<IVendedor> = ({
@@ -25,8 +26,8 @@ const Cards: React.FC<IVendedor> = ({
   companyId,
   stage,
   blocked = false,
+  userLogged
 }) => {
-  const { user } = useAuth();
   const navigation = useNavigation();
   const [supervisor, setSupervisor] = useState<ISupervisor>();
 
@@ -46,25 +47,27 @@ const Cards: React.FC<IVendedor> = ({
   useEffect(() => {
     const fetchSupervisor = async () => {
       try {
-        if (user.job === 'Gerente') {
-          const supervisorData =
-            await SupervisorServices.getSupervisorByIdCompany(
-              companyId,
-              supervisorId
-            );
-          setSupervisor(supervisorData);
+        if (userLogged.job === 'Gerente') {
+          if (supervisorId) {
+            const supervisorData =
+              await SupervisorServices.getSupervisorByIdCompany(
+                companyId,
+                supervisorId
+              );
+            setSupervisor(supervisorData);
+          }
         }
       } catch (error) {}
     };
 
     fetchSupervisor();
-  }, [companyId, supervisorId, user.job]);
+  }, [companyId, supervisorId, userLogged.job]);
   return (
     <S.DivWrapper onPress={handlePress} disabled={blocked}>
       <S.DivImage>
-        <S.ImageVendedor
+         <S.ImageVendedor
           source={require('@assets/img/cardVendedor/foto.png')}
-        />
+        /> 
       </S.DivImage>
       <S.DivText>
         <S.Name>{nome}</S.Name>
@@ -75,8 +78,8 @@ const Cards: React.FC<IVendedor> = ({
         )}
       </S.DivText>
       {cargo !== 'Supervisor' && cargo !== 'Diretor' && (
-        <S.DivAvalia nota={nota} stage={stage}>
-          <S.Nota nota={nota} stage={stage}>
+        <S.DivAvalia nota={nota ?? 0} stage={stage}>
+          <S.Nota nota={nota ?? 0} stage={stage}>
             {formattedNota}
           </S.Nota>
         </S.DivAvalia>

@@ -4,10 +4,15 @@ import { useNavigation } from '@react-navigation/native';
 import { ActivityIndicator } from 'react-native';
 import Modal from 'react-native-modal';
 import useAuth from '@hooks/useAuth';
+import User from '@interfaces/User';
 
-const HeaderMenu: React.FC = () => {
+interface HeaderMenuProps {
+  user:User
+}
+
+const HeaderMenu: React.FC<HeaderMenuProps> = ({user}) => {
   const navigation = useNavigation();
-  const { user, logout } = useAuth();
+  const {  logout } = useAuth();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 

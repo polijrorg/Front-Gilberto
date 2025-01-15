@@ -4,7 +4,6 @@ import { theme } from '@styles/default.theme';
 import * as S from './styles';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import ModuleGradeServices from '@services/ModuleGradeService';
-import DivGradient from '@components/DivGradient';
 import HeaderPages from '@components/HeaderPages';
 import ISeller from '@interfaces/Seller';
 import { useToast } from 'react-native-toast-notifications';
@@ -145,7 +144,6 @@ const CompleteMentorship: React.FC = () => {
         )}
         <ButtonsSection loading={loading} handleComplete={handleComplete} />
       </S.Wrapper>
-      <DivGradient />
     </>
   );
 };

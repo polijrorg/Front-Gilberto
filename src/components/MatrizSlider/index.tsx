@@ -9,8 +9,15 @@ import useAuth from '@hooks/useAuth';
 import { ScatterPlotProps } from '@components/Scratter';
 import ITemplateVisit from '@interfaces/Visit/TemplateVisit';
 import VisitService from '@services/VisitService';
+import User from '@interfaces/User';
 
-const MatrizSlider: React.FC = () => {
+interface matrizSliderProps{
+  user: User;
+}
+
+const MatrizSlider: React.FC<matrizSliderProps> = ({
+  user
+}) => {
   const scrollRef = useRef<ScrollView>(null);
   const { width: windowWidth } = Dimensions.get('window');
 
@@ -23,7 +30,6 @@ const MatrizSlider: React.FC = () => {
   const [message, setMessage] = useState('');
   const [template, setTemplate] = useState<ITemplateVisit[]>([]);
 
-  const { user } = useAuth();
   const data = ['modulo', 'matriz'];
 
   const fetchModuleGradesAverages = useCallback(async () => {
@@ -126,7 +132,7 @@ const MatrizSlider: React.FC = () => {
     <S.Wrapper>
       {isLoading ? (
         <S.LoadingContainer>
-          <ActivityIndicator size="large" color="#3E63DD" />
+          <ActivityIndicator color="#3E63DD" />
         </S.LoadingContainer>
       ) : (
         <ScrollView
@@ -139,6 +145,7 @@ const MatrizSlider: React.FC = () => {
         >
           {data?.map((type, index) => (
             <BarChartSection
+            user={user}
               key={index}
               windowWidth={windowWidth}
               type={type}
@@ -165,6 +172,7 @@ interface BarChartSectionProps {
   sectionIndex: number;
   modulesInfoAll: ScatterPlotProps[];
   message?: string;
+  user: User;
 }
 
 const BarChartSection: React.FC<BarChartSectionProps> = ({
@@ -176,6 +184,7 @@ const BarChartSection: React.FC<BarChartSectionProps> = ({
   sectionIndex,
   modulesInfoAll,
   message,
+  user
 }) => {
   const isVisible = currentIndex === sectionIndex;
 
@@ -188,6 +197,7 @@ const BarChartSection: React.FC<BarChartSectionProps> = ({
       ) : (
         isVisible && (
           <BarChartComponent
+            user={user}
             type={type}
             moduleAverages={modulesInfoAll}
             questionsBar={questionsBar}

@@ -1,8 +1,22 @@
 import React from 'react';
-import AppRoutes from '../routes/AppStack/app.routes';
+import PrivateRoutes from './AppStack/private.routes';
+import PublicRoutes from './AppStack/public.routes';
+import useAuth from '@hooks/useAuth';
+import { NavigationContainer } from '@react-navigation/native';
+import { InputVendedor } from '../screens/MyTeam/styles';
+
 
 const Routes: React.FC = () => {
-  return <AppRoutes />;
+  const { user } = useAuth();
+  
+  return (<>
+      {user?.id ? (
+        <PrivateRoutes user={user} />
+      ) : (
+        <PublicRoutes />
+      )}
+      </>
+  );
 };
 
 export default Routes;

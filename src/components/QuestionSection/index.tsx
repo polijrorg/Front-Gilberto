@@ -20,6 +20,7 @@ import InputRange from '@components/InputRage';
 import VisitService from '@services/VisitService';
 import useAuth from '@hooks/useAuth';
 import { useToast } from 'react-native-toast-notifications';
+import User from '@interfaces/User';
 
 interface Props {
   category: ICategories;
@@ -29,6 +30,7 @@ interface Props {
   onUpdateAnswers: (answers: any[]) => void;
   onCategoryUpdate?: (updatedCategory: ICategories) => void;
   onDeleteCategory?: (categoryId: string) => void;
+  user: User
 }
 
 const QuestionSection: React.FC<Props> = ({
@@ -39,6 +41,7 @@ const QuestionSection: React.FC<Props> = ({
   onUpdateAnswers,
   onCategoryUpdate,
   onDeleteCategory,
+  user
 }) => {
   const [categoryQuestions, setCategoryQuestions] = useState<IQuestions[]>([]);
   const [answers, setAnswers] = useState<any[]>([]);
@@ -49,7 +52,6 @@ const QuestionSection: React.FC<Props> = ({
   const [showAddQuestionInput, setShowAddQuestionInput] = useState(false);
   const [comments, setComments] = useState<{ [key: string]: string }>({});
   const [isDeleting, setIsDeleting] = useState(false);
-  const { user } = useAuth();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
 
@@ -214,7 +216,7 @@ const QuestionSection: React.FC<Props> = ({
   if (loading || isDeleting) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#3E63DD" />
+        <ActivityIndicator color="#3E63DD" />
       </View>
     );
   }
@@ -324,17 +326,14 @@ const QuestionSection: React.FC<Props> = ({
         <>
           <S.TemaQuestion>{category?.name || 'Tema Question'}</S.TemaQuestion>
           {loading ? (
-            <ActivityIndicator size="large" color="#3E63DD" />
+            <ActivityIndicator color="#3E63DD" />
           ) : (
             <S.Wrapper>
               {categoryQuestions.map((question) => (
                 <View key={question.id}>
                   <InputRange
-                    onChangeValue={(id: string, value: number) =>
-                      handleInputChange(question.id!, value, question.question)
-                    }
-                    textAsk={question.question}
-                  />
+                    onChangeValue={(id: string, value: number) => handleInputChange(question.id!, value, question.question)}
+                    textAsk={question.question} id={''}                  />
                 </View>
               ))}
               {user.job !== 'Gerente' && (

@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import DivGradient from '@components/DivGradient';
-import useAuth from '@hooks/useAuth';
 import HeaderPages from '@components/HeaderPages';
 import Dropdown from '@components/Dropdown';
 import SellerService from '@services/SellerServices';
@@ -11,9 +9,13 @@ import { useNavigation } from '@react-navigation/native';
 import * as S from './styles';
 import ISeller from '@interfaces/Seller';
 import IModule from '@interfaces/Module';
+import User from '@interfaces/User';
 
-const EvaluateMentoring = () => {
-  const { user } = useAuth();
+interface EvaluateMentoringProps {
+  user: User
+}
+
+const EvaluateMentoring:React.FC<EvaluateMentoringProps> = ({user}) => {
   const navigation = useNavigation();
   const [sellers, setSellers] = useState<ISeller[]>([]);
   const [modules, setModules] = useState<IModule[]>([]);
@@ -75,7 +77,6 @@ const EvaluateMentoring = () => {
         </S.Container>
       </S.Wrapper>
       <EvaluationButton onPress={handleSetAsk} disabled={buttonDisabled} />
-      <DivGradient />
     </>
   );
 };

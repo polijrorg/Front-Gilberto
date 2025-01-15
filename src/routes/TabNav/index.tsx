@@ -10,16 +10,26 @@ import Card from '@components/Cards';
 import SellerServices from '@services/SellerServices';
 import ISeller from '@interfaces/Seller';
 import Action from '@screens/SalesInspector/TabScreens/Action';
-import useAuth from '@hooks/useAuth';
+import User from '@interfaces/User';
 
 const Tab = createMaterialTopTabNavigator();
 
-const TabNav: React.FC = ({ route }) => {
+interface TabNavProps {
+  route: {
+    params: {
+      idEmployee: string;
+      cargo: string;
+      companyId: string;
+      stage: string;
+    };
+  };
+  user: User
+}
+
+const TabNav: React.FC<TabNavProps> = ({ route, user }) => {
   const { idEmployee, cargo, companyId, stage } = route.params;
   const [sellers, setSellers] = useState<ISeller[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const { user } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,7 +50,7 @@ const TabNav: React.FC = ({ route }) => {
     fetchData();
   }, [cargo, idEmployee, route.params]);
 
-  const getScreenOptions = (screenName) => ({
+  const getScreenOptions = (screenName: string) => ({
     tabBarActiveTintColor: 'white',
     tabBarInactiveTintColor: theme.colors.primary.main,
     tabBarLabelStyle: { fontSize: 13 },
@@ -124,7 +134,7 @@ const TabNav: React.FC = ({ route }) => {
 
 const LoadingIndicator: React.FC = () => (
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <ActivityIndicator size="large" color="#0000ff" />
+    <ActivityIndicator  color="#0000ff" />
   </View>
 );
 
