@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as S from './styles';
 import { Dimensions } from 'react-native';
 import Svg, { Circle, Line, Text } from 'react-native-svg';
@@ -16,13 +16,20 @@ export interface ScatterPlotProps {
         sellerId: string;
       }[]
     | null;
-  user:User;
+  user: User;
 }
 
-const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
-  moduleAverages,
-  user,
-}) => {
+interface CircleData {
+  x: number;
+  y: number;
+  sellerId: string;
+  sellerName: string;
+  supervisorName: string;
+  averageImplementation: number;
+  averageKnowledge: number;
+}
+
+const ScatterPlotComponent: React.FC<ScatterPlotProps> = React.memo(({ moduleAverages, user }) => {
   const [tooltip, setTooltip] = useState<{
     visible: boolean;
     x: number;
@@ -34,7 +41,7 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
   } | null>(null);
 
   const [selectedSellerId, setSelectedSellerId] = useState<string | null>(null);
-
+  const [circlesData, setCirclesData] = useState<CircleData[]>([]);
 
   const padding = 40;
   const chartWidth = Dimensions.get('window').width - 20;
@@ -44,38 +51,62 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
   const axisLabelOffset = 20;
   const middleLineColor = '#C6D4F9';
   const textColor = '#687076';
-  const selectedCircleColor = '#FF6347'; // Cor para o ponto selecionado
+  const selectedCircleColor = '#FF6347';
 
-  // Função para lidar com o clique no ponto
-  const handleCirclePress = async (
-    supervisorName: string,
-    sellerId: string,
-    sellerName: string,
-    averageImplementation: number,
-    averageKnowledge: number,
+  // Preload seller and supervisor data for each circle
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!moduleAverages) return;
+      const dataPromises = moduleAverages.map(async (item) => {
+        const x = padding + ((chartWidth - 2 * padding) * item.averageKnowledge) / 5;
+        const y = chartHeight - padding - ((chartHeight - 2 * padding) * item.averageImplementation) / 5;
+        try {
+          const seller = await SellerService.findSellerById(item.sellerId);
+          const supervisor = await SupervisorServices.findByID(seller.supervisorId);
+          return {
+            x,
+            y,
+            sellerId: item.sellerId,
+            sellerName: seller.name,
+            supervisorName: supervisor.name,
+            averageImplementation: item.averageImplementation,
+            averageKnowledge: item.averageKnowledge,
+          };
+        } catch (error) {
+          console.error('Error fetching data for seller:', item.sellerId, error);
+          return null;
+        }
+      });
+      const results = await Promise.all(dataPromises);
+      setCirclesData(results.filter((res): res is CircleData => res !== null));
+    };
+
+    fetchData();
+  }, [moduleAverages, chartWidth, chartHeight, padding]);
+
+  const handleCirclePress = (
+    circle: CircleData,
     x: number,
     y: number
   ) => {
-    // Se o tooltip já estiver visível e nas mesmas coordenadas, esconda-o
     if (tooltip && tooltip.visible && tooltip.x === x && tooltip.y === y) {
       setTooltip(null);
-      setSelectedSellerId(null); // Resetar seleção ao fechar o tooltip
+      setSelectedSellerId(null);
     } else {
-      setSelectedSellerId(sellerId); // Selecionar o ponto
-
+      setSelectedSellerId(circle.sellerId);
       setTooltip({
         visible: true,
         x,
         y,
-        name: sellerName,
-        supervisorName: supervisorName,
-        averageImplementation,
-        averageKnowledge,
+        name: circle.sellerName,
+        supervisorName: circle.supervisorName,
+        averageImplementation: circle.averageImplementation,
+        averageKnowledge: circle.averageKnowledge,
       });
     }
   };
 
-  // Eixo X - Conhecimento
+  // Create axis elements
   const xAxis = (
     <Line
       x1={padding}
@@ -87,7 +118,6 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
     />
   );
 
-  // Eixo Y - Implementação
   const yAxis = (
     <Line
       x1={padding}
@@ -99,7 +129,6 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
     />
   );
 
-  // Rótulos do eixo X - Conhecimento
   const xAxisLabels = Array.from({ length: 6 }).map((_, i) => (
     <Text
       key={`xLabel-${i}`}
@@ -113,7 +142,6 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
     </Text>
   ));
 
-  // Rótulos do eixo Y - Implementação
   const yAxisLabels = Array.from({ length: 6 }).map((_, i) => (
     <Text
       key={`yLabel-${i}`}
@@ -127,7 +155,6 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
     </Text>
   ));
 
-  // Linha de Implementação
   const implementationLine = (
     <Line
       x1={padding}
@@ -139,7 +166,6 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
     />
   );
 
-  // Rótulo da Linha de Implementação (Girado 180 graus)
   const implementationLabel = (
     <Text
       x={chartWidth - 80 + labelOffset}
@@ -153,7 +179,6 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
     </Text>
   );
 
-  // Linha de Conhecimento
   const knowledgeLine = (
     <Line
       x1={padding + (chartWidth - 2 * padding) / 2}
@@ -165,7 +190,6 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
     />
   );
 
-  // Rótulo da Linha de Conhecimento
   const knowledgeLabel = (
     <Text
       x={padding + (chartWidth - 2 * padding) / 2}
@@ -178,46 +202,6 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
     </Text>
   );
 
-  // Circulos
-  const circles = moduleAverages?.map(async (item, index) => {
-    const x =
-      padding + ((chartWidth - 2 * padding) * item.averageKnowledge) / 5;
-    const y =
-      chartHeight -
-      padding -
-      ((chartHeight - 2 * padding) * item.averageImplementation) / 5;
-    const seller = await SellerService.findSellerById(item.sellerId);
-    const supervisor = await SupervisorServices.findByID(seller.supervisorId);
-    return (
-      <Circle
-        key={x}
-        cx={x}
-        cy={y}
-        r={circleRadius}
-        fill={
-          selectedSellerId === item.sellerId ? selectedCircleColor : '#3E63DD'
-        } // Cor do ponto selecionado
-        onPressIn={() =>
-          handleCirclePress(
-            supervisor.name,
-            item.sellerId,
-            seller.name,
-            item.averageImplementation,
-            item.averageKnowledge,
-            x,
-            y
-          )
-        }
-      />
-    );
-  });
-
-  const handleCloseTooltip = () => {
-    setTooltip(null);
-    setSelectedSellerId(null); // Resetar seleção ao fechar o tooltip
-  };
-
-  // Função para ajustar a posição do tooltip
   const adjustTooltipPosition = (tooltipX: number, tooltipY: number) => {
     const tooltipWidth = 200;
     const tooltipHeight = 100;
@@ -247,6 +231,9 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
     return { x: adjustedX, y: adjustedY };
   };
 
+  // Pre-calculate tooltip position only once
+  const tooltipPosition = tooltip ? adjustTooltipPosition(tooltip.x, tooltip.y) : null;
+
   return (
     <S.Container>
       <Svg width={chartWidth} height={chartHeight}>
@@ -255,22 +242,33 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
           {xAxisLabels}
           {yAxis}
           {yAxisLabels}
-          {circles}
+          {circlesData.map((circle) => (
+            <Circle
+              key={circle.sellerId}
+              cx={circle.x}
+              cy={circle.y}
+              r={circleRadius}
+              fill={
+                selectedSellerId === circle.sellerId ? selectedCircleColor : '#3E63DD'
+              }
+              onPressIn={() => handleCirclePress(circle, circle.x, circle.y)}
+            />
+          ))}
           {knowledgeLine}
           {knowledgeLabel}
           {implementationLine}
           {implementationLabel}
         </>
       </Svg>
-      {tooltip?.visible && (
+      {tooltip?.visible && tooltipPosition && (
         <S.Tooltip
           style={{
-            position: 'absolute', // Garante que o tooltip fique acima do gráfico
-            left: adjustTooltipPosition(tooltip.x, tooltip.y).x,
-            top: adjustTooltipPosition(tooltip.x, tooltip.y).y,
+            position: 'absolute',
+            left: tooltipPosition.x,
+            top: tooltipPosition.y,
           }}
         >
-          <S.CloseButton onPress={handleCloseTooltip}>
+          <S.CloseButton onPress={() => { setTooltip(null); setSelectedSellerId(null); }}>
             <S.CloseButtonText>
               <FontAwesome name="close" size={12} color="#750101" />
             </S.CloseButtonText>
@@ -291,6 +289,6 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = ({
       )}
     </S.Container>
   );
-};
+});
 
 export default ScatterPlotComponent;
