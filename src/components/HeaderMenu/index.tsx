@@ -11,7 +11,6 @@ interface HeaderMenuProps {
 }
 
 const HeaderMenu: React.FC<HeaderMenuProps> = ({user}) => {
-  const navigation = useNavigation();
   const {  logout } = useAuth();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -23,7 +22,6 @@ const HeaderMenu: React.FC<HeaderMenuProps> = ({user}) => {
   const handleClick = () => {
     setLoading(!loading);
     setTimeout(() => {
-      navigation.navigate('Login' as never);
       logout();
     }, 1000);
     setLoading(!loading);

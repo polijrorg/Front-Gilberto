@@ -15,7 +15,6 @@ const FormsLogin: React.FC = () => {
   const [loading, setLoading] = React.useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const navigation = useNavigation();
   const { login } = useAuth();
   const toast = useToast();
 

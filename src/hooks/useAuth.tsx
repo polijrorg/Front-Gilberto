@@ -25,7 +25,6 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const navigation = useNavigation();
 
   const login = async (data: ILoginRequest): Promise<string | null> => {
     try {
@@ -40,7 +39,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         await AsyncStorage.setItem('@app:user', JSON.stringify(user));
 
         setUser(user);
-        navigation.navigate('Home' as never);
 
         return token;
       }
@@ -57,7 +55,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Remover token e usuário do armazenamento local
       await AsyncStorage.multiRemove(['@app:token', '@app:user']);
       setUser(null);
-      navigation.navigate('Login' as never);
     } catch (error) {
       console.error('Erro ao deslogar:', error);
     }
