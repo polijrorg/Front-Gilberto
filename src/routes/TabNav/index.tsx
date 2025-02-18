@@ -44,6 +44,8 @@ const TabNav: React.FC<TabNavProps> = ({ route, user }) => {
         } finally {
           setLoading(false);
         }
+      } else {
+        setLoading(false);
       }
     };
 
@@ -63,6 +65,10 @@ const TabNav: React.FC<TabNavProps> = ({ route, user }) => {
     },
     tabBarVisible: stage === screenName || screenName === 'Vendedores',
   });
+
+  if (loading) {
+    return <LoadingIndicator />;
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -126,6 +132,9 @@ const TabNav: React.FC<TabNavProps> = ({ route, user }) => {
               )}
             </Tab.Screen>
           )}
+          {!(stage === 'Mentoria' || stage === 'Visita' || cargo === 'Vendedor' || (cargo === 'Supervisor' && user.job === 'Gerente')) && (
+            <Tab.Screen name="Placeholder" component={NoInfoMessage} />
+          )}
         </Tab.Navigator>
       </S.Container>
     </View>
@@ -141,6 +150,12 @@ const LoadingIndicator: React.FC = () => (
 const NoDataMessage: React.FC = () => (
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
     <Text style={{ fontSize: 18 }}>Não há vendedores cadastrados</Text>
+  </View>
+);
+
+const NoInfoMessage: React.FC = () => (
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text style={{ fontSize: 18 }}>Sem informações</Text>
   </View>
 );
 
