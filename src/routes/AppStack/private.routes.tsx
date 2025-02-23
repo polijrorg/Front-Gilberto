@@ -16,68 +16,57 @@ import User from '@interfaces/User';
 const PrivateStack = createNativeStackNavigator();
 
 interface IRoutes {
-  user: User
+  user: User;
 }
 
 const PrivateRoutes: React.FC<IRoutes> = ({ user }) => {
-
   return (
     <PrivateStack.Navigator>
+      <PrivateStack.Screen name="Home" options={{ header: () => <></> }}>
+        {() => <Home user={user} />}
+      </PrivateStack.Screen>
       
-      <PrivateStack.Screen
-        name="Home"
-        component={() => <Home user={user} />}
-        options={{ header: () => <></> }}
-      />
-      <PrivateStack.Screen
-        name="MyTeam"
-        component={() => <MyTeam user={user} />}
-        options={{ header: () => <></> }}
-      />
-      <PrivateStack.Screen
-        name="SalesInspector"
-        component={({ route }: { route: any }) => <TabNav user={user} route={{ ...route, params: { idEmployee: '', cargo: '', companyId: '', stage: '' } }} />}
-        options={{ header: () => <></> }}
-      />
-      <PrivateStack.Screen
-        name="AddCollaborators"
-        component={() => <AddCollaborators user={user} />}
-        options={{ header: () => <></> }}
-      />
-      <PrivateStack.Screen
-        name="EvaluateVisit"
-        component={() => <EvaluateVisit user={user} />}
-        options={{ header: () => <></> }}
-      />
-      <PrivateStack.Screen
-        name="EvaluateVisitManager"
-        component={() => <EvaluateVisitManager user={user} />}
-        options={{ header: () => <></> }}
-      />
-      <PrivateStack.Screen
-        name="AskEvaluateMentoring"
-        component={(props: any) => <ModuloAsk {...props} />}
-        options={{ header: () => <></> }}
-      />
-
-      <PrivateStack.Screen
-        name="CompleteMentoring"
-        component={() => <CompleteMentorship />}
-        options={{ header: () => <></> }}
-      />
-
-      <PrivateStack.Screen
-        name="PlainAction"
-        component={() => <PlainActionTemplate user={user} />}
-        options={{ header: () => <></> }}
-      />
-
+      <PrivateStack.Screen name="MyTeam" options={{ header: () => <></> }}>
+        {() => <MyTeam user={user} />}
+      </PrivateStack.Screen>
+      
+      <PrivateStack.Screen name="SalesInspector" options={{ header: () => <></> }}>
+        {({ route }: { route: any }) => (
+          <TabNav
+            user={user}
+            route={route}
+          />
+        )}
+      </PrivateStack.Screen>
+      
+      <PrivateStack.Screen name="AddCollaborators" options={{ header: () => <></> }}>
+        {() => <AddCollaborators user={user} />}
+      </PrivateStack.Screen>
+      
+      <PrivateStack.Screen name="EvaluateVisit" options={{ header: () => <></> }}>
+        {() => <EvaluateVisit user={user} />}
+      </PrivateStack.Screen>
+      
+      <PrivateStack.Screen name="EvaluateVisitManager" options={{ header: () => <></> }}>
+        {() => <EvaluateVisitManager user={user} />}
+      </PrivateStack.Screen>
+      
+      <PrivateStack.Screen name="AskEvaluateMentoring" options={{ header: () => <></> }}>
+        {(props: any) => <ModuloAsk {...props} />}
+      </PrivateStack.Screen>
+      
+      <PrivateStack.Screen name="CompleteMentoring" options={{ header: () => <></> }}>
+        {() => <CompleteMentorship />}
+      </PrivateStack.Screen>
+      
+      <PrivateStack.Screen name="PlainAction" options={{ header: () => <></> }}>
+        {() => <PlainActionTemplate user={user} />}
+      </PrivateStack.Screen>
+      
       {user && user.job === 'Supervisor' && (
-        <PrivateStack.Screen
-          name="EvaluateMentoring"
-          component={() => <EvaluateMentoring user={user} />}
-          options={{ header: () => <></> }}
-        />
+        <PrivateStack.Screen name="EvaluateMentoring" options={{ header: () => <></> }}>
+          {() => <EvaluateMentoring user={user} />}
+        </PrivateStack.Screen>
       )}
     </PrivateStack.Navigator>
   );

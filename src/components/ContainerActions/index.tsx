@@ -36,7 +36,7 @@ const ContainerActions: React.FC<ContanerActionsProps> = ({user}) => {
   };
 
   const handleEnviarEvaluateMentoring = () => {
-    if (user.job === 'Supervisor') {
+    if (user?.job === 'Supervisor') {
       navigation.navigate('EvaluateMentoring' as never);
     } else {
       showToast('Funcionalidade apenas para Supervsiores', '');
@@ -53,23 +53,23 @@ const ContainerActions: React.FC<ContanerActionsProps> = ({user}) => {
   };
 
   const handleEnviarEvaluateVisit = () => {
-    if (user.job === 'Supervisor') {
+    if (user?.job === 'Supervisor') {
       navigation.navigate('EvaluateVisit' as never);
-    } else if (user.job === 'Gerente') {
+    } else if (user?.job === 'Gerente') {
       navigation.navigate('EvaluateVisitManager' as never);
     }
   };
 
   const handleEnviarPlainAction = () => {
-    if (user.job === 'Supervisor') {
-    const userTypeConfig = buttonConfig[user.job as keyof ButtonConfig] || buttonConfig.default;
+    if (user?.job === 'Supervisor') {
+    const userTypeConfig = buttonConfig[user?.job as keyof ButtonConfig] || buttonConfig.default;
     } else {
       showToast('Funcionalidade apenas para Supervisores', '');
     }
   };
 
   const getButtonText = (buttonType: 'mentorado' | 'visita') => {
-    const userTypeConfig = buttonConfig[user.job] || buttonConfig.default;
+    const userTypeConfig = buttonConfig[user?.job] || buttonConfig.default;
     return userTypeConfig[buttonType];
   };
 

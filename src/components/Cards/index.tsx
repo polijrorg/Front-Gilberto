@@ -47,7 +47,7 @@ const Cards: React.FC<IVendedor> = ({
   useEffect(() => {
     const fetchSupervisor = async () => {
       try {
-        if (userLogged.job === 'Gerente') {
+        if (userLogged?.job === 'Gerente') {
           if (supervisorId) {
             const supervisorData =
               await SupervisorServices.getSupervisorByIdCompany(
@@ -61,7 +61,7 @@ const Cards: React.FC<IVendedor> = ({
     };
 
     fetchSupervisor();
-  }, [companyId, supervisorId, userLogged.job]);
+  }, [companyId, supervisorId, userLogged?.job]);
   return (
     <S.DivWrapper onPress={handlePress} disabled={blocked}>
       <S.DivImage>

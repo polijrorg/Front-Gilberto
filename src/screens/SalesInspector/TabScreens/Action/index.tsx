@@ -127,7 +127,7 @@ const Action:React.FC<IActionProps> = ({ route, user }) => {
               </S.EmptyContainer>
             )}
           </S.SectionContainer>
-          {user.job !== 'Gerente' && (
+          {user?.job !== 'Gerente' && (
             <S.BtnCriarAction onPress={handleNavigator}>
               <S.TextBtn>criar plano de ação</S.TextBtn>
             </S.BtnCriarAction>

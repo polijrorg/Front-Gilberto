@@ -27,7 +27,7 @@ const CardsMentory: React.FC<CardMentoryProps> = ({
 }) => {
 
   const handleToggleVisibility = () => {
-    if (!complete && user.job !== 'Gerente') {
+    if (!complete && user?.job !== 'Gerente') {
       onMarkDone();
       onToggleVisibility();
     }

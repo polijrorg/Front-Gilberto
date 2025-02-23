@@ -1,6 +1,6 @@
 import * as S from './styles';
 import { StatusBar } from 'expo-status-bar';
-import { ActivityIndicator, ScrollView, Text } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import AccordionVisit from '@components/AccordionVisit';
 import React, { useEffect, useState, useCallback } from 'react';
 
@@ -26,51 +26,33 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
   const { idEmployee, cargo, companyId } = route.params;
   const [loading, setLoading] = useState(false);
   const [seller, setSeller] = useState<ISeller | null>(null);
-  const [comments, setComments] = useState<string[]>([]);
   const [visits, setVisits] = useState<Visit[]>([]);
-  const [categories, setCategories] = useState<{
-    [key: string]: ICategories[];
-  }>({});
-  const [questions, setQuestions] = useState<{ [key: string]: IQuestions[] }>(
-    {}
-  );
-  const [questionGrades, setQuestionGrades] = useState<{
-    [key: string]: IQuestionGrade[];
-  }>({});
-
+  const [categories, setCategories] = useState<{ [key: string]: ICategories[] }>({});
+  const [questions, setQuestions] = useState<{ [key: string]: IQuestions[] }>({});
+  const [questionGrades, setQuestionGrades] = useState<{ [key: string]: IQuestionGrade[] }>({});
+  
   const { user } = useAuth();
 
   const fetchTemplates = useCallback(async () => {
     let templates: any[] = [];
     if (user?.managerId) {
-      templates = await VisitService.getTemplateByManagerId(user.managerId);
+      const managerTemplates = await VisitService.getTemplateByManagerId(user.managerId);
+      if (managerTemplates) templates = [...templates, ...managerTemplates];
     }
 
     if (user?.job === 'Diretor') {
-      const directorTemplates = await VisitService.getTemplateByDirectorId(
-        user.id
-      );
-      if (directorTemplates) {
-        templates = [...templates, ...directorTemplates];
-      }
+      const directorTemplates = await VisitService.getTemplateByDirectorId(user.id);
+      if (directorTemplates) templates = [...templates, ...directorTemplates];
     }
 
     if (user?.job === 'Gerente') {
-      const directorTemplates = await VisitService.getTemplateByManagerId(
-        user.id
-      );
-      if (directorTemplates) {
-        templates = [...templates, ...directorTemplates];
-      }
+      const gerenteTemplates = await VisitService.getTemplateByManagerId(user.id);
+      if (gerenteTemplates) templates = [...templates, ...gerenteTemplates];
     }
 
     if (user?.companyId) {
-      const companyTemplates = await VisitService.getTemplateByCompanyId(
-        user.companyId
-      );
-      if (companyTemplates) {
-        templates = [...templates, ...companyTemplates];
-      }
+      const companyTemplates = await VisitService.getTemplateByCompanyId(user.companyId);
+      if (companyTemplates) templates = [...templates, ...companyTemplates];
     }
 
     return templates;
@@ -81,51 +63,58 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
       setLoading(true);
 
       if (cargo === 'Vendedor') {
-        const sellerData =
-          await SellerService.getAllSellerFromCompany(companyId);
-        const foundSeller = sellerData.find(
-          (seller) => seller.id === idEmployee
-        );
+        // Busca os dados do vendedor e as visitas dele
+        const sellerData = await SellerService.getAllSellerFromCompany(companyId);
+        const foundSeller = sellerData.find((seller) => seller.id === idEmployee);
 
         if (foundSeller) {
           setSeller(foundSeller);
-          const visitsData = await VisitService.getVisitByIdSeller(
-            foundSeller.id
-          );
+          const visitsData = await VisitService.getVisitByIdSeller(foundSeller.id);
           setVisits(visitsData);
 
+          // Busca os templates uma única vez
           const templates = await fetchTemplates();
 
+          // Pré-carrega as categorias de todos os templates em paralelo
+          const categoriesPromises = templates.map(template =>
+            VisitService.getCategoriesByIdTemplate(template.id)
+          );
+          const allTemplatesCategories = await Promise.all(categoriesPromises);
+
+          // Pré-carrega os questionGrades uma única vez
+          const allQuestionGrades = await VisitGradesService.getAllQuestionsBySeller(foundSeller.id);
+
+          // Inicializa os objetos que irão armazenar os dados agrupados por visita
           const fetchedCategories: { [key: string]: ICategories[] } = {};
           const fetchedQuestions: { [key: string]: IQuestions[] } = {};
           const fetchedQuestionGrades: { [key: string]: IQuestionGrade[] } = {};
 
-          for (const visit of visitsData) {
+          // Para cada visita, inicializa os arrays
+          visitsData.forEach(visit => {
             fetchedCategories[visit.id] = [];
             fetchedQuestions[visit.id] = [];
             fetchedQuestionGrades[visit.id] = [];
+          });
 
-            for (const template of templates) {
-              const categories = await VisitService.getCategoriesByIdTemplate(
-                template.id
-              );
+          // Para cada template, itera pelas categorias já pré-carregadas
+          for (let i = 0; i < templates.length; i++) {
+            const template = templates[i];
+            const templateCategories: ICategories[] = allTemplatesCategories[i] || [];
 
-              for (const category of categories) {
+            // Para cada categoria do template, verifica se ela pertence à visita e busca as perguntas
+            for (const category of templateCategories) {
+              // Itera por cada visita para ver se a categoria pertence a ela
+              for (const visit of visitsData) {
                 if (category.visitTemplateId === visit.visitTemplateId) {
                   fetchedCategories[visit.id].push(category);
 
-                  const questions = await VisitService.getQuestionsByIdCategory(
-                    category.id
-                  );
-                  const questionGrades =
-                    await VisitGradesService.getAllQuestionsBySeller(
-                      foundSeller.id
-                    );
+                  // Busca as perguntas para a categoria (pode ser feito em paralelo se necessário)
+                  const questionsForCategory = await VisitService.getQuestionsByIdCategory(category.id);
+                  fetchedQuestions[visit.id].push(...questionsForCategory);
 
-                  fetchedQuestions[visit.id].push(...questions);
-                  fetchedQuestionGrades[visit.id].push(
-                    ...questionGrades.filter((qg) => qg.visitId === visit.id)
-                  );
+                  // Filtra os questionGrades que correspondem à visita atual e à categoria, se necessário
+                  const gradesForVisit = allQuestionGrades.filter(qg => qg.visitId === visit.id);
+                  fetchedQuestionGrades[visit.id].push(...gradesForVisit);
                 }
               }
             }
@@ -137,7 +126,7 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
         }
       }
     } catch (error) {
-      console.error('Erro ao buscar dados de supervisores:', error);
+      console.error('Erro ao buscar dados de visitas:', error);
     } finally {
       setLoading(false);
     }
@@ -160,39 +149,10 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
     questions: { [key: string]: IQuestions[] },
     questionGrades: { [key: string]: IQuestionGrade[] }
   ) => {
-    const relevantQuestions = questions[visitId] || [];
     const relevantGrades = questionGrades[visitId] || [];
-
-    const totalGrades = relevantGrades.reduce(
-      (total, grade) => total + grade.grade,
-      0
-    );
-
+    const totalGrades = relevantGrades.reduce((total, grade) => total + grade.grade, 0);
     return relevantGrades.length > 0 ? totalGrades / relevantGrades.length : 0;
   };
-
-  // const generateQuestionsWithGrades = (
-  //   visitId: string,
-  //   categoryId: string,
-  //   questions: { [key: string]: IQuestions[] },
-  //   questionGrades: { [key: string]: IQuestionGrade[] }
-  // ) => {
-  //   const relevantQuestions =
-  //     questions[visitId]?.filter(
-  //       (question) => question.categoriesId === categoryId
-  //     ) || [];
-  //   return relevantQuestions.map((question) => {
-  //     const grade = questionGrades[visitId]?.find(
-  //       (grade) => grade.questionsId === question.id && grade.grade !== 0
-  //     );
-  //     return {
-  //       question: question.question,
-  //       grade: grade ? grade.grade.toString() : 'X,X',
-  //       comments: grade?.comments,
-  //       categories: question.categoriesId,
-  //     };
-  //   });
-  // };
 
   const generateQuestionsWithGradesByCategory = (
     visitId: string,
@@ -202,13 +162,10 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
   ) => {
     return categories.map((category) => {
       const relevantQuestions =
-        questions[visitId]?.filter(
-          (question) => question.categoriesId === category.id
-        ) || [];
-
+        questions[visitId]?.filter((question) => question.categoriesId === category.id) || [];
       const questionsWithGrades = relevantQuestions.map((question) => {
         const grade = questionGrades[visitId]?.find(
-          (grade) => grade.questionsId === question.id && grade.grade !== 0
+          (qg) => qg.questionsId === question.id && qg.grade !== 0
         );
         return {
           question: question.question,
@@ -216,7 +173,6 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
           comments: grade?.comments,
         };
       });
-
       return {
         categoryName: category.name,
         questions: questionsWithGrades,
@@ -230,22 +186,20 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <S.WrapperView>
           {visits.length > 0 ? (
-            visits.map((visit) => {
-              return (
-                <AccordionVisit
-                  key={visit.id}
-                  title={`${visit.storeVisited} - ${visit.dateVisited}`}
-                  media={calculateMedia(visit.id, questions, questionGrades)}
-                  categories={generateQuestionsWithGradesByCategory(
-                    visit.id,
-                    categories[visit.id] || [],
-                    questions,
-                    questionGrades
-                  )}
-                  visitId={visit.id}
-                />
-              );
-            })
+            visits.map((visit) => (
+              <AccordionVisit
+                key={visit.id}
+                title={`${visit.storeVisited} - ${visit.dateVisited}`}
+                media={calculateMedia(visit.id, questions, questionGrades)}
+                categories={generateQuestionsWithGradesByCategory(
+                  visit.id,
+                  categories[visit.id] || [],
+                  questions,
+                  questionGrades
+                )}
+                visitId={visit.id}
+              />
+            ))
           ) : (
             <S.NoVisitsContainer>
               <Text>Nenhuma visita registrada para o dia selecionado.</Text>

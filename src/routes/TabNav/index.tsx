@@ -66,7 +66,7 @@ const TabNav: React.FC<TabNavProps> = ({ route, user }) => {
     tabBarVisible: stage === screenName || screenName === 'Vendedores',
   });
 
-  if (loading) {
+  if (loading || !user) {
     return <LoadingIndicator />;
   }
 
@@ -100,16 +100,14 @@ const TabNav: React.FC<TabNavProps> = ({ route, user }) => {
             />
           )}
 
-          {cargo === 'Supervisor' && user.job === 'Gerente' && (
+          {cargo === 'Supervisor' && user?.job === 'Gerente' && (
             <Tab.Screen
               name="Vendedores"
               options={getScreenOptions('Vendedores')}
             >
               {() => (
                 <>
-                  {loading ? (
-                    <LoadingIndicator />
-                  ) : sellers.length > 0 ? (
+                  {sellers.length > 0 ? (
                     <ScrollView
                       contentContainerStyle={{
                         flexGrow: 1,
@@ -132,7 +130,7 @@ const TabNav: React.FC<TabNavProps> = ({ route, user }) => {
               )}
             </Tab.Screen>
           )}
-          {!(stage === 'Mentoria' || stage === 'Visita' || cargo === 'Vendedor' || (cargo === 'Supervisor' && user.job === 'Gerente')) && (
+          {!(stage === 'Mentoria' || stage === 'Visita' || cargo === 'Vendedor' || (cargo === 'Supervisor' && user?.job === 'Gerente')) && (
             <Tab.Screen name="Placeholder" component={NoInfoMessage} />
           )}
         </Tab.Navigator>
@@ -142,8 +140,8 @@ const TabNav: React.FC<TabNavProps> = ({ route, user }) => {
 };
 
 const LoadingIndicator: React.FC = () => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <ActivityIndicator  color="#0000ff" />
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingTop: 32 }}>
+    <Text style={{ fontSize: 18 }}>Isso pode demorar um pouco</Text><ActivityIndicator  color="#0000ff" />
   </View>
 );
 

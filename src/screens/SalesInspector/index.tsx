@@ -75,6 +75,13 @@ const SalesInspector = ({ route }) => {
     }
   };
 
+  
+  if (!user) {
+    return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator  color="#0000ff" />
+      </View>;
+  }
+
   return (
     <S.Wrapper>
       <S.DivButtonBack>
