@@ -7,7 +7,6 @@ import HeaderPages from '@components/HeaderPages';
 import QuestionSection from '@components/QuestionSection';
 import { useToast } from 'react-native-toast-notifications';
 
-
 import SellerService from '@services/SellerServices';
 import VisitService from '@services/VisitService';
 import VisitGradesService from '@services/VisitGradesService';
@@ -33,10 +32,10 @@ interface VisitGrade {
 }
 
 interface EvaluateVisitVisitProps {
-  user:User
+  user: User;
 }
 
-const EvaluateVisit:React.FC<EvaluateVisitVisitProps> = ({user}) => {
+const EvaluateVisit: React.FC<EvaluateVisitVisitProps> = ({ user }) => {
   const [sellers, setSellers] = useState<ISeller[]>([]);
   const [visitToDay, setVisitToDay] = useState<Visit>();
   const [indexScreen, setIndexScreen] = useState(0);
@@ -171,7 +170,7 @@ const EvaluateVisit:React.FC<EvaluateVisitVisitProps> = ({user}) => {
       for (const answer of fetchedVisitGrade) {
         await createGrades(answer);
       }
-      await pdfAndEmail(selectedSeller.id);
+      //await pdfAndEmail(selectedSeller.id);
     } catch (error) {
       console.error('Ocorreu um erro:', error);
       showToast('Problema em avaliar Visita', 'warning');
@@ -388,6 +387,42 @@ const FinishedSection: React.FC<FinishedProps> = ({
   selectedSeller,
   visitToDay = {} as Visit,
 }) => {
+  const toast = useToast();
+  const dateVisited = new Date().toISOString();
+  const pdfAndEmail = async (sellerId: string) => {
+    try {
+      const formattedDate = formatDateForPdf(dateVisited);
+      const encodedDate = formatToEncodedDate(formattedDate);
+      await PdfService.getPdf(sellerId, encodedDate);
+      showToast('PDF Enviado para o E-mail', 'success');
+    } catch (error) {
+      console.error('Erro ao criar o PDF:', error);
+    }
+  };
+
+  const showToast = (message: string, type: string) => {
+    toast.show(message, {
+      type: type,
+      placement: 'bottom',
+      duration: 3500,
+      animationType: 'zoom-in',
+    });
+  };
+
+  const formatDateForPdf = (isoDate: string): string => {
+    const date = new Date(isoDate);
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear().toString();
+
+    return `${day}/${month}/${year}`;
+  };
+
+  const formatToEncodedDate = (formattedDate: string): string => {
+    const [day, month, year] = formattedDate.split('/');
+    return `${day}%2F${month}%2F${year}`;
+  };
+
   return (
     <S.ContainerButton>
       <S.ContainerPlain>
@@ -397,7 +432,13 @@ const FinishedSection: React.FC<FinishedProps> = ({
         />
       </S.ContainerPlain>
 
-      <S.BtnFinished onPress={finishedVisit} disabled={loading}>
+      <S.BtnFinished
+        onPress={() => {
+          pdfAndEmail(selectedSeller.id);
+          finishedVisit();
+        }}
+        disabled={loading}
+      >
         {loading ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (
