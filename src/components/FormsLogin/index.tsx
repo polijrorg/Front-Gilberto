@@ -26,7 +26,7 @@ const FormsLogin: React.FC = () => {
     setLoading(true);
 
     try {
-      const token = await login({ email, password });
+      const token = await login({ email: email.toLowerCase(), password });
 
       if (token) {
         toast.show('Login realizado com sucesso!', {
