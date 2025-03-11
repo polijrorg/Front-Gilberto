@@ -22,9 +22,15 @@ interface RouteParams {
   };
 }
 
+// Helper to parse dd/mm/yyyy into a Date object
+const parseDate = (dateString: string) => {
+  const [day, month, year] = dateString.split('/').map(Number);
+  return new Date(year, month - 1, day);
+};
+
 const VisitComponent = ({ route }: { route: RouteParams }) => {
   const { idEmployee, cargo, companyId } = route.params;
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [seller, setSeller] = useState<ISeller | null>(null);
   const [visits, setVisits] = useState<Visit[]>([]);
   const [categories, setCategories] = useState<{ [key: string]: ICategories[] }>({});
@@ -33,6 +39,7 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
   
   const { user } = useAuth();
 
+  // Fetch details templates
   const fetchTemplates = useCallback(async () => {
     let templates: any[] = [];
     if (user?.managerId) {
@@ -43,9 +50,7 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
     if (user?.job === 'Diretor') {
       const directorTemplates = await VisitService.getTemplateByDirectorId(user.id);
       if (directorTemplates) templates = [...templates, ...directorTemplates];
-    }
-
-    if (user?.job === 'Gerente') {
+    } else if (user?.job === 'Gerente') {
       const gerenteTemplates = await VisitService.getTemplateByManagerId(user.id);
       if (gerenteTemplates) templates = [...templates, ...gerenteTemplates];
     }
@@ -56,93 +61,100 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
     }
 
     return templates;
-  }, [user?.managerId, user?.job, user?.id, user?.companyId]);
+  }, [user]);
 
   const fetchData = useCallback(async () => {
     try {
+      if (cargo !== "Vendedor") return;
+  
+      const sellerData = await SellerService.getAllSellerFromCompany(companyId);
+      const foundSeller = sellerData.find((seller) => seller.id === idEmployee);
+      if (!foundSeller) return;
+  
+      setSeller(foundSeller);
+  
+      // Fetch visits and sort by most recent first
+      let visitsData = await VisitService.getVisitByIdSeller(foundSeller.id);
+      visitsData.sort((a, b) => parseDate(b.dateVisited).getTime() - parseDate(a.dateVisited).getTime());
+      setVisits(visitsData);
+  
       setLoading(true);
-
-      if (cargo === 'Vendedor') {
-        // Busca os dados do vendedor e as visitas dele
-        const sellerData = await SellerService.getAllSellerFromCompany(companyId);
-        const foundSeller = sellerData.find((seller) => seller.id === idEmployee);
-
-        if (foundSeller) {
-          setSeller(foundSeller);
-          const visitsData = await VisitService.getVisitByIdSeller(foundSeller.id);
-          setVisits(visitsData);
-
-          // Busca os templates uma única vez
-          const templates = await fetchTemplates();
-
-          // Pré-carrega as categorias de todos os templates em paralelo
-          const categoriesPromises = templates.map(template =>
-            VisitService.getCategoriesByIdTemplate(template.id)
-          );
-          const allTemplatesCategories = await Promise.all(categoriesPromises);
-
-          // Pré-carrega os questionGrades uma única vez
-          const allQuestionGrades = await VisitGradesService.getAllQuestionsBySeller(foundSeller.id);
-
-          // Inicializa os objetos que irão armazenar os dados agrupados por visita
-          const fetchedCategories: { [key: string]: ICategories[] } = {};
-          const fetchedQuestions: { [key: string]: IQuestions[] } = {};
-          const fetchedQuestionGrades: { [key: string]: IQuestionGrade[] } = {};
-
-          // Para cada visita, inicializa os arrays
-          visitsData.forEach(visit => {
-            fetchedCategories[visit.id] = [];
-            fetchedQuestions[visit.id] = [];
-            fetchedQuestionGrades[visit.id] = [];
-          });
-
-          // Para cada template, itera pelas categorias já pré-carregadas
-          for (let i = 0; i < templates.length; i++) {
-            const template = templates[i];
-            const templateCategories: ICategories[] = allTemplatesCategories[i] || [];
-
-            // Para cada categoria do template, verifica se ela pertence à visita e busca as perguntas
-            for (const category of templateCategories) {
-              // Itera por cada visita para ver se a categoria pertence a ela
-              for (const visit of visitsData) {
-                if (category.visitTemplateId === visit.visitTemplateId) {
-                  fetchedCategories[visit.id].push(category);
-
-                  // Busca as perguntas para a categoria (pode ser feito em paralelo se necessário)
-                  const questionsForCategory = await VisitService.getQuestionsByIdCategory(category.id);
-                  fetchedQuestions[visit.id].push(...questionsForCategory);
-
-                  // Filtra os questionGrades que correspondem à visita atual e à categoria, se necessário
-                  const gradesForVisit = allQuestionGrades.filter(qg => qg.visitId === visit.id);
-                  fetchedQuestionGrades[visit.id].push(...gradesForVisit);
-                }
-              }
-            }
-          }
-
-          setCategories(fetchedCategories);
-          setQuestions(fetchedQuestions);
-          setQuestionGrades(fetchedQuestionGrades);
+  
+      // Fetch templates, categories, and grades in parallel
+      const [templates, allQuestionGrades] = await Promise.all([
+        fetchTemplates(),
+        VisitGradesService.getAllQuestionsBySeller(foundSeller.id),
+      ]);
+  
+      // Fetch all categories for templates in parallel
+      const categoriesPromises = templates.map((template) => 
+        VisitService.getCategoriesByIdTemplate(template.id)
+      );
+      const allTemplatesCategories = await Promise.all(categoriesPromises);
+  
+      // Create maps to structure the data efficiently
+      const fetchedCategories: { [key: string]: ICategories[] } = {};
+      const fetchedQuestions: { [key: string]: IQuestions[] } = {};
+      const fetchedQuestionGrades: { [key: string]: IQuestionGrade[] } = {};
+  
+      // Initialize containers for each visit
+      visitsData.forEach(visit => {
+        fetchedCategories[visit.id] = [];
+        fetchedQuestions[visit.id] = [];
+        fetchedQuestionGrades[visit.id] = [];
+      });
+  
+      // Create a map for visitTemplateId -> visitIds for fast lookup
+      const visitTemplateMap = new Map<string, string[]>();
+      visitsData.forEach(visit => {
+        if (!visitTemplateMap.has(visit.visitTemplateId)) {
+          visitTemplateMap.set(visit.visitTemplateId, []);
         }
-      }
+        visitTemplateMap.get(visit.visitTemplateId)?.push(visit.id);
+      });
+  
+      // Gather all category-question fetch promises
+      const questionPromises: Promise<IQuestions[]>[] = [];
+      allTemplatesCategories.flat().forEach(category => {
+        const relatedVisits = visitTemplateMap.get(category.visitTemplateId) || [];
+        relatedVisits.forEach(visitId => {
+          fetchedCategories[visitId].push(category);
+          questionPromises.push(VisitService.getQuestionsByIdCategory(category.id));
+        });
+      });
+  
+      // Fetch all questions in one go
+      const allQuestions = await Promise.all(questionPromises);
+  
+      // Assign fetched questions to visits
+      let questionIndex = 0;
+      allTemplatesCategories.flat().forEach(category => {
+        const relatedVisits = visitTemplateMap.get(category.visitTemplateId) || [];
+        relatedVisits.forEach(visitId => {
+          fetchedQuestions[visitId].push(...allQuestions[questionIndex]);
+        });
+        questionIndex++;
+      });
+  
+      // Assign grades to visits
+      visitsData.forEach(visit => {
+        fetchedQuestionGrades[visit.id] = allQuestionGrades.filter(qg => qg.visitId === visit.id);
+      });
+  
+      setCategories(fetchedCategories);
+      setQuestions(fetchedQuestions);
+      setQuestionGrades(fetchedQuestionGrades);
     } catch (error) {
-      console.error('Erro ao buscar dados de visitas:', error);
+      console.error("Erro ao buscar dados de visitas:", error);
     } finally {
       setLoading(false);
     }
   }, [cargo, idEmployee, companyId, fetchTemplates]);
-
+  
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  if (loading) {
-    return (
-      <S.LoadingContainer>
-        <ActivityIndicator color="#3E63DD" />
-      </S.LoadingContainer>
-    );
-  }
+  
 
   const calculateMedia = (
     visitId: string,
@@ -185,6 +197,12 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
       <StatusBar style="light" />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <S.WrapperView>
+          {loading && (
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+              <Text>Carregando informações adicionais...</Text> 
+              <ActivityIndicator color="#0000ff" />
+            </View>
+          )}
           {visits.length > 0 ? (
             visits.map((visit) => (
               <AccordionVisit
