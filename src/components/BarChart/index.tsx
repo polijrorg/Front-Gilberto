@@ -29,7 +29,7 @@ const BarChartComponent: React.FC<BarChartProps> = React.memo(
             datasets: [
               {
                 data: questionsBar.map((item) =>
-                  Math.min(Math.max(item.averageGrade, 0), 5)
+                  Math.min(Math.max(item.averageGrade, 1), 5)
                 ),
                 colors: questionsBar.map(
                   () =>
@@ -37,6 +37,9 @@ const BarChartComponent: React.FC<BarChartProps> = React.memo(
                       '#3E63DD'
                 ),
               },
+              {
+                data: [1]
+              }
             ],
           }
         : null;
@@ -53,8 +56,6 @@ const BarChartComponent: React.FC<BarChartProps> = React.memo(
         barPercentage: 0.6,
         useShadowColorFromDataset: false,
         decimalPlaces: 1,
-        minValue: 0,
-        maxValue: 5,
       }),
       []
     );
@@ -62,7 +63,7 @@ const BarChartComponent: React.FC<BarChartProps> = React.memo(
     return (
       <S.Container>
         <View style={{ display: type === 'modulo' ? 'flex' : 'none' }}>
-          <S.TitleSlider>Médias por módulo</S.TitleSlider>
+          <S.TitleSlider>Histórico de Visitas Auditadas</S.TitleSlider>
           {hasBarChartData && barChartData && (
             <BarChart
               data={barChartData}
@@ -73,8 +74,9 @@ const BarChartComponent: React.FC<BarChartProps> = React.memo(
               chartConfig={barChartConfig}
               showValuesOnTopOfBars={false}
               showBarTops={false}
-              fromZero
               flatColor
+              fromZero
+              segments={5}
               fromNumber={5}
               withInnerLines={false}
               withCustomBarColorFromData

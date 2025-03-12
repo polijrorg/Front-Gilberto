@@ -5,7 +5,6 @@ import BarChartComponent, { BarChartProps } from '@components/BarChart';
 import ModuleGradeServices from '@services/ModuleGradeService';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import VisitGradeService from '@services/VisitGradesService';
-import useAuth from '@hooks/useAuth';
 import { ScatterPlotProps } from '@components/Scratter';
 import ITemplateVisit from '@interfaces/Visit/TemplateVisit';
 import VisitService from '@services/VisitService';

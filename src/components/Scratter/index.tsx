@@ -5,7 +5,6 @@ import Svg, { Circle, Line, Text } from 'react-native-svg';
 import SellerService from '@services/SellerServices';
 import { FontAwesome } from '@expo/vector-icons';
 import SupervisorServices from '@services/SupervisorServices';
-import useAuth from '@hooks/useAuth';
 import User from '@interfaces/User';
 
 export interface ScatterPlotProps {
@@ -58,8 +57,8 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = React.memo(({ moduleAve
     const fetchData = async () => {
       if (!moduleAverages) return;
       const dataPromises = moduleAverages.map(async (item) => {
-        const x = padding + ((chartWidth - 2 * padding) * item.averageKnowledge) / 5;
-        const y = chartHeight - padding - ((chartHeight - 2 * padding) * item.averageImplementation) / 5;
+        const x = padding + ((chartWidth - 2 * padding) * (item.averageKnowledge - 1)) / 4;
+        const y = chartHeight - padding - ((chartHeight - 2 * padding) * (item.averageImplementation - 1)) / 4;
         try {
           const seller = await SellerService.findSellerById(item.sellerId);
           const supervisor = await SupervisorServices.findByID(seller.supervisorId);
@@ -129,29 +128,30 @@ const ScatterPlotComponent: React.FC<ScatterPlotProps> = React.memo(({ moduleAve
     />
   );
 
-  const xAxisLabels = Array.from({ length: 6 }).map((_, i) => (
+  const xAxisLabels = Array.from({ length: 5 }).map((_, i) => (
     <Text
       key={`xLabel-${i}`}
-      x={padding + ((chartWidth - 2 * padding) * i) / 5}
+      x={padding + ((chartWidth - 2 * padding) * i) / 4}
       y={chartHeight - padding + axisLabelOffset}
       textAnchor="middle"
       fontSize={9}
       fill={textColor}
     >
-      {((i / 5) * 5).toFixed(1).replace('.', ',')}
+      {(i + 1).toFixed(1).replace('.', ',')}
     </Text>
   ));
+  
 
-  const yAxisLabels = Array.from({ length: 6 }).map((_, i) => (
+  const yAxisLabels = Array.from({ length: 5 }).map((_, i) => (
     <Text
       key={`yLabel-${i}`}
       x={padding - axisLabelOffset}
-      y={chartHeight - padding - ((chartHeight - 2 * padding) * i) / 5}
+      y={chartHeight - padding - ((chartHeight - 2 * padding) * i) / 4}
       textAnchor="middle"
       fontSize={9}
       fill={textColor}
     >
-      {((i / 5) * 5).toFixed(1).replace('.', ',')}
+      {(i + 1).toFixed(1).replace('.', ',')}
     </Text>
   ));
 
