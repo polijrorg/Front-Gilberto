@@ -151,8 +151,8 @@ const EvaluateVisit: React.FC<EvaluateVisitVisitProps> = ({ user }) => {
     setIndexScreen(indexScreen < categories.length + 1 ? indexScreen + 1 : 1);
   };
 
-  const handleNavigation = (index: number) => {
-    setIndexScreen(index);
+  const goBack = () => {
+    setIndexScreen(prev => prev-1);
   };
 
   const handleStoreNameChange = (text: string) => {
@@ -273,7 +273,7 @@ const EvaluateVisit: React.FC<EvaluateVisitVisitProps> = ({ user }) => {
     <>
       <S.WrapperView>
         <StatusBar backgroundColor={'#3E63DD'} />
-        <HeaderPages title="Visita" />
+        <HeaderPages title="Visita" index={indexScreen} goBack={goBack} />
         <S.ContainerFields>
           <Breadcrumb
             key={indexScreen}

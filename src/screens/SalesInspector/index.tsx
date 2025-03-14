@@ -1,7 +1,6 @@
 import * as S from './styles';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import useAuth from '@hooks/useAuth';
 import SellerServices from '@services/SellerServices';
 import ISeller from '@interfaces/Seller';
 import ISupervisor from '@interfaces/Supervisor';

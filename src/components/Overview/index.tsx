@@ -1,5 +1,5 @@
-import React, { Suspense, lazy, useState, useEffect } from 'react';
-import { ActivityIndicator, Dimensions, Text } from 'react-native';
+import React, { Suspense, lazy, useState, useEffect, useMemo } from 'react';
+import { ActivityIndicator, Dimensions, Text, View } from 'react-native';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -238,10 +238,18 @@ const OverView: React.FC<OverViewProps> = ({
       };
     });
   };
+
   return (
     <S.ContainerChart>
       <Suspense fallback={<ActivityIndicator  color="#3E63DD" />}>
         <BarChar dateVisit={dateVisit} questionsBar={questionsBar} />
+        <View style={{ alignItems: 'flex-start', gap: 2}}>
+          {Object.values(categories)[0].map((category, index) => (
+            <Text key={category.id} style={{ fontSize: 16 }}>
+              {index + 1} - {category.name}
+            </Text>
+          ))}
+        </View>
       </Suspense>
 
       <S.WrapperView>
@@ -290,7 +298,7 @@ const BarChar: React.FC<BarCharProps> = ({ questionsBar, dateVisit }) => {
   const chartWidth = Dimensions.get('window').width - 50;
   const chartHeight = 200;
 
-  const barChartData = {
+  const barChartData = useMemo(() => ({
     labels: (questionsBar || []).map(
       (_item: any, index: number) => `${index + 1}`
     ),
@@ -306,7 +314,7 @@ const BarChar: React.FC<BarCharProps> = ({ questionsBar, dateVisit }) => {
         ),
       },
     ],
-  };
+  }), [questionsBar]);
 
   const barChartConfig = {
     backgroundGradientFrom: 'rgba(0, 0, 0, 0)',
@@ -325,6 +333,7 @@ const BarChar: React.FC<BarCharProps> = ({ questionsBar, dateVisit }) => {
   const formattedDate = format(new Date(dateVisit), 'dd/MM/yyyy', {
     locale: ptBR,
   });
+
 
   return (
     <>

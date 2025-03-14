@@ -36,7 +36,7 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
   const [categories, setCategories] = useState<{ [key: string]: ICategories[] }>({});
   const [questions, setQuestions] = useState<{ [key: string]: IQuestions[] }>({});
   const [questionGrades, setQuestionGrades] = useState<{ [key: string]: IQuestionGrade[] }>({});
-  
+
   const { user } = useAuth();
 
   // Fetch details templates
@@ -154,6 +154,7 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+  console.log(categories)
   
 
   const calculateMedia = (

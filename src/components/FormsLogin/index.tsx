@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Alert, Platform, KeyboardAvoidingView, ScrollView, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { Alert, Platform, KeyboardAvoidingView, ScrollView, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import * as S from './styles';
 
 import useAuth from '@hooks/useAuth';
@@ -53,45 +52,42 @@ const FormsLogin: React.FC = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
+      keyboardVerticalOffset={60}
+      style={{ flex: 1, borderTopLeftRadius: 32, borderTopRightRadius: 32, backgroundColor: '#fff' }}
     >
-      <S.Wrapper>
-        <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-          }}
-          keyboardShouldPersistTaps="handled"
-        >
-            <S.Forms>
-              <S.DivFields>
-                <Input
-                  label="Digite seu E-mail"
-                  placeholder="email@example.com"
-                  type="email"
-                  onChangeValue={(text) => setEmail(text)}
-                  value={email}
-                />
-                <Input
-                  label="Digite sua Senha"
-                  placeholder="Senha"
-                  type="password"
-                  showPasswordToggle={true}
-                  secureTextEntry={true}
-                  onChangeValue={(text) => setPassword(text)}
-                  value={password}
-                  onTogglePassword={toggleShowPassword}
-                />
-              </S.DivFields>
-
-              <DefaultButton
-                textButton="Enviar"
-                loading={loading}
-                isEnviarDisabled={isEnviarDisabled}
-                onPress={handleLogin}
-                />
-            </S.Forms>
-        </ScrollView>
-      </S.Wrapper>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-start' }}>
+                <S.Forms>
+                  <S.DivFields>
+                    <Input
+                      label="Digite seu E-mail"
+                      placeholder="email@example.com"
+                      type="email"
+                      onChangeValue={(text) => setEmail(text)}
+                      value={email}
+                      returnKeyType="next"
+                      autoCapitalize="none"
+                    />
+                    <Input
+                      label="Digite sua Senha"
+                      placeholder="Senha"
+                      type="password"
+                      showPasswordToggle={true}
+                      secureTextEntry={true}
+                      onChangeValue={(text) => setPassword(text)}
+                      value={password}
+                      onTogglePassword={toggleShowPassword}
+                    />
+                  </S.DivFields>
+                  <DefaultButton
+                    textButton="Enviar"
+                    loading={loading}
+                    isEnviarDisabled={isEnviarDisabled}
+                    onPress={handleLogin}
+                    />
+                </S.Forms>
+          </ScrollView>
+        </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };

@@ -2,6 +2,7 @@ import { View, Text } from 'react-native';
 import styled from 'styled-components/native';
 
 export const ContainerActions = styled(View)`
+  background-color: #fff;
   width: 100%;
   height: auto;
   padding: 10px 16px;

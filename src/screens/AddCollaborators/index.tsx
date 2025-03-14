@@ -49,11 +49,11 @@ const AddCollaborator: React.FC<AddCollaboratorsProps> = ({user}) => {
               {isSeller ? 'Vendedor' : 'Supervisor'}
             </Text>
           </View>
-          {isSeller ? <SellerAdded /> : <SupervisorAdded />}
+          {isSeller ? <SellerAdded user={user} /> : <SupervisorAdded user={user} />}
         </>
       )}
 
-      {user.job === 'Supervisor' && <SellerAdded />}
+      {user.job === 'Supervisor' && <SellerAdded user={user} />}
     </View>
   );
 };

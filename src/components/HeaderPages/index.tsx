@@ -4,13 +4,19 @@ import { useNavigation } from '@react-navigation/native';
 
 type IHeaderProps = {
   title: string;
+  goBack?: any;
+  index?: number;
 };
 
-const HeaderPages: React.FC<IHeaderProps> = ({ title }) => {
+const HeaderPages: React.FC<IHeaderProps> = ({ title, goBack, index }) => {
   const navigation = useNavigation();
 
   const handlePressBack = () => {
-    navigation.goBack();
+    if (goBack && index && index > 1) {
+      goBack();
+    } else {
+      navigation.goBack();
+    }
   };
 
   return (
