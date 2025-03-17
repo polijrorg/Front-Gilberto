@@ -201,7 +201,7 @@ const OverView: React.FC<OverViewProps> = ({
     fetchQuestionsAndModules();
   }, [sellerId, templates, user.companyId, user.id, user.job, user.managerId]);
 
-  if (loading) {
+  if (loading || !visits || !categories || !questions || !questionGrades) {
     return (
       <S.LoadingContainer>
         <ActivityIndicator  color="#3E63DD" />
@@ -238,13 +238,13 @@ const OverView: React.FC<OverViewProps> = ({
       };
     });
   };
-
+  
   return (
     <S.ContainerChart>
       <Suspense fallback={<ActivityIndicator  color="#3E63DD" />}>
         <BarChar dateVisit={dateVisit} questionsBar={questionsBar} />
         <View style={{ alignItems: 'flex-start', gap: 2}}>
-          {Object.values(categories)[0].map((category, index) => (
+          {Object.values(categories)[0] && Object.values(categories)[0].map((category, index) => (
             <Text key={category.id} style={{ fontSize: 16 }}>
               {index + 1} - {category.name}
             </Text>
@@ -350,6 +350,7 @@ const BarChar: React.FC<BarCharProps> = ({ questionsBar, dateVisit }) => {
         fromZero
         flatColor
         fromNumber={5}
+        segments={5}
         withInnerLines={false}
         withCustomBarColorFromData
       />
