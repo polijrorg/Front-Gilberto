@@ -44,15 +44,15 @@ export const Input = styled(TextInput)`
   border: none;
   width: 100%;
   border: 1px solid #d7dbdf;
-  padding: 14px 8px; /* Aumentei o padding para maior conforto */
+  padding: 14px 8px;
   border-radius: 4px;
-  font-size: 14px; /* Aumentei o tamanho da fonte */
+  font-size: 14px;
   background-color: #f1f3f5;
   font-family: Poppins;
   position: relative;
   ::placeholder {
     color: #687076;
-    font-size: 14px; /* Tamanho do placeholder */
+    font-size: 14px;
   }
 `;
 

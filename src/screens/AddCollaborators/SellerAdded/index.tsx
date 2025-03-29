@@ -77,7 +77,9 @@ const SellerAdded: React.FC<SellerAddedProps> = ({user}) => {
   };
 
   const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
+    setTimeout(() => {
+      setIsModalVisible(!isModalVisible);
+    }, 10);
   };
 
   const handleSelectChange = (value: string) => {

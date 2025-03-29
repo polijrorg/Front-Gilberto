@@ -4,8 +4,8 @@ import { theme } from '@styles/default.theme';
 
 export const Wrapper = styled(View)`
   width: 90%;
-  height: auto;
-  margin: 0 auto;
+  flex: 1;
+  margin: auto;
 `;
 
 export const TemaQuestion = styled(Text)`

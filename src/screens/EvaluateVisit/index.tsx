@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as S from './styles';
-import { ActivityIndicator, Dimensions, StatusBar } from 'react-native';
+import { ActivityIndicator, Dimensions, StatusBar, KeyboardAvoidingView, Platform } from 'react-native';
 import Breadcrumb from '@components/Breadcrumb';
 import Dropdown from '@components/Dropdown';
 import HeaderPages from '@components/HeaderPages';
@@ -255,10 +255,7 @@ const EvaluateVisit: React.FC<EvaluateVisitVisitProps> = ({ user }) => {
   const initialNewVisit = () => {
     finishedVisit();
     setIndexScreen(0);
-    setSelectedSeller(null);
     setStoreName('');
-    setCategories([]);
-    setTemplate([]);
     setFetchedVisitGrade([]);
     setEvaluationStarted(false);
     setVisitToDay(undefined);
@@ -270,7 +267,7 @@ const EvaluateVisit: React.FC<EvaluateVisitVisitProps> = ({ user }) => {
   };
 
   return (
-    <>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'height' : 'padding'}>
       <S.WrapperView>
         <StatusBar backgroundColor={'#3E63DD'} />
         <HeaderPages title="Visita" index={indexScreen} goBack={goBack} />
@@ -297,6 +294,7 @@ const EvaluateVisit: React.FC<EvaluateVisitVisitProps> = ({ user }) => {
 
           {indexScreen === 0 && (
             <SellerSelection
+              selectedSeller={selectedSeller}
               sellers={sellers}
               onSelectSeller={handleSelectSeller}
               onAdvance={handleAdvance}
@@ -368,7 +366,7 @@ const EvaluateVisit: React.FC<EvaluateVisitVisitProps> = ({ user }) => {
           )}
         </S.ContainerFields>
       </S.WrapperView>
-    </>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -434,7 +432,11 @@ const FinishedSection: React.FC<FinishedProps> = ({
 
       <S.BtnFinished
         onPress={() => {
-          pdfAndEmail(selectedSeller.id);
+          if (selectedSeller) {
+            pdfAndEmail(selectedSeller.id);
+          } else {
+            console.error('Erro: Nenhum vendedor selecionado.');
+          }
           finishedVisit();
         }}
         disabled={loading}
@@ -451,6 +453,7 @@ const FinishedSection: React.FC<FinishedProps> = ({
 
 interface SellerSelectionProps {
   sellers: ISeller[];
+  selectedSeller: ISeller | null; // nova prop para controle
   onSelectSeller: (seller: ISeller) => void;
   onAdvance: () => void;
   storeName: string;
@@ -459,6 +462,7 @@ interface SellerSelectionProps {
 
 const SellerSelection: React.FC<SellerSelectionProps> = ({
   sellers,
+  selectedSeller,
   onSelectSeller,
   onAdvance,
   storeName,
@@ -467,7 +471,11 @@ const SellerSelection: React.FC<SellerSelectionProps> = ({
   return (
     <S.DivContainer>
       <S.TitleInput>Nome do Vendedor</S.TitleInput>
-      <Dropdown sellers={sellers} onSelectSeller={onSelectSeller} />
+      <Dropdown
+        sellers={sellers}
+        onSelectSeller={onSelectSeller}
+        selectedSeller={selectedSeller} // repassando o valor selecionado
+      />
       <S.TitleInput>Loja</S.TitleInput>
       <S.Input
         placeholder="Nome da Loja"

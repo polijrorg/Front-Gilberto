@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as S from './styles';
 import {
-  ScrollView,
   TouchableOpacity,
   View,
   StyleSheet,
@@ -21,6 +20,8 @@ import VisitService from '@services/VisitService';
 import useAuth from '@hooks/useAuth';
 import { useToast } from 'react-native-toast-notifications';
 import User from '@interfaces/User';
+import { Platform } from 'react-native';
+import KeyboardAvoidWrapper from '@components/KeyboardAvoidWrapper';
 
 interface Props {
   category: ICategories;
@@ -226,10 +227,9 @@ const QuestionSection: React.FC<Props> = ({
   };
 
   return selectedIndex === index ? (
-    <ScrollView
+    <View
       style={{
         minWidth: '95%',
-        height: user.job === 'Gerente' ? 600 : 'auto',
         marginVertical: 16,
         marginHorizontal: 16,
       }}
@@ -323,12 +323,13 @@ const QuestionSection: React.FC<Props> = ({
           </TouchableOpacity>
         </View>
       ) : (
-        <>
+
+        <View>
           <S.TemaQuestion>{category?.name || 'Tema Question'}</S.TemaQuestion>
           {loading ? (
             <ActivityIndicator color="#3E63DD" />
           ) : (
-            <S.Wrapper>
+            <View style={{ flex: 1 }}>
               {categoryQuestions.map((question) => (
                 <View key={question.id}>
                   <InputRange
@@ -345,11 +346,11 @@ const QuestionSection: React.FC<Props> = ({
                   onChangeText={handleCommentChange} // Apenas um campo de texto para comentários
                 />
               )}
-            </S.Wrapper>
+            </View>
           )}
-        </>
+        </View>
       )}
-    </ScrollView>
+    </View>
   ) : null;
 };
 

@@ -6,22 +6,19 @@ import ISupervisor from '@interfaces/Supervisor';
 import ISeller from '@interfaces/Seller';
 import Manager from '@interfaces/Manager';
 
-interface SupervisorState {
-  single: ISupervisor | null;
-  list: ISupervisor[];
-}
-
-interface ManagerState {
-  single: Manager | null;
-  list: Manager[];
-}
-
 type IDropdownProps = {
-  supervisors?: SupervisorState;
-  managers?: ManagerState;
+  supervisors?: {
+    single: ISupervisor | null;
+    list: ISupervisor[];
+  };
+  managers?: {
+    single: Manager | null;
+    list: Manager[];
+  };
+  sellers?: ISeller[];
+  selectedSeller?: ISeller | null; // nova prop
   onSelectSupervisor?: (supervisor: ISupervisor) => void;
   onSelectManager?: (manager: Manager) => void;
-  sellers?: ISeller[];
   onSelectSeller?: (seller: ISeller) => void;
 };
 
@@ -32,11 +29,12 @@ const Dropdown: React.FC<IDropdownProps> = ({
   onSelectSeller,
   managers,
   onSelectManager,
+  selectedSeller,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedSupervisor, setSelectedSupervisor] =
     useState<ISupervisor | null>(null);
-  const [selectedSeller, setSelectedSeller] = useState<ISeller | null>(null);
+  const [oldSelectedSeller, setOldSelectedSeller] = useState<ISeller | null>(null);
 
   const [selectedManager, setSelectedManager] = useState<Manager | null>(null);
 
@@ -53,7 +51,9 @@ const Dropdown: React.FC<IDropdownProps> = ({
   };
 
   const handleSelectSeller = (seller: ISeller) => {
-    setSelectedSeller(seller);
+    if(!selectedSeller) {
+      setOldSelectedSeller(seller);
+    }
     onSelectSeller && onSelectSeller(seller);
     setIsOpen(false);
   };
@@ -71,7 +71,7 @@ const Dropdown: React.FC<IDropdownProps> = ({
             <S.Selected>
               {selectedManager?.name ||
                 selectedSupervisor?.name ||
-                selectedSeller?.name ||
+                (selectedSeller?.name ?? oldSelectedSeller?.name) ||
                 'Selecione o responsável'}
             </S.Selected>
             <FontAwesome

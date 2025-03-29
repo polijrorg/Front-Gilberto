@@ -154,8 +154,6 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-  console.log(categories)
-  
 
   const calculateMedia = (
     visitId: string,
