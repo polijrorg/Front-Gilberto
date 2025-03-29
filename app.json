@@ -3,6 +3,7 @@
     "name": "Sell Outer",
     "slug": "sell-out-expert",
     "newArchEnabled": true,
+    "Owner": "polijunior",
     "icon": "./public/assets/icon.jpg",
     "version": "1.1.0",
     "assetBundlePatterns": [
