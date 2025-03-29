@@ -1,9 +1,8 @@
 {
   "expo": {
-    "name": "Sell Outer",
+    "name": "Sell_Outer",
     "slug": "sell-out-expert",
     "newArchEnabled": true,
-    "Owner": "polijunior",
     "icon": "./public/assets/icon.jpg",
     "version": "1.1.0",
     "assetBundlePatterns": [
@@ -11,8 +10,13 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "c96ce6af-d885-4e11-b2d7-1c3ff8682ec5"
+        "projectId": "68ff0e58-4d45-40da-8b42-c7b5e62df96e"
       }
+    },
+    "owner": "polijr",
+    "runtimeVersion": "1.1.0",
+    "updates": {
+      "url": "https://u.expo.dev/68ff0e58-4d45-40da-8b42-c7b5e62df96e"
     },
     "android": {
       "package": "com.selloutexpert.app",
