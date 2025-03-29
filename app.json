@@ -3,6 +3,7 @@
     "name": "Sell_Outer",
     "slug": "sell-out-expert",
     "newArchEnabled": true,
+    "main": "index.ts",
     "icon": "./public/assets/icon.jpg",
     "version": "1.1.0",
     "assetBundlePatterns": [
