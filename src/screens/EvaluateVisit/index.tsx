@@ -155,10 +155,6 @@ const EvaluateVisit: React.FC<EvaluateVisitVisitProps> = ({ user }) => {
     setIndexScreen(prev => prev-1);
   };
 
-  const handleStoreNameChange = (text: string) => {
-    setStoreName(text);
-  };
-
   const finishedVisit = async () => {
     try {
       if (!selectedSeller || !selectedSeller.id) {

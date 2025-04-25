@@ -22,20 +22,20 @@ const BarChartComponent: React.FC<BarChartProps> = React.memo(
     const chartHeight = 200;
     const hasBarChartData = questionsBar && questionsBar.length > 0;
 
+    const barColor = (_opacity = 1) => '#3E63DD';
+
     const barChartData = useMemo(() => {
       return hasBarChartData
         ? {
-            labels: questionsBar.map((_item, index) => `${index + 1}`),
+            labels: questionsBar.map((item) =>  {
+              return item.categoryName.slice(0,4);
+            }),
             datasets: [
               {
                 data: questionsBar.map((item) =>
                   Math.min(Math.max(item.averageGrade, 1), 5)
                 ),
-                colors: questionsBar.map(
-                  () =>
-                    (_opacity = 1) =>
-                      '#3E63DD'
-                ),
+                colors: questionsBar.map(() => barColor),
               },
               {
                 data: [1]

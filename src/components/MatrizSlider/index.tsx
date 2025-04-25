@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 import * as S from './styles';
 import BarChartComponent, { BarChartProps } from '@components/BarChart';
@@ -30,13 +30,13 @@ const MatrizSlider: React.FC<matrizSliderProps> = ({
   const [template, setTemplate] = useState<ITemplateVisit[]>([]);
 
   const data = ['modulo', 'matriz'];
-
+  
   const fetchModuleGradesAverages = useCallback(async () => {
+    setIsLoading(true);
+    setMessage('');
     try {
-      setMessage('');
-
+      // 1) Fetch templates
       let templates: ITemplateVisit[] = [];
-
       if (user.job === 'Supervisor') {
         templates = await VisitService.getTemplateByManagerId(user.managerId);
       } else if (user.job === 'Gerente') {
@@ -46,45 +46,51 @@ const MatrizSlider: React.FC<matrizSliderProps> = ({
         templates = await VisitService.getTemplateByCompanyId(user.companyId);
       }
 
-      if (templates.length > 0) {
-        const template = templates[0];
-        setTemplate([template]);
-      } else {
+      // 2) If no templates, clear and exit early
+      if (templates.length === 0) {
         setTemplate([]);
+        setQuestionsBar([]);
+        return;
       }
 
-      const moduleInfoAll = await ModuleGradeServices.getAllModulesInfo(
-        user.id
-      );
+      // 3) Save the first template for UI
+      const selectedTemplate = templates[0];
+      setTemplate([selectedTemplate]);
+
+      // 4) Fetch module info once
+      const moduleInfoAll = await ModuleGradeServices.getAllModulesInfo(user.id);
       setModuleAll(moduleInfoAll);
 
-      const jobToServiceMap: {
-        [key: string]: (
-          id: string,
-          templateId: string
-        ) => Promise<
-          { categoryId: string; categoryName: string; averageGrade: number }[]
-        >;
-      } = {
+      // 5) Choose the correct VisitGradeService method
+      const jobToServiceMap: Record<string, typeof VisitGradeService.getAverageGradesSupervisor> = {
         Supervisor: VisitGradeService.getAverageGradesSupervisor,
-        Gerente: VisitGradeService.getAverageGradesManager,
+        Gerente:    VisitGradeService.getAverageGradesManager,
       };
-
       const fetchAverageGrades = jobToServiceMap[user.job];
-
       if (!fetchAverageGrades) {
         throw new Error(`Invalid job type: ${user.job}`);
       }
 
-      const averageGrades = await fetchAverageGrades(user.id, template[0].id);
+      // 6) Fetch averages using the freshly fetched template ID
+      const averageGrades = await fetchAverageGrades(user.id, selectedTemplate.id);
 
-      setQuestionsBar(averageGrades);
-    } catch (error) {
-      setMessage(error.response.data.message);
+      // 7) Only update state if really changed
+      setQuestionsBar(prev => {
+        const prevJson = JSON.stringify(prev);
+        const newJson  = JSON.stringify(averageGrades);
+        return prevJson === newJson ? prev : averageGrades;
+      });
+    } catch (err: any) {
+      setMessage(err?.response?.data?.message ?? err.message);
     } finally {
       setIsLoading(false);
     }
-  }, [template, user.companyId, user.id, user.job, user.managerId]);
+  }, [user]);
+
+  // kick off on mount (and whenever `user` changes)
+  useEffect(() => {
+    fetchModuleGradesAverages();
+  }, [fetchModuleGradesAverages]);
 
   const handleScroll = useCallback(
     (event: { nativeEvent: { contentOffset: { x: any } } }) => {
