@@ -1,6 +1,5 @@
 import * as S from './styles';
 import React, { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import { ActivityIndicator } from 'react-native';
 import Modal from 'react-native-modal';
 import useAuth from '@hooks/useAuth';

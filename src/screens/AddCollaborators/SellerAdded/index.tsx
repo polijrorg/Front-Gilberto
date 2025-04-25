@@ -77,9 +77,7 @@ const SellerAdded: React.FC<SellerAddedProps> = ({user}) => {
   };
 
   const toggleModal = () => {
-    setTimeout(() => {
-      setIsModalVisible(!isModalVisible);
-    }, 10);
+    setIsModalVisible(!isModalVisible);
   };
 
   const handleSelectChange = (value: string) => {
@@ -133,10 +131,6 @@ const SellerAdded: React.FC<SellerAddedProps> = ({user}) => {
   const isCreateDisabled = !name || !selectedValue || !selectedSupervisor;
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
-    >
       <S.Wrapper>
         <S.Main>
           <S.DivFileds>
@@ -198,7 +192,6 @@ const SellerAdded: React.FC<SellerAddedProps> = ({user}) => {
           </S.ContentModal>
         </Modal>
       </S.Wrapper>
-    </KeyboardAvoidingView>
   );
 };
 

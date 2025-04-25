@@ -145,7 +145,7 @@ export const TextBtn = styled(Text)`
   font-family: Poppins;
   text-transform: uppercase;
   color: #fff;
-  font-size: 16px;
+  font-size: 14px;
 `;
 
 export const Outline = styled(TouchableOpacity)`
