@@ -124,6 +124,63 @@ export default class VisitService {
     return visits.data;
   }
 
+  static async setSelectedForCompany(
+    idCompany: string,
+    idTemplate: string
+  ): Promise<ITemplateVisit> {
+    const templateResponse: AxiosResponse<ITemplateVisit> = await api.post(`/visitTemplate/selectForCompany`, { idCompany, idTemplate });
+
+    return templateResponse.data;
+  }
+
+  static async setSelectedForManager(
+    idManager: string,
+    idTemplate: string
+  ): Promise<ITemplateVisit> {
+    const templateResponse: AxiosResponse<ITemplateVisit> = await api.post(`/visitTemplate/selectForManager`, { idManager, idTemplate });
+
+    return templateResponse.data;
+  }
+
+  static async setSelectedForDirector(
+    idDirector: string,
+    idTemplate: string
+  ): Promise<ITemplateVisit> {
+    const templateResponse: AxiosResponse<ITemplateVisit> = await api.post(`/visitTemplate/selectForDirector`, { idDirector, idTemplate });
+
+    return templateResponse.data;
+  }
+
+  static async getSelectedTemplateByCompany(
+    idCompany: string
+  ): Promise<ITemplateVisit> {
+    const templateResponse: AxiosResponse<ITemplateVisit> = await api.get(
+      `/visitTemplate/getSelectedByCompany/${idCompany}`
+    );
+
+    return templateResponse.data;
+  }
+
+  static async getSelectedTemplateByManager(
+    idManager: string
+  ): Promise<ITemplateVisit> {
+    const templateResponse: AxiosResponse<ITemplateVisit> = await api.get(
+      `/visitTemplate/getSelectedByManager/${idManager}`
+    );
+
+    return templateResponse.data;
+  }
+
+  static async getSelectedTemplateByDirector(
+    idDirector: string
+  ): Promise<ITemplateVisit> {
+    const templateResponse: AxiosResponse<ITemplateVisit> = await api.get(
+      `/visitTemplate/getSelectedByDirector/${idDirector}`
+    );
+
+    return templateResponse.data;
+  }
+
   static async getTemplateByCompanyId(
     idCompany: string
   ): Promise<ITemplateVisit[]> {
