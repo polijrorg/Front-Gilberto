@@ -28,7 +28,7 @@ const BarChartComponent: React.FC<BarChartProps> = React.memo(
       return hasBarChartData
         ? {
             labels: questionsBar.map((item) =>  {
-              return item.categoryName.slice(0,4);
+              return item.categoryName.slice(0,3);
             }),
             datasets: [
               {
