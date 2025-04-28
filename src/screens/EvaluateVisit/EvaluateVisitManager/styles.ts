@@ -6,10 +6,10 @@ import {
   View as RNView,
   ActivityIndicator,
   Switch as RNSwitch,
+  ScrollView,
   Modal,
 } from 'react-native';
 import styled from 'styled-components/native';
-import { Wrapper } from '../../../components/FormsLogin/styles';
 
 export const ContainerVisit = styled(RNView)`
   min-width: 90%;
@@ -30,16 +30,15 @@ export const Title = styled(RNText)`
   text-transform: capitalize;
 `;
 
-export const WrapperView = styled(RNView)`
+export const WrapperView = styled(ScrollView)`
   width: 100%;
-  height: 100%;
+  margin-bottom: 10px;
   margin-top: ${RNStatusBar.currentHeight || 0}px;
   display: flex;
 `;
 
 export const ContainerFields = styled(RNView)`
   max-width: 90%;
-  height: 90%;
   margin: 2rem auto;
   padding: 1rem;
 `;
@@ -160,14 +159,18 @@ export const CreatedTemplateContainer = styled(RNView)`
   min-width: 100%;
   margin: 16px auto;
 
-  border: 1px solid #d7dbdf;
+  border: 1px solid  #d7dbdf;
 
   border-radius: 8px;
 `;
 
-export const WrapperTemplate = styled(Wrapper)`
-  min-width: 90%;
-  height: auto;
+export const WrapperTemplate = styled(RNView)`
+  width: 100%;
+  height: max-content;
+  min-height: 200px;
+  border-top-right-radius: 32px;
+  border-top-left-radius: 32px;
+  background-color: #fff;
 
   padding: 16px;
   margin: 16px auto;
