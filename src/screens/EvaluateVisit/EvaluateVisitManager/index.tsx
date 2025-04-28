@@ -3,12 +3,11 @@ import * as S from './styles';
 import HeaderPages from '@components/HeaderPages';
 import QuestionSection from '@components/QuestionSection';
 import { useToast } from 'react-native-toast-notifications';
-import useAuth from '@hooks/useAuth';
 import VisitService from '@services/VisitService';
 import ICategories from '@interfaces/Visit/Categories';
 import ITemplateVisit from '@interfaces/Visit/TemplateVisit';
 import Select from '@components/Select';
-import { StatusBar } from 'react-native';
+import { KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
 import User from '@interfaces/User';
 
 interface VisitGrade {
@@ -190,212 +189,215 @@ const EvaluateVisitManager:React.FC<EvaluateVisitManagerProps> = ({user}) => {
   }, [newTemplateName, user.id, toast]);
 
   return (
-    <S.WrapperView>
-      <StatusBar backgroundColor={'#3E63DD'} />
-
-      <HeaderPages title="Visita" />
-      <S.ContainerFields>
-        <S.ContainerVisit>
-          <S.Title>Escolha um template de Visita:</S.Title>
-          <Select
-            onChange={handleTemplateChange}
-            placeholder="Selecione um template"
-            options={selectOptions}
-          />
-        </S.ContainerVisit>
-        {loading ? (
-          <S.Loading color="#0000ff" />
-        ) : templates.length === 0 ? (
-          <>
-            <S.NoCategoriesContainer>
-              <S.NoCategoriesText>
-                Você não tem nenhum template
-              </S.NoCategoriesText>
-              <S.AddCategoryButton
-                onPress={() => setCreatedTemplate(!createdTemplate)}
-              >
-                <S.AddCategoryText>Adicionar Template</S.AddCategoryText>
-              </S.AddCategoryButton>
-            </S.NoCategoriesContainer>
-            {createdTemplate && (
-              <S.CreatedTemplateContainer>
-                <S.WrapperTemplate>
-                  <S.TitleCreatedTemplate>
-                    Adicione um novo template:
-                  </S.TitleCreatedTemplate>
-                  <S.InputNameTemplate
-                    placeholder="Nome do Template"
-                    value={newTemplateName}
-                    onChangeText={setNewTemplateName}
-                  />
-                  <S.FormButtonsContainer>
-                    <S.ButtonGeneric onPress={() => setCreatedTemplate(false)}>
-                      <S.ButtonGenericText>Cancelar</S.ButtonGenericText>
-                    </S.ButtonGeneric>
-                    <S.ButtonGeneric onPress={handleAddTemplate}>
-                      <S.ButtonGenericText>Adicionar</S.ButtonGenericText>
-                    </S.ButtonGeneric>
-                  </S.FormButtonsContainer>
-                </S.WrapperTemplate>
-              </S.CreatedTemplateContainer>
-            )}
-          </>
-        ) : categories.length === 0 ? (
-          <S.NoCategoriesContainer>
-            {selectedTemplate ? (
-              <>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
+    >
+      <S.WrapperView>
+        <StatusBar backgroundColor={'#3E63DD'} />
+        <HeaderPages title="Visita" />
+        <S.ContainerFields>
+          <S.ContainerVisit>
+            <S.Title>Escolha um template de Visita:</S.Title>
+            <Select
+              onChange={handleTemplateChange}
+              placeholder="Selecione um template"
+              options={selectOptions}
+            />
+          </S.ContainerVisit>
+          {loading ? (
+            <S.Loading color="#0000ff" />
+          ) : templates.length === 0 ? (
+            <>
+              <S.NoCategoriesContainer>
                 <S.NoCategoriesText>
-                  Você não tem nenhuma categoria para este template:{' '}
-                  {selectedTemplate.name}
-                </S.NoCategoriesText>
-                <S.AddCategoryEmpty onPress={() => setIsModalVisible(true)}>
-                  <S.AddCategoryEmptyText>
-                    Adicionar Categoria
-                  </S.AddCategoryEmptyText>
-                </S.AddCategoryEmpty>
-              </>
-            ) : (
-              <>
-                <S.NoCategoriesText>
-                  Você não selecionou nenhum template
+                  Você não tem nenhum template
                 </S.NoCategoriesText>
                 <S.AddCategoryButton
                   onPress={() => setCreatedTemplate(!createdTemplate)}
                 >
                   <S.AddCategoryText>Adicionar Template</S.AddCategoryText>
                 </S.AddCategoryButton>
-                {createdTemplate && (
-                  <S.CreatedTemplateContainer>
-                    <S.WrapperTemplate>
-                      <S.TitleCreatedTemplate>
-                        Adicione um novo template:
-                      </S.TitleCreatedTemplate>
-                      <S.InputNameTemplate
-                        placeholder="Nome do Template"
-                        value={newTemplateName}
-                        onChangeText={setNewTemplateName}
-                      />
-                      <S.FormButtonsContainer>
-                        <S.ButtonGeneric
-                          onPress={() => setCreatedTemplate(false)}
-                        >
-                          <S.ButtonGenericText>Cancelar</S.ButtonGenericText>
-                        </S.ButtonGeneric>
-                        <S.ButtonGeneric onPress={handleAddTemplate}>
-                          <S.ButtonGenericText>Adicionar</S.ButtonGenericText>
-                        </S.ButtonGeneric>
-                      </S.FormButtonsContainer>
-                    </S.WrapperTemplate>
-                  </S.CreatedTemplateContainer>
-                )}
-              </>
-            )}
-          </S.NoCategoriesContainer>
-        ) : (
-          <>
-            {categories.map((category, idx) => (
-              <S.CategoryContainer key={category.id}>
-                <QuestionSection
-                  user={user}
-                  key={category.id}
-                  sellerId=""
-                  category={category}
-                  index={idx + 1}
-                  selectedIndex={indexScreen}
-                  onCategoryUpdate={handleCategoryUpdate}
-                  onUpdateAnswers={handleUpdateAnswers}
-                  onDeleteCategory={fetchCategories}
-                />
-              </S.CategoryContainer>
-            ))}
-            <S.NavigationContainer>
-              <S.ButtonFirst
-                onPress={handlePreviousCategory}
-                disabled={indexScreen <= 1}
-                isDisabled={indexScreen <= 1}
-              >
-                <S.TextBtn>{'<'}</S.TextBtn>
-              </S.ButtonFirst>
-              <S.AddCategoryButton onPress={() => setIsModalVisible(true)}>
-                <S.AddCategoryText>Add Categoria</S.AddCategoryText>
-              </S.AddCategoryButton>
-              <S.ButtonFirst
-                onPress={handleAdvanceCategory}
-                disabled={indexScreen >= categories.length}
-                isDisabled={indexScreen >= categories.length}
-              >
-                <S.TextBtn>{'>'}</S.TextBtn>
-              </S.ButtonFirst>
-            </S.NavigationContainer>
-          </>
-        )}
-        <S.ModalStyled
-          statusBarTranslucent={true}
-          visible={isModalVisible}
-          transparent={true}
-          animationType="slide"
-        >
-          <S.ModalContent>
-            {managerTemplate.length === 0 && (
-              <>
-                <S.SwitchContainer>
-                  <S.SwitchLabel>Adicionar Categoria</S.SwitchLabel>
-
-                  <S.Switch
-                    value={isCreatingTemplate}
-                    onValueChange={(value) => setIsCreatingTemplate(value)}
+              </S.NoCategoriesContainer>
+              {createdTemplate && (
+                <S.CreatedTemplateContainer>
+                  <S.WrapperTemplate>
+                    <S.TitleCreatedTemplate>
+                      Adicione um novo template:
+                    </S.TitleCreatedTemplate>
+                    <S.InputNameTemplate
+                      placeholder="Nome do Template"
+                      value={newTemplateName}
+                      onChangeText={setNewTemplateName}
+                    />
+                    <S.FormButtonsContainer>
+                      <S.ButtonGeneric onPress={() => setCreatedTemplate(false)}>
+                        <S.ButtonGenericText>Cancelar</S.ButtonGenericText>
+                      </S.ButtonGeneric>
+                      <S.ButtonGeneric onPress={handleAddTemplate}>
+                        <S.ButtonGenericText>Adicionar</S.ButtonGenericText>
+                      </S.ButtonGeneric>
+                    </S.FormButtonsContainer>
+                  </S.WrapperTemplate>
+                </S.CreatedTemplateContainer>
+              )}
+            </>
+          ) : categories.length === 0 ? (
+            <S.NoCategoriesContainer>
+              {selectedTemplate ? (
+                <>
+                  <S.NoCategoriesText>
+                    Você não tem nenhuma categoria para este template:{' '}
+                    {selectedTemplate.name}
+                  </S.NoCategoriesText>
+                  <S.AddCategoryEmpty onPress={() => setIsModalVisible(true)}>
+                    <S.AddCategoryEmptyText>
+                      Adicionar Categoria
+                    </S.AddCategoryEmptyText>
+                  </S.AddCategoryEmpty>
+                </>
+              ) : (
+                <>
+                  <S.NoCategoriesText>
+                    Você não selecionou nenhum template
+                  </S.NoCategoriesText>
+                  <S.AddCategoryButton
+                    onPress={() => setCreatedTemplate(!createdTemplate)}
+                  >
+                    <S.AddCategoryText>Adicionar Template</S.AddCategoryText>
+                  </S.AddCategoryButton>
+                  {createdTemplate && (
+                    <S.CreatedTemplateContainer>
+                      <S.WrapperTemplate>
+                        <S.TitleCreatedTemplate>
+                          Adicione um novo template:
+                        </S.TitleCreatedTemplate>
+                        <S.InputNameTemplate
+                          placeholder="Nome do Template"
+                          value={newTemplateName}
+                          onChangeText={setNewTemplateName}
+                        />
+                        <S.FormButtonsContainer>
+                          <S.ButtonGeneric
+                            onPress={() => setCreatedTemplate(false)}
+                          >
+                            <S.ButtonGenericText>Cancelar</S.ButtonGenericText>
+                          </S.ButtonGeneric>
+                          <S.ButtonGeneric onPress={handleAddTemplate}>
+                            <S.ButtonGenericText>Adicionar</S.ButtonGenericText>
+                          </S.ButtonGeneric>
+                        </S.FormButtonsContainer>
+                      </S.WrapperTemplate>
+                    </S.CreatedTemplateContainer>
+                  )}
+                </>
+              )}
+            </S.NoCategoriesContainer>
+          ) : (
+            <>
+              {categories.map((category, idx) => (
+                <S.CategoryContainer key={category.id}>
+                  <QuestionSection
+                    user={user}
+                    key={category.id}
+                    sellerId=""
+                    category={category}
+                    index={idx + 1}
+                    selectedIndex={indexScreen}
+                    onCategoryUpdate={handleCategoryUpdate}
+                    onUpdateAnswers={handleUpdateAnswers}
+                    onDeleteCategory={fetchCategories}
                   />
-                  <S.SwitchLabel>Adicionar Template</S.SwitchLabel>
-                </S.SwitchContainer>
-              </>
-            )}
-            {isCreatingTemplate && managerTemplate.length === 0 ? (
-              <S.CreatedTemplateContainer>
-                <S.WrapperTemplate>
-                  <S.TitleCreatedTemplate>
-                    Adicione um novo template:
-                  </S.TitleCreatedTemplate>
-                  <S.InputNameTemplate
-                    placeholder="Nome do Template"
-                    value={newTemplateName}
-                    onChangeText={setNewTemplateName}
-                  />
-                  <S.FormButtonsContainer>
-                    <S.ButtonGeneric onPress={() => setIsModalVisible(false)}>
-                      <S.ButtonGenericText>Cancelar</S.ButtonGenericText>
-                    </S.ButtonGeneric>
-                    <S.ButtonGeneric onPress={handleAddTemplate}>
-                      <S.ButtonGenericText>Adicionar</S.ButtonGenericText>
-                    </S.ButtonGeneric>
-                  </S.FormButtonsContainer>
-                </S.WrapperTemplate>
-              </S.CreatedTemplateContainer>
-            ) : (
-              <S.CreatedTemplateContainer>
-                <S.WrapperTemplate>
-                  <S.TitleCreatedTemplate>
-                    Adicione Categoria:
-                  </S.TitleCreatedTemplate>
-                  <S.InputNameTemplate
-                    placeholder="Nome da Categoria"
-                    value={newCategoryName}
-                    onChangeText={setNewCategoryName}
-                  />
-                  <S.FormButtonsContainer>
-                    <S.ButtonGeneric onPress={() => setIsModalVisible(false)}>
-                      <S.ButtonGenericText>Cancelar</S.ButtonGenericText>
-                    </S.ButtonGeneric>
-                    <S.ButtonGeneric onPress={handleAddCategory}>
-                      <S.ButtonGenericText>Adicionar</S.ButtonGenericText>
-                    </S.ButtonGeneric>
-                  </S.FormButtonsContainer>
-                </S.WrapperTemplate>
-              </S.CreatedTemplateContainer>
-            )}
-          </S.ModalContent>
-        </S.ModalStyled>
-      </S.ContainerFields>
-    </S.WrapperView>
+                </S.CategoryContainer>
+              ))}
+              <S.NavigationContainer>
+                <S.ButtonFirst
+                  onPress={handlePreviousCategory}
+                  disabled={indexScreen <= 1}
+                  isDisabled={indexScreen <= 1}
+                >
+                  <S.TextBtn>{'<'}</S.TextBtn>
+                </S.ButtonFirst>
+                <S.AddCategoryButton onPress={() => setIsModalVisible(true)}>
+                  <S.AddCategoryText>Add Categoria</S.AddCategoryText>
+                </S.AddCategoryButton>
+                <S.ButtonFirst
+                  onPress={handleAdvanceCategory}
+                  disabled={indexScreen >= categories.length}
+                  isDisabled={indexScreen >= categories.length}
+                >
+                  <S.TextBtn>{'>'}</S.TextBtn>
+                </S.ButtonFirst>
+              </S.NavigationContainer>
+            </>
+          )}
+          <S.ModalStyled
+            statusBarTranslucent={true}
+            visible={isModalVisible}
+            transparent={true}
+            animationType="slide"
+          >
+            <S.ModalContent>
+              {managerTemplate.length === 0 && (
+                <>
+                  <S.SwitchContainer>
+                    <S.SwitchLabel>Adicionar Categoria</S.SwitchLabel>
+                    <S.Switch
+                      value={isCreatingTemplate}
+                      onValueChange={(value) => setIsCreatingTemplate(value)}
+                    />
+                    <S.SwitchLabel>Adicionar Template</S.SwitchLabel>
+                  </S.SwitchContainer>
+                </>
+              )}
+              {isCreatingTemplate && managerTemplate.length === 0 ? (
+                <S.CreatedTemplateContainer>
+                  <S.WrapperTemplate>
+                    <S.TitleCreatedTemplate>
+                      Adicione um novo template:
+                    </S.TitleCreatedTemplate>
+                    <S.InputNameTemplate
+                      placeholder="Nome do Template"
+                      value={newTemplateName}
+                      onChangeText={setNewTemplateName}
+                    />
+                    <S.FormButtonsContainer>
+                      <S.ButtonGeneric onPress={() => setIsModalVisible(false)}>
+                        <S.ButtonGenericText>Cancelar</S.ButtonGenericText>
+                      </S.ButtonGeneric>
+                      <S.ButtonGeneric onPress={handleAddTemplate}>
+                        <S.ButtonGenericText>Adicionar</S.ButtonGenericText>
+                      </S.ButtonGeneric>
+                    </S.FormButtonsContainer>
+                  </S.WrapperTemplate>
+                </S.CreatedTemplateContainer>
+              ) : (
+                <S.CreatedTemplateContainer>
+                  <S.WrapperTemplate>
+                    <S.TitleCreatedTemplate>
+                      Adicione Categoria:
+                    </S.TitleCreatedTemplate>
+                    <S.InputNameTemplate
+                      placeholder="Nome da Categoria"
+                      value={newCategoryName}
+                      onChangeText={setNewCategoryName}
+                    />
+                    <S.FormButtonsContainer>
+                      <S.ButtonGeneric onPress={() => setIsModalVisible(false)}>
+                        <S.ButtonGenericText>Cancelar</S.ButtonGenericText>
+                      </S.ButtonGeneric>
+                      <S.ButtonGeneric onPress={handleAddCategory}>
+                        <S.ButtonGenericText>Adicionar</S.ButtonGenericText>
+                      </S.ButtonGeneric>
+                    </S.FormButtonsContainer>
+                  </S.WrapperTemplate>
+                </S.CreatedTemplateContainer>
+              )}
+            </S.ModalContent>
+          </S.ModalStyled>
+        </S.ContainerFields>
+      </S.WrapperView>
+    </KeyboardAvoidingView>
   );
 };
 

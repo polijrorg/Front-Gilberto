@@ -35,15 +35,18 @@ const MatrizSlider: React.FC<matrizSliderProps> = ({
     setIsLoading(true);
     setMessage('');
     try {
-      // 1) Fetch templates
       let templates: ITemplateVisit[] = [];
+      let selectedTemplate: ITemplateVisit | null = null;
       if (user.job === 'Supervisor') {
         templates = await VisitService.getTemplateByManagerId(user.managerId);
+        selectedTemplate = await VisitService.getSelectedTemplateByManager(user.managerId);
       } else if (user.job === 'Gerente') {
         templates = await VisitService.getTemplateByManagerId(user.id);
+        selectedTemplate = await VisitService.getSelectedTemplateByManager(user.id);
       }
       if (templates.length === 0 && user.companyId) {
         templates = await VisitService.getTemplateByCompanyId(user.companyId);
+        selectedTemplate = await VisitService.getSelectedTemplateByCompany(user.companyId);
       }
 
       // 2) If no templates, clear and exit early
@@ -53,8 +56,9 @@ const MatrizSlider: React.FC<matrizSliderProps> = ({
         return;
       }
 
-      // 3) Save the first template for UI
-      const selectedTemplate = templates[0];
+      if (!selectedTemplate) {
+        selectedTemplate = templates[0];
+      }
       setTemplate([selectedTemplate]);
 
       // 4) Fetch module info once
