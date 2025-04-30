@@ -12,6 +12,7 @@ import EvaluateVisitManager from '@screens/EvaluateVisit/EvaluateVisitManager';
 import ModuloAsk from '@screens/EvaluateMentoring/ModuloAsk';
 import PlainActionTemplate from '@screens/PlainAction';
 import User from '@interfaces/User';
+import SelectTemplate from '@screens/SelectTemplate';
 
 const PrivateStack = createNativeStackNavigator();
 
@@ -68,6 +69,13 @@ const PrivateRoutes: React.FC<IRoutes> = ({ user }) => {
           {() => <EvaluateMentoring user={user} />}
         </PrivateStack.Screen>
       )}
+      
+      {user && user.job === 'Gerente' && (
+        <PrivateStack.Screen name="SelectTemplate" options={{ header: () => <></> }}>
+          {() => <SelectTemplate user={user} />}
+        </PrivateStack.Screen>
+      )}
+
     </PrivateStack.Navigator>
   );
 };

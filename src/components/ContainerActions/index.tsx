@@ -59,6 +59,14 @@ const ContainerActions: React.FC<ContanerActionsProps> = ({user}) => {
       navigation.navigate('EvaluateVisitManager' as never);
     }
   };
+  
+  const handleSelecionarTemplate = () => {
+    if (user?.job === 'Gerente') {
+      navigation.navigate('SelectTemplate' as never);
+    } else {
+      showToast('Funcionalidade apenas para Gerentes', '');
+    }
+  };
 
   const handleEnviarPlainAction = () => {
     if (user?.job === 'Supervisor') {
@@ -93,8 +101,15 @@ const ContainerActions: React.FC<ContanerActionsProps> = ({user}) => {
             />
           </>
         )}
-
+        
         <ButtonWhite text="Visualizar Equipe" duty={handleEnviarMyTeam} />
+
+        {user.job === 'Gerente' && (
+          <ButtonWhite
+            text='Selecionar Template'
+            duty={handleSelecionarTemplate}
+          />
+        )}
       </S.DivActions>
     </S.ContainerActions>
   );
