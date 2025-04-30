@@ -125,28 +125,28 @@ export default class VisitService {
   }
 
   static async setSelectedForCompany(
-    idCompany: string,
-    idTemplate: string
+    companyId: string,
+    templateId: string
   ): Promise<ITemplateVisit> {
-    const templateResponse: AxiosResponse<ITemplateVisit> = await api.post(`/visitTemplate/selectForCompany`, { idCompany, idTemplate });
+    const templateResponse: AxiosResponse<ITemplateVisit> = await api.post(`/visitTemplate/selectForCompany`, { companyId, templateId });
 
     return templateResponse.data;
   }
 
   static async setSelectedForManager(
-    idManager: string,
-    idTemplate: string
+    managerId: string,
+    templateId: string
   ): Promise<ITemplateVisit> {
-    const templateResponse: AxiosResponse<ITemplateVisit> = await api.post(`/visitTemplate/selectForManager`, { idManager, idTemplate });
+    const templateResponse: AxiosResponse<ITemplateVisit> = await api.post(`/visitTemplate/selectForManager`, { managerId, templateId });
 
     return templateResponse.data;
   }
 
   static async setSelectedForDirector(
-    idDirector: string,
-    idTemplate: string
+    directorId: string,
+    templateId: string
   ): Promise<ITemplateVisit> {
-    const templateResponse: AxiosResponse<ITemplateVisit> = await api.post(`/visitTemplate/selectForDirector`, { idDirector, idTemplate });
+    const templateResponse: AxiosResponse<ITemplateVisit> = await api.post(`/visitTemplate/selectForDirector`, { directorId, templateId });
 
     return templateResponse.data;
   }
