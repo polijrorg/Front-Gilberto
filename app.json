@@ -21,11 +21,11 @@
     },
     "android": {
       "package": "com.selloutexpert.app",
-      "versionCode": 9
+      "versionCode": 10
     },
     "ios": {
       "bundleIdentifier": "com.selloutexpert.app",
-      "buildNumber": "9",
+      "buildNumber": "10",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
