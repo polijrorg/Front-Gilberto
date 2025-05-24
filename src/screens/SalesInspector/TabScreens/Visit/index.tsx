@@ -63,93 +63,113 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
     return templates;
   }, [user]);
 
-  const fetchData = useCallback(async () => {
-    try {
-      if (cargo !== "Vendedor") return;
-  
-      const sellerData = await SellerService.getAllSellerFromCompany(companyId);
-      const foundSeller = sellerData.find((seller) => seller.id === idEmployee);
-      if (!foundSeller) return;
-  
-      setSeller(foundSeller);
-  
-      // Fetch visits and sort by most recent first
-      let visitsData = await VisitService.getVisitByIdSeller(foundSeller.id);
-      visitsData.sort((a, b) => parseDate(b.dateVisited).getTime() - parseDate(a.dateVisited).getTime());
-      setVisits(visitsData);
-  
-      setLoading(true);
-  
-      // Fetch templates, categories, and grades in parallel
-      const [templates, allQuestionGrades] = await Promise.all([
-        fetchTemplates(),
-        VisitGradesService.getAllQuestionsBySeller(foundSeller.id),
-      ]);
-  
-      // Fetch all categories for templates in parallel
-      const categoriesPromises = templates.map((template) => 
-        VisitService.getCategoriesByIdTemplate(template.id)
+const fetchData = useCallback(async () => {
+  try {
+    if (cargo !== "Vendedor") return;
+
+    const sellerData = await SellerService.getAllSellerFromCompany(companyId);
+    const foundSeller = sellerData.find((seller) => seller.id === idEmployee);
+    if (!foundSeller) return;
+
+    setSeller(foundSeller);
+
+    // Fetch visits and sort by most recent first
+    let visitsData = await VisitService.getVisitByIdSeller(foundSeller.id);
+    visitsData.sort(
+      (a, b) => parseDate(b.dateVisited).getTime() - parseDate(a.dateVisited).getTime()
+    );
+    visitsData = visitsData.slice(0, 10);
+    setVisits(visitsData);
+
+    setLoading(true);
+
+    // Fetch templates and all question grades in parallel
+    const [templates, allQuestionGrades] = await Promise.all([
+      fetchTemplates(),
+      VisitGradesService.getAllQuestionsBySeller(foundSeller.id),
+    ]);
+
+    // Fetch all categories for each template in parallel
+    const categoriesPromises = templates.map((template) =>
+      VisitService.getCategoriesByIdTemplate(template.id)
+    );
+    const allTemplatesCategories = await Promise.all(categoriesPromises);
+
+    // 1️⃣ EXTRAI CATEGORIAS ÚNICAS (garante que cada categoria apareça apenas uma vez)
+    const uniqueCategories = Array.from(
+      new Map(
+        allTemplatesCategories
+          .flat()
+          .map((cat) => [cat.id, cat])
+      ).values()
+    );
+
+    // 2️⃣ BUSCA PERGUNTAS UMA ÚNICA VEZ POR CATEGORIA
+    const questionPromises = uniqueCategories.map((cat) =>
+      VisitService.getQuestionsByIdCategory(cat.id)
+    );
+    const questionsByCategory = await Promise.all(questionPromises);
+    console.log(questionsByCategory)
+
+    // Mapeia cada categoria única ao seu array de perguntas
+    const categoryQuestionsMap: Record<string, IQuestions[]> = {};
+    uniqueCategories.forEach((cat, idx) => {
+      categoryQuestionsMap[cat.id] = questionsByCategory[idx];
+    });
+
+    // -----------------------------------------------------
+    // Cria containers vazios para cada visita
+    const fetchedCategories: { [key: string]: ICategories[] } = {};
+    const fetchedQuestions: { [key: string]: IQuestions[] } = {};
+    const fetchedQuestionGrades: { [key: string]: IQuestionGrade[] } = {};
+
+    visitsData.forEach((visit) => {
+      fetchedCategories[visit.id] = [];
+      fetchedQuestions[visit.id] = [];
+      fetchedQuestionGrades[visit.id] = [];
+    });
+
+    // Mapeia visitTemplateId → lista de visitIds
+    const visitTemplateMap = new Map<string, string[]>();
+    visitsData.forEach((visit) => {
+      if (!visitTemplateMap.has(visit.visitTemplateId)) {
+        visitTemplateMap.set(visit.visitTemplateId, []);
+      }
+      visitTemplateMap.get(visit.visitTemplateId)!.push(visit.id);
+    });
+
+    // 3️⃣ DISTRIBUI CATEGORIAS e PERGUNTAS para cada visita, sem buscar repetido
+    allTemplatesCategories.flat().forEach((category) => {
+      const relatedVisits = visitTemplateMap.get(category.visitTemplateId) || [];
+      relatedVisits.forEach((visitId) => {
+        // Adiciona a categoria ao array daquele visitId
+        fetchedCategories[visitId].push(category);
+
+        // Busca as perguntas já carregadas no map
+        const qs = categoryQuestionsMap[category.id] || [];
+        // Adiciona todas as perguntas dessa categoria ao array daquele visitId
+        fetchedQuestions[visitId].push(...qs);
+      });
+    });
+
+    // Atribui as notas de perguntas para cada visita (já vinha de allQuestionGrades)
+    visitsData.forEach((visit) => {
+      fetchedQuestionGrades[visit.id] = allQuestionGrades.filter(
+        (qg) => qg.visitId === visit.id
       );
-      const allTemplatesCategories = await Promise.all(categoriesPromises);
-  
-      // Create maps to structure the data efficiently
-      const fetchedCategories: { [key: string]: ICategories[] } = {};
-      const fetchedQuestions: { [key: string]: IQuestions[] } = {};
-      const fetchedQuestionGrades: { [key: string]: IQuestionGrade[] } = {};
-  
-      // Initialize containers for each visit
-      visitsData.forEach(visit => {
-        fetchedCategories[visit.id] = [];
-        fetchedQuestions[visit.id] = [];
-        fetchedQuestionGrades[visit.id] = [];
-      });
-  
-      // Create a map for visitTemplateId -> visitIds for fast lookup
-      const visitTemplateMap = new Map<string, string[]>();
-      visitsData.forEach(visit => {
-        if (!visitTemplateMap.has(visit.visitTemplateId)) {
-          visitTemplateMap.set(visit.visitTemplateId, []);
-        }
-        visitTemplateMap.get(visit.visitTemplateId)?.push(visit.id);
-      });
-  
-      // Gather all category-question fetch promises
-      const questionPromises: Promise<IQuestions[]>[] = [];
-      allTemplatesCategories.flat().forEach(category => {
-        const relatedVisits = visitTemplateMap.get(category.visitTemplateId) || [];
-        relatedVisits.forEach(visitId => {
-          fetchedCategories[visitId].push(category);
-          questionPromises.push(VisitService.getQuestionsByIdCategory(category.id));
-        });
-      });
-  
-      // Fetch all questions in one go
-      const allQuestions = await Promise.all(questionPromises);
-  
-      // Assign fetched questions to visits
-      let questionIndex = 0;
-      allTemplatesCategories.flat().forEach(category => {
-        const relatedVisits = visitTemplateMap.get(category.visitTemplateId) || [];
-        relatedVisits.forEach(visitId => {
-          fetchedQuestions[visitId].push(...allQuestions[questionIndex]);
-        });
-        questionIndex++;
-      });
-  
-      // Assign grades to visits
-      visitsData.forEach(visit => {
-        fetchedQuestionGrades[visit.id] = allQuestionGrades.filter(qg => qg.visitId === visit.id);
-      });
-  
-      setCategories(fetchedCategories);
-      setQuestions(fetchedQuestions);
-      setQuestionGrades(fetchedQuestionGrades);
-    } catch (error) {
-      console.error("Erro ao buscar dados de visitas:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [cargo, idEmployee, companyId, fetchTemplates]);
+    });
+
+    // Atualiza o estado com os dados finais
+    setCategories(fetchedCategories);
+    setQuestions(fetchedQuestions);
+    setQuestionGrades(fetchedQuestionGrades);
+  } catch (error) {
+    console.error("Erro ao buscar dados de visitas:", error);
+  } finally {
+    setLoading(false);
+  }
+}, [cargo, idEmployee, companyId, fetchTemplates]);
+
   
   useEffect(() => {
     fetchData();
@@ -203,7 +223,8 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
             </View>
           )}
           {visits.length > 0 ? (
-            visits.map((visit) => (
+            visits.map((visit) => {
+              return (
               <AccordionVisit
                 key={visit.id}
                 title={`${visit.storeVisited} - ${visit.dateVisited}`}
@@ -216,7 +237,7 @@ const VisitComponent = ({ route }: { route: RouteParams }) => {
                 )}
                 visitId={visit.id}
               />
-            ))
+            )})
           ) : (
             <S.NoVisitsContainer>
               <Text>Nenhuma visita registrada para o dia selecionado.</Text>
