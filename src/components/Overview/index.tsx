@@ -141,7 +141,7 @@ const OverView: React.FC<OverViewProps> = ({
           return dateB - dateA;
         });
 
-        setVisits(sortedVisits);
+        setVisits(sortedVisits.slice(0, 10));
 
         const fetchedCategories: { [key: string]: ICategories[] } = {};
         const fetchedQuestions: { [key: string]: IQuestions[] } = {};
@@ -199,7 +199,7 @@ const OverView: React.FC<OverViewProps> = ({
     };
 
     fetchQuestionsAndModules();
-  }, [sellerId, templates, user.companyId, user.id, user.job, user.managerId]);
+  }, [sellerId, templates, user]);
 
   if (loading || !visits || !categories || !questions || !questionGrades) {
     return (

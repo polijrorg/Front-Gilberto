@@ -95,7 +95,20 @@ const EvaluateVisit: React.FC<EvaluateVisitVisitProps> = ({ user }) => {
       }
 
       if (templates.length > 0) {
-        const template = templates[0];
+        let selectedTemplate: ITemplateVisit | null = null;
+        if (user.job === 'Supervisor') {
+          selectedTemplate = await VisitService.getSelectedTemplateByManager(user.managerId);
+        } else if (user.job === 'Gerente') {
+          selectedTemplate = await VisitService.getSelectedTemplateByManager(user.id);
+        } else {
+          selectedTemplate = await VisitService.getSelectedTemplateByCompany(user.companyId);
+        }
+
+        if (!selectedTemplate) {
+          selectedTemplate = templates[0];
+        }
+        const template = selectedTemplate;
+
         const categories = await VisitService.getCategoriesByIdTemplate(
           template.id
         );
