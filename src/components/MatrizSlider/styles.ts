@@ -5,7 +5,7 @@ import { theme } from '@styles/default.theme';
 export const Wrapper = styled(View)`
   background-color: ${theme.colors.primary.main};
   width: 100%;
-  height: 300px; // Altura ajustada para o carrossel
+  height: 300px;
   margin: 0 auto;
   display: flex;
   align-items: center;

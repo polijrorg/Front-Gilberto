@@ -63,7 +63,8 @@
     "react-native-toast-notifications": "^3.4.0",
     "react-native-tooltip": "^5.2.0",
     "react-native-web": "^0.20.0",
-    "styled-components": "^6.1.19"
+    "styled-components": "^6.1.19",
+    "use-latest-callback": "0.1.9"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
@@ -93,5 +94,8 @@
     "prettier": "^3.2.4",
     "typescript": "~5.8.3"
   },
-  "private": true
+  "private": true,
+  "resolutions": {
+      "use-latest-callback": "0.1.9"
+    }
 }
