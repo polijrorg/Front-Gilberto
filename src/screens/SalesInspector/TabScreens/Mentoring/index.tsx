@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Text, ScrollView } from 'react-native';
 import * as S from './styles';
 import Accordion from '@components/AccordionMentory';
@@ -43,22 +43,28 @@ const Mentoring = ({ route }) => {
   const formatScore = (score: number) =>
     score === 0 ? '0,0' : score?.toFixed(2).replace('.', ',');
 
+  // Sorteia módulos por nome antes de renderizar
+  const sortedModules = useMemo(
+    () => [...modules].sort((a, b) => a.name.localeCompare(b.name)),
+    [modules]
+  );
+
   return (
     <S.Wrapper>
       {isLoading ? (
         <S.ViewContainer>
           <ActivityIndicator color="#3E63DD" />
         </S.ViewContainer>
-      ) : modules.length === 0 ? (
+      ) : sortedModules.length === 0 ? (
         <S.ViewContainer>
           <Text>Nenhum módulo disponível</Text>
         </S.ViewContainer>
       ) : (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <S.WrapperView>
-            {modules.map((module, index) => (
+            {sortedModules.map((module, index) => (
               <Accordion
-                key={index}
+                key={module.id || index}
                 comment={moduleGrade[index]?.supervisorComment || 'Comentários'}
                 title={module.name || `Módulo: Tema`}
                 implementation={
