@@ -1,6 +1,9 @@
 /* eslint-disable react/no-unstable-nested-components */
+import 'react-native-get-random-values';
+
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { v4 as uuidv4 } from 'uuid';
 import Home from '@screens/Home';
 import MyTeam from '@screens/MyTeam';
 import AddCollaborators from '@screens/AddCollaborators';
@@ -24,11 +27,11 @@ const PrivateRoutes: React.FC<IRoutes> = ({ user }) => {
   return (
     <PrivateStack.Navigator>
       <PrivateStack.Screen name="Home" options={{ header: () => <></> }}>
-        {() => <Home user={user} />}
+        {() => <Home user={user} key={uuidv4()} />}
       </PrivateStack.Screen>
       
       <PrivateStack.Screen name="MyTeam" options={{ header: () => <></> }}>
-        {() => <MyTeam user={user} />}
+        {() => <MyTeam user={user} key={uuidv4()} />}
       </PrivateStack.Screen>
       
       <PrivateStack.Screen name="SalesInspector" options={{ header: () => <></> }}>
@@ -36,43 +39,44 @@ const PrivateRoutes: React.FC<IRoutes> = ({ user }) => {
           <TabNav
             user={user}
             route={route}
+            key={uuidv4()}
           />
         )}
       </PrivateStack.Screen>
       
       <PrivateStack.Screen name="AddCollaborators" options={{ header: () => <></> }}>
-        {() => <AddCollaborators user={user} />}
+        {() => <AddCollaborators user={user} key={uuidv4()} />}
       </PrivateStack.Screen>
       
       <PrivateStack.Screen name="EvaluateVisit" options={{ header: () => <></> }}>
-        {() => <EvaluateVisit user={user} />}
+        {() => <EvaluateVisit user={user} key={uuidv4()} />}
       </PrivateStack.Screen>
       
       <PrivateStack.Screen name="EvaluateVisitManager" options={{ header: () => <></> }}>
-        {() => <EvaluateVisitManager user={user} />}
+        {() => <EvaluateVisitManager user={user} key={uuidv4()} />}
       </PrivateStack.Screen>
       
       <PrivateStack.Screen name="AskEvaluateMentoring" options={{ header: () => <></> }}>
-        {(props: any) => <ModuloAsk {...props} />}
+        {(props: any) => <ModuloAsk {...props} key={uuidv4()} />}
       </PrivateStack.Screen>
       
       <PrivateStack.Screen name="CompleteMentoring" options={{ header: () => <></> }}>
-        {() => <CompleteMentorship />}
+        {() => <CompleteMentorship key={uuidv4()} />}
       </PrivateStack.Screen>
       
       <PrivateStack.Screen name="PlainAction" options={{ header: () => <></> }}>
-        {() => <PlainActionTemplate user={user} />}
+        {() => <PlainActionTemplate user={user} key={uuidv4()} />}
       </PrivateStack.Screen>
       
       {user && user.job === 'Supervisor' && (
         <PrivateStack.Screen name="EvaluateMentoring" options={{ header: () => <></> }}>
-          {() => <EvaluateMentoring user={user} />}
+          {() => <EvaluateMentoring user={user} key={uuidv4()} />}
         </PrivateStack.Screen>
       )}
       
       {user && user.job === 'Gerente' && (
         <PrivateStack.Screen name="SelectTemplate" options={{ header: () => <></> }}>
-          {() => <SelectTemplate user={user} />}
+          {() => <SelectTemplate user={user} key={uuidv4()} />}
         </PrivateStack.Screen>
       )}
 
