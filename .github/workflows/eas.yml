@@ -46,7 +46,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
-          cache: npm
+          cache: yarn
 
       - name: 🏗 Setup EAS
         uses: expo/expo-github-action@v8
@@ -56,13 +56,13 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile
 
       - name: 🚨 Run tests (optional)
-        run: npm run test --if-present
+        run: yarn test --if-present
 
       - name: 🚨 Check TypeScript (optional)
-        run: npx tsc --noEmit --if-present
+        run: yarn tsc --noEmit --if-present
 
       - name: 📋 Validate Expo config
         run: npx expo config --type public
@@ -152,7 +152,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
-          cache: npm
+          cache: yarn
 
       - name: 🏗 Setup EAS
         uses: expo/expo-github-action@v8
@@ -162,7 +162,7 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile
 
       - name: 🚢 Deploy Update to Production
         run: |
