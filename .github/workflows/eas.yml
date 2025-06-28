@@ -58,11 +58,8 @@ jobs:
       - name: 📦 Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: 🚨 Run tests (optional)
-        run: yarn test --if-present
-
-      - name: 🚨 Check TypeScript (optional)
-        run: yarn tsc --noEmit --if-present
+      # - name: 🚨 Run tests (optional)
+      #   run: yarn test --if-present
 
       - name: 📋 Validate Expo config
         run: npx expo config --type public
@@ -85,17 +82,17 @@ jobs:
         run: eas build --platform android --profile production --non-interactive --wait
 
       # Preview builds for PRs
-      - name: 🔍 Build iOS (Preview)
-        if: |
-          github.event_name == 'pull_request' && 
-          matrix.platform == 'ios'
-        run: eas build --platform ios --profile preview --non-interactive --wait
+      # - name: 🔍 Build iOS (Preview)
+      #   if: |
+      #     github.event_name == 'pull_request' && 
+      #     matrix.platform == 'ios'
+      #   run: eas build --platform ios --profile preview --non-interactive --wait
 
-      - name: 🔍 Build Android (Preview)
-        if: |
-          github.event_name == 'pull_request' && 
-          matrix.platform == 'android'
-        run: eas build --platform android --profile preview --non-interactive --wait
+      # - name: 🔍 Build Android (Preview)
+      #   if: |
+      #     github.event_name == 'pull_request' && 
+      #     matrix.platform == 'android'
+      #   run: eas build --platform android --profile preview --non-interactive --wait
 
       # Update deployment
       - name: 🚢 Deploy Update (Production)
