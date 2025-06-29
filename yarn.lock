@@ -5075,7 +5075,7 @@ dunder-proto@^1.0.0, dunder-proto@^1.0.1:
     es-errors "^1.3.0"
     gopd "^1.2.0"
 
-eas-cli@^16.1.0:
+eas-cli@^16.13.2:
   version "16.13.2"
   resolved "https://registry.yarnpkg.com/eas-cli/-/eas-cli-16.13.2.tgz#0ade7c3347b70842b5c431e372546cd6d3453d0e"
   integrity sha512-lqodNgCiASLD9dFuVlDAVQFqXeFgWk6bS/wYpNa/kG9q8/RtkllW31g1TgOkl4nKlqiDMUAKuGhYOcYJDYRmZw==
