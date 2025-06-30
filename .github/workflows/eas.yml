@@ -29,14 +29,6 @@ jobs:
   build:
     name: Build and Submit
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        platform: [ios, android]
-        include:
-          - platform: ios
-            build-command: ios
-          - platform: android
-            build-command: android
     
     steps:
       - name: 🏗 Setup repo
@@ -64,37 +56,20 @@ jobs:
       - name: 📋 Validate Expo config
         run: npx expo config --type public
 
-      # Conditional builds based on trigger
+      # Production builds (Push to main or manual dispatch)
       - name: 🚀 Build iOS (Production)
         if: |
-          (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-          (github.event_name == 'workflow_dispatch' && 
-           (github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'all')) &&
-          matrix.platform == 'ios'
+          github.event_name == 'workflow_dispatch' && 
+          github.event.inputs.platform == 'ios'
         run: eas build --platform ios --profile production --non-interactive --wait
 
       - name: 🚀 Build Android (Production)
         if: |
-          (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-          (github.event_name == 'workflow_dispatch' && 
-           (github.event.inputs.platform == 'android' || github.event.inputs.platform == 'all')) &&
-          matrix.platform == 'android'
+          github.event_name == 'workflow_dispatch' && 
+          github.event.inputs.platform == 'android'
         run: eas build --platform android --profile production --non-interactive --wait
 
-      # Preview builds for PRs
-      # - name: 🔍 Build iOS (Preview)
-      #   if: |
-      #     github.event_name == 'pull_request' && 
-      #     matrix.platform == 'ios'
-      #   run: eas build --platform ios --profile preview --non-interactive --wait
-
-      # - name: 🔍 Build Android (Preview)
-      #   if: |
-      #     github.event_name == 'pull_request' && 
-      #     matrix.platform == 'android'
-      #   run: eas build --platform android --profile preview --non-interactive --wait
-
-      # Update deployment
+      # Deploy OTA Update
       - name: 🚢 Deploy Update (Production)
         if: |
           (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
@@ -104,16 +79,14 @@ jobs:
       # Submit to stores (only for production builds)
       - name: 🍎 Submit iOS to App Store
         if: |
-          ((github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-           (github.event_name == 'workflow_dispatch' && github.event.inputs.submit == 'true')) &&
-          matrix.platform == 'ios'
+          (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.submit == 'true')
         run: eas submit --platform ios --latest --non-interactive
 
       - name: 🤖 Submit Android to Play Store
         if: |
-          ((github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-           (github.event_name == 'workflow_dispatch' && github.event.inputs.submit == 'true')) &&
-          matrix.platform == 'android'
+          (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+          (github.event_name == 'workflow_dispatch' && github.event.inputs.submit == 'true')
         run: eas submit --platform android --latest --non-interactive
 
       # Notify about build completion
@@ -126,9 +99,9 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `✅ Build completed for **${{ matrix.platform }}**! 
+              body: `✅ Build completed for both platforms! 
               
-              Preview build is ready for testing.
+              Preview builds are ready for testing.
               Check the [Expo dashboard](https://expo.dev) for download links.`
             })
 
@@ -155,7 +128,7 @@ jobs:
         uses: expo/expo-github-action@v8
         with:
           expo-version: latest
-          eas-version: 16.13.2
+          eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install dependencies
