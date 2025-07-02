@@ -11,9 +11,14 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
-      }    },
+      }
+    },
     "production": {
-      "channel": "production"
+      "channel": "production",
+      "android": {
+        "buildType": "app-bundle",
+        "credentialsSource": "local"
+      }
     }
   },
   "submit": {
@@ -22,6 +27,10 @@
         "appleId": "financeiro@polijunior.com.br",
         "ascAppId": "6572284907",
         "appleTeamId": "82L63Y7JQJ" 
+      },
+      "android": {
+        "serviceAccountKeyPath": "credentials/gilberto-464711-48b80a7999b2.json",
+        "track": "production"
       }
     }
   }
