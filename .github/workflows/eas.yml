@@ -44,7 +44,7 @@ jobs:
         uses: expo/expo-github-action@v8
         with:
           expo-version: latest
-          eas-version: latest
+          eas-version: 16.13.3
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: 📦 Install dependencies
