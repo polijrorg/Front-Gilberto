@@ -29,7 +29,7 @@
         "appleTeamId": "82L63Y7JQJ" 
       },
       "android": {
-        "serviceAccountKeyPath": "credentials/gilberto-464711-48b80a7999b2.json",
+        "serviceAccountKeyPath": "./google-services.json",
         "track": "production"
       }
     }

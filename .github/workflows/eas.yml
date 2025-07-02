@@ -78,6 +78,10 @@ jobs:
           (github.event_name == 'workflow_dispatch')
         run: eas update --branch production --message "Deploy from GitHub Actions"
 
+      - name: Setup credentials
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 --decode > google-services.json
+
       # Submit to stores (only for production builds)
       - name: 🍎 Submit iOS to App Store
         if: |
