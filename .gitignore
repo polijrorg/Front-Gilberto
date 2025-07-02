@@ -56,3 +56,5 @@ web-build/
 # Testing
 /coverage
 coverage/
+
+/credentials
