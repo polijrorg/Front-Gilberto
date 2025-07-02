@@ -65,7 +65,6 @@
     "react-native-tooltip": "^5.2.0",
     "react-native-web": "^0.20.0",
     "styled-components": "^6.1.19",
-    "use-latest-callback": "0.1.9",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
