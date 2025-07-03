@@ -57,19 +57,11 @@ jobs:
         run: npx expo config --type public
 
       # Production builds (Push to main or manual dispatch)
-      - name: 🚀 Build iOS (Production)
+      - name: 🚀 Build all (Production)
         if: |
           (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-          (github.event_name == 'workflow_dispatch' && 
-           (github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'all'))
-        run: eas build --platform ios --profile production --non-interactive --wait
-
-      - name: 🚀 Build Android (Production)
-        if: |
-          (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-          (github.event_name == 'workflow_dispatch' && 
-           (github.event.inputs.platform == 'android' || github.event.inputs.platform == 'all'))
-        run: eas build --platform android --profile production --non-interactive --wait
+          (github.event_name == 'workflow_dispatch')
+        run: eas build --platform all --profile production --non-interactive --wait
 
       # Deploy OTA Update
       - name: 🚢 Deploy Update (Production)
