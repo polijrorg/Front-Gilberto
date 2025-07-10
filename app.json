@@ -5,7 +5,7 @@
     "newArchEnabled": true,
     "main": "index.ts",
     "icon": "./public/assets/icon.jpg",
-    "version": "1.6.0",
+    "version": "1.7.0",
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -15,20 +15,20 @@
       }
     },
     "owner": "polijr",
-    "runtimeVersion": "1.6.0",
+    "runtimeVersion": "1.7.0",
     "updates": {
       "url": "https://u.expo.dev/68ff0e58-4d45-40da-8b42-c7b5e62df96e"
     },
     "android": {
       "package": "com.selloutexpert.app",
-      "versionCode": 10,
+      "versionCode": 11,
       "compileSdkVersion": 35,
       "targetSdkVersion": 35,
       "minSdkVersion": 21
     },
     "ios": {
       "bundleIdentifier": "com.selloutexpert.app",
-      "buildNumber": "10",
+      "buildNumber": "11",
       "deploymentTarget": "17.0",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
